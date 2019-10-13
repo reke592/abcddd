@@ -1,0 +1,14 @@
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/xunit.runner.visualstudio.dotnetcore.testadapter.dll
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/xunit.runner.reporters.netcoreapp10.dll
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/xunit.runner.utility.netcoreapp10.dll
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/hr.test.deps.json
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/hr.test.runtimeconfig.json
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/hr.test.runtimeconfig.dev.json
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/hr.test.dll
+/home/rekstuvwxyz/erp/school/hr.test/bin/Debug/netcoreapp2.2/hr.test.pdb
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.csprojAssemblyReference.cache
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.csproj.CoreCompileInputs.cache
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.AssemblyInfoInputs.cache
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.AssemblyInfo.cs
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.dll
+/home/rekstuvwxyz/erp/school/hr.test/obj/Debug/netcoreapp2.2/hr.test.pdb

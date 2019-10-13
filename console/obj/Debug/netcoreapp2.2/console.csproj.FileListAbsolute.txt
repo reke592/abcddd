@@ -1,0 +1,16 @@
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/console.deps.json
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/console.runtimeconfig.json
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/console.runtimeconfig.dev.json
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/console.dll
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/console.pdb
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.csprojAssemblyReference.cache
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.csproj.CoreCompileInputs.cache
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.AssemblyInfoInputs.cache
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.AssemblyInfo.cs
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.dll
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.pdb
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/hr.core.dll
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/hr.infrastracture.dll
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/hr.infrastracture.pdb
+/home/rekstuvwxyz/erp/school/console/bin/Debug/netcoreapp2.2/hr.core.pdb
+/home/rekstuvwxyz/erp/school/console/obj/Debug/netcoreapp2.2/console.csproj.CopyComplete
