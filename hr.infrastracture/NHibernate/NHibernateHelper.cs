@@ -3,7 +3,7 @@ using NHibernate.Cfg;
 using System.Collections.Generic;
 using NHibernate.Tool.hbm2ddl;
 
-namespace hr.infrastracture.nhibernate
+namespace hr.infrastracture.NHibernate
 {
   public class NHibernateHelper
   {

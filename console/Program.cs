@@ -1,18 +1,16 @@
 ﻿using System;
-using hr.infrastracture.nhibernate;
-using hr.core.models;
+using hr.infrastracture.NHibernate.repositories;
+using NHibernate.Criterion;
+using System.Collections.Generic;
 
 namespace console
 {
   class Program
   {
     static void Main(string[] args) {
-      var x = NHibernateHelper.SessionFactory;
-      using (var s = NHibernateHelper.OpenSession()) {
-        var data = new PersonDetails();
-        data.Rename("Erric John", "Castillo", "Rapsing", null);
-        s.SaveOrUpdate(data);
-      }
+      // var x = NHibernateHelper.SessionFactory;
+      var repo = new DepartmentRepository();
+      Console.WriteLine(repo.All().Count);
     }
   }
 }

@@ -8,7 +8,11 @@ namespace hr.core.models
     public virtual string ExtName { get; protected set; }
     public virtual string Gender { get; protected set; }
 
-    public virtual void Rename(string firstname, string middlename, string lastname, string ext) {
+    public virtual Employee Employee { get; protected set; }
+
+    public PersonDetails() { }
+
+    public PersonDetails(string firstname, string middlename, string lastname, string ext) {
       FirstName = firstname;
       MiddleName = middlename;
       LastName = lastname;

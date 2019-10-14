@@ -12,6 +12,8 @@
     <property name="LastName"/>
     <property name="ExtName"/>
     <property name="Gender"/>
+
+    <one-to-one name="Employee" class="Employee" property-ref="PersonDetails"/>
   </class>
 
 </hibernate-mapping>

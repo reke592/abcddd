@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+  assembly="hr.core"
+  namespace="hr.core.models">
+  
+  <class name="Employee" table="employees">
+    <id name="Id" column="Id">
+      <generator class="identity"/>
+    </id>
+    <property name="Status"/>
+    <many-to-one name="PersonDetails" class="PersonDetails" unique="true" cascade="all"/>
+    <many-to-one name="Department" class="Department"/>
+  </class>
+
+</hibernate-mapping>
