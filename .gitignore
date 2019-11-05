@@ -1,4 +1,4 @@
 *.db
 .env
-/bin
-/obj
+**/bin/Debug/
+**/obj/Debug/

@@ -12,7 +12,7 @@ namespace hr.domain.models.Companies {
 
         public void AddEmployeeToDepartment(Department department, Employee employee) {
             department.addEmployee(employee);
-            _departments.update(department);
+            _departments.Update(department);
         }
     }
 }
