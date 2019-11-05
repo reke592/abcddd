@@ -1,3 +1,10 @@
+Flow:
+  application --> open session, begin transaction
+  domain --> use session, sends confirmation
+  finally:
+    application --> validate confirmation, commit transaction, ( emit integration event )
+    ( infrastracture --> listen to integration event, run infrastracture service )
+
 Entity
  - with identity
  - stripped down to the most intristic characteristic, particularly those that identify it,

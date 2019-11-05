@@ -8,8 +8,46 @@ namespace hr.helper.errors {
         private IDictionary<string, IList<string>> errors;
         private string paramName;
         private object subj;
+        private IDictionary<string, IList<string>> _Errors {
+            get {
+                return this.errors ?? (this.errors = new Dictionary<string, IList<string>>());
+            }
+        }  
 
         public ErrorBag(string message = "Error Bag") : base(message) { }
+
+        public ReadOnlyDictionary<string, IList<string>> Errors {
+            get {
+                return new ReadOnlyDictionary<string, IList<string>>(this.errors);
+            }
+        }
+
+        public int Count {
+            get { 
+                return this._Errors.Count;
+            }
+        }
+
+        public void raiseOnError() {
+            this.subj = null;
+
+            if(this.Count > 0)
+                throw this;
+        }
+
+        public void Dispose()
+        {
+            this.paramName = null;
+            this.subj = null;
+
+            if(this.Count > 0) {
+                throw this;
+            } else {
+                this.errors = null;
+            }
+        }
+
+        // Validations ...
 
         public ErrorBag Required(string paramName, object value) {
             if(value == null) {
@@ -109,43 +147,5 @@ namespace hr.helper.errors {
                 this._Errors.Add(paramName, new List<string>());
             this._Errors[paramName].Add(message);
         }
-
-        private IDictionary<string, IList<string>> _Errors {
-            get {
-                return this.errors ?? (this.errors = new Dictionary<string, IList<string>>());
-            }
-        }
-
-        public int Count {
-            get { 
-                return this._Errors.Count;
-            }
-        }
-
-        public void raiseOnError() {
-            this.subj = null;
-
-            if(this.Count > 0)
-                throw this;
-        }
-
-        public void Dispose()
-        {
-            this.paramName = null;
-            this.subj = null;
-
-            if(this.Count > 0) {
-                throw this;
-            } else {
-                this.errors = null;
-            }
-        }
-
-        public ReadOnlyDictionary<string, IList<string>> Errors {
-            get {
-                return new ReadOnlyDictionary<string, IList<string>>(this.errors);
-            }
-        }
-        
     }
 }

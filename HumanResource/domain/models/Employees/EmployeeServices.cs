@@ -13,7 +13,7 @@ namespace hr.domain.models.Employees {
             var employee = Employee.Create(pDetails);
             // emit event
             // application layer listen to event, and make call for infrastracture services
-            _employees.save(employee);
+            _employees.Save(employee);
         }
 
         public void AddEmployeeAddress(Employee employee, AddressDTO addr) {
@@ -21,7 +21,7 @@ namespace hr.domain.models.Employees {
             employee.addAddress(address);
             // emit event
             // application layer listen to event, and make call for infrastracture services
-            _employees.save(employee);
+            _employees.Save(employee);
         }
     }
 }

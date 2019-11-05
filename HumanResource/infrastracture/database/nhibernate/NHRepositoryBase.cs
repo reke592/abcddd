@@ -7,20 +7,26 @@ namespace hr.infrastracture.database.nhibernate {
         // application will begin a transaction
         // we use the current session
         // we commit the transaction in application layer iff no errors thrown in domain services
-        public void delete(T obj)
+        public void Delete(T obj)
         {
             var s = NHibernateHelper.GetCurrentSession();
             s.Delete(obj);
         }
 
-        public T save(T obj)
+        public T Save(T obj)
         {
             var s = NHibernateHelper.GetCurrentSession();
             s.Save(obj);
             return obj;
         }
 
-        public void update(T obj)
+        public void SaveOrUpdate(T obj)
+        {
+            var s = NHibernateHelper.GetCurrentSession();
+            s.SaveOrUpdate(obj);
+        }
+
+        public void Update(T obj)
         {
             var s = NHibernateHelper.GetCurrentSession();
             s.Update(obj);
