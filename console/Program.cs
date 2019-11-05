@@ -1,16 +1,23 @@
 ﻿using System;
-using hr.infrastracture.NHibernate.repositories;
-using NHibernate.Criterion;
-using System.Collections.Generic;
+using hr.domain.shared;
+using hr.helper.errors;
 
 namespace console
 {
-  class Program
+   class Program
   {
     static void Main(string[] args) {
-      // var x = NHibernateHelper.SessionFactory;
-      var repo = new DepartmentRepository();
-      Console.WriteLine(repo.All().Count);
+      try {
+        var p = Person.Create("Erric John", "Castillo", "Rapsing", "Ir", EnumSex.Male, new DateTime(1992,5,24));
+      }
+      catch(ErrorBag errors) {
+        Console.WriteLine(errors.Count);
+        foreach(var k in errors.Errors.Keys) {
+          foreach(var m in errors.Errors[k]) {
+            Console.WriteLine($"{k} {m}");
+          }
+        }
+      }
     }
   }
 }

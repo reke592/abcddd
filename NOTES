@@ -1,0 +1,51 @@
+Entity
+ - with identity
+ - stripped down to the most intristic characteristic, particularly those that identify it,
+   or commonly used to find or match it. (hence by creating attributes: VALUE OBJECTS)
+ - attributes associated with identity, stays with the ENTITY
+ - when an ID symbol is obtained and stored as an attribute of the ENTITY, it is designated immutable.
+ - restrict access to state setters, expose only behavior and getters.
+
+ValueObjects
+ - No identity
+ - part of entity
+ - immutable (sharable)
+ - mutable (must not be shared)
+ - design VALUE OBJECT as immutable as we can
+
+Association : "For every traversable association in te model, there is a mechanisim with thesame properties"
+ - Imposition of traversal direction (avoid bidirectional access)
+   eg. country *- president -* person
+       country - president ->* person
+ - Addition of a qualifier, effectively reducing multiplicity
+   eg. country - president ->* person
+       country :period - president ->1 person
+ - Elimination of non-essential associations
+
+Database Tuning : "The fewer and simpler the association in model, the better"
+ - rather than sharing reference to thesame instance, VO that is acting as an attribute of many ENTITIES
+   can be stored on the same page (table) as eac ENTITY that uses it. This technique is called "DENORMALIZATION"
+ - use DENORMALIZATION only if access time is more critical than storage.
+ - eg. storing reference to a VALUE OBJECT on another server is probably wasteful.
+
+AppServices : "the doer objects"
+ - contains specific responsibilities
+ - A STATELESS SINGLETON implementation of a service interface
+ - are JUST DELIVERY mechanism for service interfaces (hence the domain and infrastracrure)
+ - not meaningful domain objects
+ - eg. Digest message
+       sends message to domain service
+       listen for confirmation
+       decides to send notifications using infrastracture service.
+
+DomainServices
+ - eg. Interacts with necessary Account and ledger objects
+       making appropriate debit and credit
+       supplies confirmation of result (eg. transfer allowed or not, etc.)
+
+InfrastractureService
+ - eg. Send notification service
+       sends Email, letters, etc. as directed by application.
+
+Modules (aka Package)
+ - Low Coupling, High Cohesion

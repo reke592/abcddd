@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\hr.infrastracture\hr.infrastracture.csproj" />
-    <ProjectReference Include="..\hr.core\hr.core.csproj" />
+    <ProjectReference Include="..\HumanResource\HumanResource.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="NHibernate" Version="5.2.6" />
+    <PackageReference Include="System.Data.Sqlite" Version="1.0.111.0" />
   </ItemGroup>
 
   <PropertyGroup>

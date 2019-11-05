@@ -1,0 +1,9 @@
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.csprojAssemblyReference.cache
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.csproj.CoreCompileInputs.cache
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.AssemblyInfoInputs.cache
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.AssemblyInfo.cs
+C:\Users\Administrator\erp\school\HumanResource\bin\Debug\netstandard2.0\HumanResource.deps.json
+C:\Users\Administrator\erp\school\HumanResource\bin\Debug\netstandard2.0\HumanResource.dll
+C:\Users\Administrator\erp\school\HumanResource\bin\Debug\netstandard2.0\HumanResource.pdb
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.dll
+C:\Users\Administrator\erp\school\HumanResource\obj\Debug\netstandard2.0\HumanResource.pdb
