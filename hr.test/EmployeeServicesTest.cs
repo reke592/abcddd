@@ -31,8 +31,9 @@ namespace hr.test
                 var departmentstub = Department.Create("Faculty", 20);
                 var personstub = Person.Create("Juan", "Santos", "Dela Cruz", null, EnumSex.Male, new DateTime(1992, 5, 24));
                 var employeestub = Employee.Create(personstub);
-                            
-                service.AddEmployeeToDepartment(departmentstub, employeestub);
+                
+                employeeRepository.Save(employeestub);
+                departmentRepository.Save(departmentstub);
                 uow.Commit();
 
                 dept_id = departmentstub.Id;
@@ -40,8 +41,14 @@ namespace hr.test
             }
             
             using(var uow = new NHUnitOfWork()) {
-                var actual = uow.Session.Get<Employee>(emp_id).getDepartment().Id;
-                Assert.Equal(dept_id, actual);
+                var departmentstub = uow.Session.Get<Department>(dept_id);
+                var employeestub = uow.Session.Get<Employee>(emp_id);
+
+                service.AddEmployeeToDepartment(departmentstub, employeestub);
+                uow.Commit();
+
+                var actual = employeestub.getDepartment()?.Id;
+                Assert.Equal(departmentstub.Id, actual);
             }
         }
     }

@@ -10,10 +10,13 @@ namespace hr.infrastracture.database.nhibernate.mappings {
             Id(x => x.Id);
             Map(Reveal.Member<Employee>("dateHired"));
 
-            // will add person_id column to employee table
+            // will add person_id column to employee table (* - 1)
             References<Person>(Reveal.Member<Employee>("personDetails")).Cascade.All();
-            
-            References<Department>(Reveal.Member<Employee>("department")).Cascade.None();
+
+            // will add department_id columnt to employee table (1 - 1)
+            HasOne<Department>(Reveal.Member<Employee>("department"));
+
+            // References<Department>(Reveal.Member<Employee>("department")).Cascade.None();
 
             // will create separate table to manage m-m relationships between employee and address
             HasManyToMany<Address>(Reveal.Member<Employee>("employeeAddresses"))
