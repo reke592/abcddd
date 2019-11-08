@@ -44,6 +44,7 @@ AppServices : "the doer objects"
        sends message to domain service
        listen for confirmation
        decides to send notifications using infrastracture service.
+ - ... HOW ABOUT, we have a return value on each method so we can easily pass the result to presentation layer
 
 DomainServices
  - eg. Interacts with necessary Account and ledger objects
@@ -56,3 +57,12 @@ InfrastractureService
 
 Modules (aka Package)
  - Low Coupling, High Cohesion
+
+Unit Test
+ - create a partial implementation
+ - let the test fail
+ - ... HOW ABOUT, we extend the test class to the actual interface, so we can easily refactor the code
+
+Persistence (Save, Update, Delete)
+ - ... HOW ABOUT, we call these methods inside the application layer methods,
+       so we can easly see all the persistence call inside a unit transaction

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using hr.domain.models.Companies;
 using hr.domain.shared;
+using hr.helper.domain;
 using hr.helper.errors;
 
 namespace hr.domain.models.Employees {
@@ -11,6 +12,25 @@ namespace hr.domain.models.Employees {
         private IList<Address> employeeAddresses = new List<Address>();
         private DateTime dateHired;
         private Department department;
+
+        private void onEmployeeAssignedToDepartment(object sender, Command cmd) {
+            var args = cmd as EmployeeAssignedToDepartment;
+            if(this.Equals(args?.Employee)) {
+                this.department = args.Department;
+            }
+        }
+
+        private void onEmployeeRemovedFromDepartment(object sender, Command cmd) {
+            var args = cmd as EmployeeRemovedFromDepartment;
+            if(this.Equals(args?.Employee)) {
+                this.department = null;
+            }
+        }
+
+        public Employee() {
+            EventBroker.getInstance.addCommandListener(onEmployeeAssignedToDepartment);
+            EventBroker.getInstance.addCommandListener(onEmployeeRemovedFromDepartment);
+        }
 
         public static Employee Create(Person pdetails) {
             // domain validate here ...

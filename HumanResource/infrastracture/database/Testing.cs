@@ -7,7 +7,7 @@ namespace hr.infrastracture.database.nhibernate {
         public Testing() {
             using(var s = NHibernateHelper.SessionFactory.OpenSession()) {
                 using(var t = s.BeginTransaction()) {
-                    var e = Employee.Create(Person.Create("Erric John", "Castillo", "Rapsing", "", EnumSex.Male, new DateTime(1992,5,24)));
+                    var e = Employee.Create(Person.Create("Erric John", "Castillo", "Rapsing", "", EnumSex.Male, Date.Create(1992,5,24)));
                     e.addAddress(Address.Create("414", "M.Perez", "Norzagaray", "Bulacan", "Philippines"));
                     s.Save(e);
                     t.Commit();

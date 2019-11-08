@@ -29,7 +29,7 @@ namespace hr.infrastracture.database.nhibernate {
             // }
             return Fluently
                 .Configure()
-                .Database(SQLiteConfiguration.Standard.UsingFile("test.db"))
+                .Database(SQLiteConfiguration.Standard.UsingFile("test.db").ShowSql())
                 .CurrentSessionContext("thread_static")
                 .Mappings(m => {
                     m.FluentMappings.AddFromAssemblyOf<NHibernateHelper>();

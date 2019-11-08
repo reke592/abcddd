@@ -10,8 +10,12 @@ namespace hr.infrastracture.database.nhibernate.mappings.shared {
             Map(Reveal.Member<Person>("Middlename"));
             Map(Reveal.Member<Person>("Surname"));
             Map(Reveal.Member<Person>("Ext"));
-            Map(Reveal.Member<Person>("Birthdate"));
             Map(Reveal.Member<Person>("Sex"));
+            Component<Date>(Reveal.Member<Person, Date>("Birthdate"), x => {
+                x.Map(Reveal.Member<Date>("Year"));
+                x.Map(Reveal.Member<Date>("Month"));
+                x.Map(Reveal.Member<Date>("Day"));
+            }).ColumnPrefix("birth_");
         }
     }
 }

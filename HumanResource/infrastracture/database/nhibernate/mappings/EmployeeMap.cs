@@ -13,8 +13,9 @@ namespace hr.infrastracture.database.nhibernate.mappings {
             // will add person_id column to employee table (* - 1)
             References<Person>(Reveal.Member<Employee>("personDetails")).Cascade.All();
 
-            // will add department_id columnt to employee table (1 - 1)
-            HasOne<Department>(Reveal.Member<Employee>("department"));
+            // will add department_id column to employee table (1 - 1)
+            References<Department>(Reveal.Member<Employee>("department")).Cascade.None();
+            // HasOne<Department>(Reveal.Member<Employee>("department"));
 
             // References<Department>(Reveal.Member<Employee>("department")).Cascade.None();
 

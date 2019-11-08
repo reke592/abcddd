@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HumanResource\HumanResource.csproj" />
+    <ProjectReference Include="..\hr.test\hr.test.csproj" />
   </ItemGroup>
 
   <ItemGroup>

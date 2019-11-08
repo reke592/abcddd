@@ -55,9 +55,13 @@
               "version": "[2.2.0, )",
               "autoReferenced": true
             },
+            "XUnit.Extensions.Ordering": {
+              "target": "Package",
+              "version": "[1.4.5, )"
+            },
             "xunit": {
               "target": "Package",
-              "version": "[2.4.0, )"
+              "version": "[2.4.1, )"
             },
             "xunit.runner.visualstudio": {
               "target": "Package",

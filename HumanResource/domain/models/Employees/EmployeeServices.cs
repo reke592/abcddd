@@ -1,3 +1,4 @@
+using System;
 using hr.application.Employees;
 using hr.domain.shared;
 
@@ -8,20 +9,32 @@ namespace hr.domain.models.Employees {
             this._employees = employees;
         }
 
-        public void CreateEmployee(PersonDTO person) {
-            var pDetails = Person.Create(person.Firstname, person.Middlename, person.Surname, person.Ext, person.Sex, person.Birthdate);
+        public Employee CreateEmployee(PersonDTO input) {
+            var pDetails = Person.Create(
+                input.Firstname
+                , input.Middlename
+                , input.Surname
+                , input.Ext
+                , (EnumSex) Enum.Parse(typeof(EnumSex), input.Sex)
+                , Date.TryParse(input.Birthdate));
+
             var employee = Employee.Create(pDetails);
             // emit event
             // application layer listen to event, and make call for infrastracture services
-            _employees.Save(employee);
+            return employee;
         }
 
         public void AddEmployeeAddress(Employee employee, AddressDTO addr) {
-            var address = Address.Create(addr.LotBlock, addr.Street, addr.Municipality, addr.Province, addr.Country);
+            var address = Address.Create(
+                addr.LotBlock
+                , addr.Street
+                , addr.Municipality
+                , addr.Province
+                , addr.Country);
+            
             employee.addAddress(address);
             // emit event
             // application layer listen to event, and make call for infrastracture services
-            _employees.Save(employee);
         }
     }
 }

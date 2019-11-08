@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using hr.domain.models.Employees;
+using hr.helper.domain;
 using hr.helper.errors;
 
 namespace hr.domain.models.Companies {
@@ -27,13 +29,22 @@ namespace hr.domain.models.Companies {
             }
         }
 
-        public virtual void addEmployee(Employee employee) {
-            // validate capacity
+        public virtual Command addEmployee(Employee employee) {
+            if(this.employees.Count == this.Capacity)
+                return new Errored(new { Message = $"{this.Name} department capacity is full" });
+            if(employee.getDepartment() != null)
+                return new Errored(new { Message = $"Employee is currently assigned to {employee.getDepartment().Name}" });
+
             this.employees.Add(employee);
+            return new EmployeeAssignedToDepartment(employee, this);
         }
 
-        public virtual void removeEmployee(Employee employee) {
+        public virtual Command removeEmployee(Employee employee) {
+            if(!this.employees.Contains(employee))
+                return new Errored(new { Message = $"Employee not assigned in {this.Name} department" });
+
             this.employees.Remove(employee);
+            return new EmployeeRemovedFromDepartment(employee, this);
         }
     }
 }

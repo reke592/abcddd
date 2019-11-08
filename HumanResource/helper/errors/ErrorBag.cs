@@ -18,7 +18,7 @@ namespace hr.helper.errors {
 
         public ReadOnlyDictionary<string, IList<string>> Errors {
             get {
-                return new ReadOnlyDictionary<string, IList<string>>(this.errors);
+                return new ReadOnlyDictionary<string, IList<string>>(this._Errors);
             }
         }
 
@@ -52,8 +52,9 @@ namespace hr.helper.errors {
         public ErrorBag Required(string paramName, object value) {
             if(value == null) {
                 this.Add(paramName, "required");
+                return this;
             }
-                
+            // else
             this.paramName = paramName;
             this.subj = value;
 
@@ -72,6 +73,14 @@ namespace hr.helper.errors {
                 this.subj = value;
             }
 
+            return this;
+        }
+
+        /// <summary>
+        /// add error message "Not found" when reference is null
+        /// </summary>
+        public ErrorBag NotFound(string paramName, object reference) {
+            if(reference is null) this.Add(paramName, "Not Found");
             return this;
         }
 
@@ -120,6 +129,19 @@ namespace hr.helper.errors {
 
         public ErrorBag AlphaNum() {
             this.Format(@"^[a-zA-Z0-9\.\-]+$");
+            return this;
+        }
+
+        public ErrorBag DateValue() {
+            if(this.subj is string) {
+                try {
+                    DateTime.Parse((string) this.subj);
+                }
+                catch {
+                    this.Add(this.paramName, "invalid date value");
+                }
+            }
+            
             return this;
         }
 
