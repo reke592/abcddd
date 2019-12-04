@@ -1,9 +1,4 @@
-Repositories:
-    use specs pattern
-
-finish infrastracture database mappings:
-    PayrollReport
-    PayrollRecord
-    DeductionPayment
-
 Create unit test
+Create application and domain service implementations
+Create webapi infrastracture
+Create minimal web UI

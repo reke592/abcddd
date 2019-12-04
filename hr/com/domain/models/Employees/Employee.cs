@@ -16,7 +16,7 @@ namespace hr.com.domain.models.Employees {
                 var args = cmd as CommandAssociateSalaryToEmployee;
                 if(this.Equals(args.Employee)) {
                     if(this._salary != null)
-                        throw new Exception("Employee already associated to salary.");
+                        throw new Exception("Employee already associated to an existing salary.");
                     else
                         this._salary = args.Salary;
                 }
