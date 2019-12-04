@@ -1929,6 +1929,22 @@
           "build/netcoreapp1.0/_._": {}
         }
       },
+      "hr/1.0.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v2.0",
+        "dependencies": {
+          "Castle.Windsor": "5.0.1",
+          "FluentNHibernate": "2.1.2",
+          "NHibernate": "5.2.6",
+          "System.Data.Sqlite": "1.0.111"
+        },
+        "compile": {
+          "bin/placeholder/hr.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/hr.dll": {}
+        }
+      },
       "hr.test/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v2.2",
@@ -6683,6 +6699,11 @@
         "xunit.runner.visualstudio.nuspec"
       ]
     },
+    "hr/1.0.0": {
+      "type": "project",
+      "path": "../hr/hr.csproj",
+      "msbuildProject": "../hr/hr.csproj"
+    },
     "hr.test/1.0.0": {
       "type": "project",
       "path": "../hr.test/hr.test.csproj",
@@ -6696,10 +6717,10 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.2": [
-      "HumanResource >= 1.0.0",
       "Microsoft.NETCore.App >= 2.2.0",
       "NHibernate >= 5.2.6",
       "System.Data.Sqlite >= 1.0.111",
+      "hr >= 1.0.0",
       "hr.test >= 1.0.0"
     ]
   },
@@ -6736,8 +6757,8 @@
             "C:\\Users\\Administrator\\erp\\school\\hr.test\\hr.test.csproj": {
               "projectPath": "C:\\Users\\Administrator\\erp\\school\\hr.test\\hr.test.csproj"
             },
-            "C:\\Users\\Administrator\\erp\\school\\HumanResource\\HumanResource.csproj": {
-              "projectPath": "C:\\Users\\Administrator\\erp\\school\\HumanResource\\HumanResource.csproj"
+            "C:\\Users\\Administrator\\erp\\school\\hr\\hr.csproj": {
+              "projectPath": "C:\\Users\\Administrator\\erp\\school\\hr\\hr.csproj"
             }
           }
         }

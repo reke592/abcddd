@@ -1,0 +1,43 @@
+using System;
+using System.Linq.Expressions;
+
+namespace hr.com.helper.database {
+
+    /// <summary>
+    /// https://enterprisecraftsmanship.com/posts/specification-pattern-c-implementation/
+    /// </summary>
+    public abstract class Specification<T> {
+        public abstract Expression<Func<T, bool>> toExpression();
+
+        public bool isSatisfiedBy(T entity) {
+            Func<T, bool> predicate = this.toExpression().Compile();
+            return predicate(entity);
+        }
+
+        public AndSpecification<T> And(Specification<T> specification) {
+            return new AndSpecification<T>(this, specification);
+        }
+    }
+
+    public class AndSpecification<T> : Specification<T>
+    {
+        private readonly Specification<T> _left;
+        private readonly Specification<T> _right;
+
+        public AndSpecification(Specification<T> left, Specification<T> right) {
+            this._left = left;
+            this._right = right;
+        }
+
+        public override Expression<Func<T, bool>> toExpression()
+        {
+            Expression<Func<T, bool>> leftExpression = this._left.toExpression();
+            Expression<Func<T, bool>> rightExpression = this._right.toExpression();
+
+            BinaryExpression andExpression = Expression.AndAlso(leftExpression.Body, Expression.Invoke(rightExpression, leftExpression.Parameters[0]));
+            // Console.WriteLine(andExpression.ToString());
+            return Expression.Lambda<Func<T, bool>>(andExpression, leftExpression.Parameters);
+        }
+    }
+
+}

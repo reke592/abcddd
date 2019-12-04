@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\HumanResource\HumanResource.csproj" />
     <ProjectReference Include="..\hr.test\hr.test.csproj" />
+    <ProjectReference Include="..\hr\hr.csproj" />
   </ItemGroup>
 
   <ItemGroup>

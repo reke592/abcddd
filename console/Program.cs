@@ -1,22 +1,59 @@
 ﻿using System;
-using hr.domain.models.Companies;
-using hr.domain.models.Employees;
-using hr.domain.shared;
-using hr.helper.domain;
+using System.Linq.Expressions;
+using hr.com.domain.enums;
+using hr.com.domain.models.Employees;
+using hr.com.domain.models.Payrolls;
+using hr.com.domain.shared;
+using hr.com.helper.database;
+using hr.com.helper.domain;
+using hr.com.infrastracture.database.nhibernate;
 
 namespace console
 {
-   class Program
+  class Voter {
+    public int Age { get; set; }
+    public int Precint { get; set; }
+  }
+
+  class CanVote : Specification<Voter>
   {
-    public static Employee employee1 = Employee.Create(Person.Create("Juan", "Santos", "Dela Cruz", "Jr", EnumSex.Male, Date.Create(1992, 3, 4)));
-    public static Employee employee2 = Employee.Create(Person.Create("Ann", "Bernabe", "Santos", null, EnumSex.Female, Date.Create(1994, 3, 2)));
-    public static Department department1 = Department.Create("Faculty", 20);
-    public static Department department2 = Department.Create("Finance", 5);
-    
+      public override Expression<Func<Voter, bool>> toExpression()
+      {
+          return voter => voter.Age > 18;
+      }
+  }
+
+  class VoterByPrecint : Specification<Voter>
+  {
+    private int _precint_num;
+    public VoterByPrecint(int precint_number) {
+      this._precint_num = precint_number;
+    }
+
+    public override Expression<Func<Voter, bool>> toExpression()
+    {
+        return voter => voter.Precint == this._precint_num;
+    }
+  }
+
+  class Program
+  {
     static void Main(string[] args) {
-      var broker = EventBroker.getInstance;
-      broker.Command(department1.addEmployee(employee1));
-      Console.WriteLine(employee1.getDepartment());
+      using(var uow = new NHUnitOfWork()) {
+        var p = Person.Create("Erric John", "Castillo", "Rapsing", null, Gender.MALE, Date.TryParse("may 24, 1992"));
+        var e = Employee.Create(p, Date.Now);
+        var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+        uow.Session.Save(e);
+        uow.Session.Save(s);
+        uow.Commit();
+      }
+
+      using(var uow = new NHUnitOfWork()) {
+        var e = uow.Session.Get<Employee>(1L);
+        var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+        uow.Session.Save(s);
+        uow.Commit();
+      }
     }
   }
 }

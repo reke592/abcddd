@@ -50,6 +50,7 @@ DomainServices
  - eg. Interacts with necessary Account and ledger objects
        making appropriate debit and credit
        supplies confirmation of result (eg. transfer allowed or not, etc.)
+ - ... HOW ABOUT, we do all validations against existing records
 
 InfrastractureService
  - eg. Send notification service

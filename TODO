@@ -1,0 +1,9 @@
+Repositories:
+    use specs pattern
+
+finish infrastracture database mappings:
+    PayrollReport
+    PayrollRecord
+    DeductionPayment
+
+Create unit test
