@@ -8,7 +8,7 @@ namespace hr.com.domain.models.Payrolls {
         private Employee _employee;                  // reference
         private PayrollReport _payroll_report;       // reference, updated via CQRS event: DeductionPaymentIncludedInPayroll
         private Deduction _deduction;                // reference
-        public virtual decimal PaidAmount { get; protected set; }
+        public virtual MonetaryValue PaidAmount { get; protected set; }              // component
 
         private void onDeductionPaymentIncludedInPayroll(object sender, Event e) {
             if(e is EventDeductionPaymentIncludedInPayroll) {
@@ -24,10 +24,12 @@ namespace hr.com.domain.models.Payrolls {
         }
 
         public static DeductionPayment Create(Deduction deduction, MonetaryValue custom_payment = null) {
+            
             var record = new DeductionPayment {
                 _employee = deduction.GetEmployee(),
                 _deduction = deduction,
-                PaidAmount = (custom_payment is null) ? deduction.AmortizedAmount : custom_payment.PreciseValue
+                // PaidAmount = (custom_payment is null) ? deduction.AmortizedAmount : custom_payment.PreciseValue
+                PaidAmount = custom_payment ?? deduction.AmortizedAmount
             };
 
             // emit event

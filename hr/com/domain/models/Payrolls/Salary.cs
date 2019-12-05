@@ -9,8 +9,8 @@ namespace hr.com.domain.models.Payrolls {
     // aggregate for salary deductions
     public class Salary : Entity {
         private Employee _employee;  // reference
-        private MonetaryValue _gross;    // component
         private IList<Deduction> _deductions = new List<Deduction>();    // 1 to *
+        public virtual MonetaryValue Gross { get; protected set; }    // component
 
         // private void onCommandAddSalaryDeduction(object sender, Command cmd) {
         //     if(cmd is CommandAddSalaryDeduction) {
@@ -39,26 +39,22 @@ namespace hr.com.domain.models.Payrolls {
         public static Salary Create(Employee employee, MonetaryValue gross) {
             var record = new Salary {
                 _employee = employee,
-                _gross = gross
+                Gross = gross
             };
             EventBroker.getInstance().Command(new CommandAssociateSalaryToEmployee(record, employee));
             return record;
         }
 
-        public virtual decimal Gross {
+        /// <summary>
+        /// get only the net value against active deductions, no persisted updates
+        /// </summary>
+        public virtual MonetaryValue Net {
             get {
-                return this._gross.PreciseValue;
-            }
-        }
-
-        // get only the net value, no persisted updates
-        public virtual decimal Net {
-            get {
-                var net = Gross;
+                var net = Gross.PreciseValue;
                 foreach(Deduction deduction in this._deductions) {
-                    net -= deduction.AmortizedAmount;
+                    net -= deduction.HasBalance() ? deduction.AmortizedAmount.PreciseValue : 0;
                 }
-                return net;
+                return MonetaryValue.of(this.Gross.Code, net);
             }
         }
 

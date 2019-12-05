@@ -32,12 +32,14 @@ namespace hr.com.domain.models.Payrolls {
                 var args = cmd as CommandIncludeSalaryDeductionInReport;
                 
                 if(args.PayrollReport.Equals(this._payroll_report)) {
-                    Console.WriteLine(this._salary.Deductions.Count);
                     foreach(var deduction in this._salary.Deductions) {
-                        // var payment = DeductionPayment.Create(this._payroll_report, this._employee, deduction);
-                        var payment = DeductionPayment.Create(deduction);
+                        // because deduction can be whole even if the payroll is half
+                        // we include the MonthlyUnit for deduction payment in CQRS command
+                        var amount = deduction.AmortizedAmount.PreciseValue * (decimal) args.MonthlyUnit;
+                        var payment = DeductionPayment.Create(deduction, MonetaryValue.of(deduction.MonetaryCode, amount));
                         this._deduction_payments.Add(payment);
-                        this._gross_deduction += payment.PaidAmount;
+                        this._gross_deduction += payment.PaidAmount.PreciseValue;
+
                         EventBroker.getInstance().Emit(new EventDeductionPaymentIncludedInPayroll(this._payroll_report, payment));
                     }
                 }
@@ -55,7 +57,7 @@ namespace hr.com.domain.models.Payrolls {
                 _employee = sal.GetEmployee(),
 
                 // copy the gross value to avoid miscalculation in future
-                _gross = sal.Gross
+                _gross = sal.Gross.PreciseValue * (decimal) pr.MonthlyUnit
             };
         }
 

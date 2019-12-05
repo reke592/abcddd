@@ -1,13 +1,5 @@
-... need to create precise ratio for each payroll period and deduction amortization updates
-    ?? pre-requisite: employee working days per annum (eg. 240)
-                                                                (n) Gives
-    Annually                WDA                 = 240           1
-    Monthly                 Annually / 12       = 20            12
-    Quarterly               Annually / 4        = 60            4
-    Every other month       Monthly * 2         = 40            6
-    Weekly                  Monthly / 4         = 5             48
-    Every other week        Weekly * 2          = 10            24
-    Daily                   Annually / WDA      = 1             WDA
+... make logic for Deduction so it can be temporary or permanent
+... how about we support monetary value convertion?
 
 Create unit test
 Create application and domain service implementations

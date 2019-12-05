@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\hr.test\hr.test.csproj" />
     <ProjectReference Include="..\hr\hr.csproj" />
   </ItemGroup>
 

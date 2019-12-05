@@ -66,6 +66,22 @@ namespace hr.com.domain.shared {
             return MonetaryValue.of(this.Code, this.PreciseValue - other.PreciseValue);
         }
 
+        public MonetaryValue multipliedBy(decimal multiple) {
+            return MonetaryValue.of(this.Code, this.PreciseValue * multiple);
+        }
+
+        public MonetaryValue dividedBy(decimal dividend) {
+            return MonetaryValue.of(this.Code, this.PreciseValue / dividend);
+        }
+
+        /// <summary>
+        /// multiply monetary value by per_unit.
+        /// </summary>
+        public static MonetaryValue Convert(MonetaryValue money, decimal per_unit, string code) {
+            if(money is null) return null;
+            return money.multipliedBy(per_unit);
+        }
+
         public override string ToString() {
             return $"{this.Code}:{this.PreciseValue}";
         }

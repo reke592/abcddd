@@ -11,9 +11,9 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
 
             References<Employee>(Reveal.Member<Salary>("_employee")).Cascade.None();
 
-            Component<MonetaryValue>(Reveal.Member<Salary>("_gross"), c => {
-                c.Map(x => x.Code);
-                c.Map(x => x.PreciseValue).Column("Amount");
+            Component<MonetaryValue>(x => x.Gross, c => {
+                c.Map(x => x.Code).Column("money_code");
+                c.Map(x => x.PreciseValue).Column("amount");
             }).ColumnPrefix("gross_");
 
             HasMany<Deduction>(Reveal.Member<Salary>("_deductions")).Cascade.All();
