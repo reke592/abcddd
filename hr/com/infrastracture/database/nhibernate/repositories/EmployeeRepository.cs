@@ -1,6 +1,6 @@
 using hr.com.domain.models.Employees;
 
-namespace hr.com.infrastracture.database.nhibernate {
+namespace hr.com.infrastracture.database.nhibernate.repositories {
     public class EmployeeRepository : NHRepositoryBase<Employee>, IEmployeeRepository
     {
         public Employee findById(long id)

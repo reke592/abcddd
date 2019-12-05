@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using hr.com.helper.database;
 using System.Linq;
+using System;
+using System.Linq.Expressions;
+using hr.com.domain;
 
 namespace hr.com.infrastracture.database.nhibernate {
     // NOTE:

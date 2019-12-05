@@ -2,57 +2,66 @@
 using System.Linq.Expressions;
 using hr.com.domain.enums;
 using hr.com.domain.models.Employees;
+using hr.com.domain.models.Employees.specs;
 using hr.com.domain.models.Payrolls;
+using hr.com.domain.models.Payrolls.specs;
 using hr.com.domain.shared;
 using hr.com.helper.database;
 using hr.com.helper.domain;
 using hr.com.infrastracture.database.nhibernate;
+using hr.com.infrastracture.database.nhibernate.repositories;
 
 namespace console
 {
-  class Voter {
-    public int Age { get; set; }
-    public int Precint { get; set; }
-  }
-
-  class CanVote : Specification<Voter>
-  {
-      public override Expression<Func<Voter, bool>> toExpression()
-      {
-          return voter => voter.Age > 18;
-      }
-  }
-
-  class VoterByPrecint : Specification<Voter>
-  {
-    private int _precint_num;
-    public VoterByPrecint(int precint_number) {
-      this._precint_num = precint_number;
-    }
-
-    public override Expression<Func<Voter, bool>> toExpression()
-    {
-        return voter => voter.Precint == this._precint_num;
-    }
-  }
-
   class Program
   {
+    static readonly IRepository<Salary> _salaries = new SalaryRepository();
+    static readonly IRepository<Employee> _employees = new EmployeeRepository();
+
     static void Main(string[] args) {
       using(var uow = new NHUnitOfWork()) {
-        var p = Person.Create("Erric John", "Castillo", "Rapsing", null, Gender.MALE, Date.TryParse("may 24, 1992"));
-        var e = Employee.Create(p, Date.Now);
+        var p = Person.Create("Sam", "Wilson", "Tucker", "", Gender.MALE, Date.TryParse("September 11, 2019"));
+        var e = Employee.Create(p, Date.Now, EmployeeStatus.RETIRED);
         var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 12000m));
         uow.Session.Save(e);
         uow.Session.Save(s);
         uow.Commit();
       }
 
       using(var uow = new NHUnitOfWork()) {
-        var e = uow.Session.Get<Employee>(1L);
+        var p = Person.Create("Juan", "Cruz", "Dela Cruz", "Jr", Gender.MALE, Date.TryParse("September 11, 2019"));
+        var e = Employee.Create(p, Date.Now);
         var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 12000m));
+        uow.Session.Save(e);
         uow.Session.Save(s);
         uow.Commit();
+      }
+
+      using(var uow = new NHUnitOfWork()) {
+        var p = Person.Create("Ann", "Santos", "Abe", "", Gender.FEMALE, Date.TryParse("Feb 29, 2019"));
+        var e = Employee.Create(p, Date.Now);
+        var s = Salary.Create(e, MonetaryValue.of("php", 27000m));
+        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 7000m));
+        uow.Session.Save(e);
+        uow.Session.Save(s);
+        uow.Commit();
+      }
+
+      Console.WriteLine("\n\n");
+      using(var uow = new NHUnitOfWork()) {
+        var activeEmployees = new EmployeeIsActive();
+        var ees = _employees.FindAll(activeEmployees);
+        var report = PayrollReport.Create(ees, Date.Now);
+        EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
+        
+        uow.Session.Save(report);
+        uow.Commit();
+
+        foreach(var r in report.Records) {
+          Console.WriteLine(r);
+        }
       }
     }
   }

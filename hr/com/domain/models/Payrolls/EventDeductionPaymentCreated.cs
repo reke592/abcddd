@@ -12,6 +12,11 @@ namespace hr.com.domain.models.Payrolls {
             DeductionPayment = dp;
         }
 
+        public EventDeductionPaymentCreated(DeductionPayment payment, Deduction deduction) {
+            this.Deduction = deduction;
+            this.DeductionPayment = payment;
+        }
+
         public override string ToString() {
             return $"Deduction Payment created: payroll_report: {PayrollReport.Id}, deduction_id: {Deduction.Id}, amount: {DeductionPayment.PaidAmount}, amort_ratio: {DeductionPayment.PaidAmount / Deduction.AmortizedAmount}";
         }

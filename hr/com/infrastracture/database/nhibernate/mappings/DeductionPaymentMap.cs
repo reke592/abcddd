@@ -9,7 +9,7 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
             Id(x => x.Id);
             References<Employee>(Reveal.Member<DeductionPayment>("_employee"));
             References<PayrollReport>(Reveal.Member<DeductionPayment>("_payroll_report"));
-            References<Deduction>(Reveal.Member<DeductionPayment>("_deduction"));
+            References<Deduction>(Reveal.Member<DeductionPayment>("_deduction")).Cascade.SaveUpdate();
             
             Map(x => x.PaidAmount);
         }

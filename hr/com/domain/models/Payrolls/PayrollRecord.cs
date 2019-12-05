@@ -1,12 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using hr.com.domain.models.Employees;
 using hr.com.domain.shared;
 using hr.com.helper.domain;
 
-// TODO: add payroll period, create an aggregate?
+// TODO: add payroll period
 namespace hr.com.domain.models.Payrolls {
-    // aggregate for deduction payments
     public class PayrollRecord : Entity {
         private PayrollReport _payroll_report;       // reference
         private Salary _salary;                      // reference
@@ -30,11 +30,15 @@ namespace hr.com.domain.models.Payrolls {
         private void onCommandIncludeSalaryDeductionInReport(object sender, Command cmd) {
             if(cmd is CommandIncludeSalaryDeductionInReport) {
                 var args = cmd as CommandIncludeSalaryDeductionInReport;
-                if(this.Equals(args.PayrollReport)) {
+                
+                if(args.PayrollReport.Equals(this._payroll_report)) {
+                    Console.WriteLine(this._salary.Deductions.Count);
                     foreach(var deduction in this._salary.Deductions) {
-                        var payment = DeductionPayment.Create(this._payroll_report, this._employee, deduction);
+                        // var payment = DeductionPayment.Create(this._payroll_report, this._employee, deduction);
+                        var payment = DeductionPayment.Create(deduction);
                         this._deduction_payments.Add(payment);
                         this._gross_deduction += payment.PaidAmount;
+                        EventBroker.getInstance().Emit(new EventDeductionPaymentIncludedInPayroll(this._payroll_report, payment));
                     }
                 }
             }
@@ -53,6 +57,10 @@ namespace hr.com.domain.models.Payrolls {
                 // copy the gross value to avoid miscalculation in future
                 _gross = sal.Gross
             };
+        }
+
+        public override string ToString() {
+            return $"Payroll Report ID: {this._payroll_report.Id}, Record ID: {this.Id}, Gross: {this._gross}, Deduction: {decimal.Round(this._gross_deduction, 3)}, Net: {decimal.Round(this.Net, 3)}";
         }
     }
 }

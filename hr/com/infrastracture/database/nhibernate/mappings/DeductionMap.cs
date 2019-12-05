@@ -9,6 +9,7 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
         public DeductionMap() {
             Id(x => x.Id);
             References<Employee>(Reveal.Member<Deduction>("_employee"));
+            References<Salary>(Reveal.Member<Deduction>("_salary"));
             
             Map(Reveal.Member<Deduction>("_amortization"));
             Map(Reveal.Member<Deduction>("_paid"));
@@ -23,6 +24,8 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
                 c.Map(x => x.Month);
                 c.Map(x => x.Day);
             }).ColumnPrefix("granted_");
+
+            HasMany<DeductionPayment>(Reveal.Member<Deduction>("_payments"));
         }
     }
 }

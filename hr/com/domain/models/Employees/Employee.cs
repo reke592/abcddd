@@ -5,6 +5,7 @@ using hr.com.domain.shared;
 using hr.com.helper.domain;
 
 namespace hr.com.domain.models.Employees {
+    // Root Aggregate
     public class Employee : Entity {
         private Salary _salary;  // reference
         public virtual Person Person { get; protected set; }    // component
@@ -33,6 +34,10 @@ namespace hr.com.domain.models.Employees {
                 DateHired = dt_hired,
                 Status = status
             };
+        }
+
+        public virtual Salary GetSalary() {
+            return this._salary;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
             Id(x => x.Id);
             Map(x => x.Month);
             Map(x => x.Year);
-            HasManyToMany<PayrollRecord>(Reveal.Member<PayrollReport>("_records"));
+            HasManyToMany<PayrollRecord>(Reveal.Member<PayrollReport>("_records")).Cascade.All();
         }
     }
 }

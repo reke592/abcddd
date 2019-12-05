@@ -14,7 +14,7 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
             Map(Reveal.Member<PayrollRecord>("_gross"));
             Map(Reveal.Member<PayrollRecord>("_gross_deduction"));
             
-            HasMany<DeductionPayment>(Reveal.Member<PayrollRecord>("_deduction_payments"));
+            HasMany<DeductionPayment>(Reveal.Member<PayrollRecord>("_deduction_payments")).Cascade.All();
         }
     }
 }
