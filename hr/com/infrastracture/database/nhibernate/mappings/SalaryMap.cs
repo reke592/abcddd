@@ -7,6 +7,7 @@ using hr.com.domain.shared;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class SalaryMap : ClassMap<Salary> {
         public SalaryMap() {
+            Table("salaries");
             Id(x => x.Id);
 
             References<Employee>(Reveal.Member<Salary>("_employee")).Cascade.None();

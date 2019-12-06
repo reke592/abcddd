@@ -7,14 +7,16 @@ using hr.com.domain.shared;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class DeductionMap : ClassMap<Deduction> {
         public DeductionMap() {
+            Table("deductions");
             Id(x => x.Id);
             References<Employee>(Reveal.Member<Deduction>("_employee"));
             References<Salary>(Reveal.Member<Deduction>("_salary"));
             
             Map(Reveal.Member<Deduction>("_amortization"));
             Map(Reveal.Member<Deduction>("_paid"));
+            Map(x => x.Mode);
 
-            Component<MonetaryValue>(Reveal.Member<Deduction>("_total"), c => {
+            Component<MonetaryValue>(x => x.Total, c => {
                 c.Map(x => x.PreciseValue).Column("total");
                 c.Map(x => x.Code);
             }).ColumnPrefix("deduction_");

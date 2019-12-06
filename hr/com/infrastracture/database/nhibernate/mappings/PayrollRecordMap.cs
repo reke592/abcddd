@@ -6,6 +6,7 @@ using hr.com.domain.models.Payrolls;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class PayrollRecordMap : ClassMap<PayrollRecord> {
         public PayrollRecordMap() {
+            Table("payroll_records");
             Id(x => x.Id);
             References<PayrollReport>(Reveal.Member<PayrollRecord>("_payroll_report"));
             References<Salary>(Reveal.Member<PayrollRecord>("_salary")); // ?

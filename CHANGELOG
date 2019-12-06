@@ -1,0 +1,9 @@
+12-06-19
+Domain.Models:
+Payroll.Deduction
+    + support TEMPORARY and CONTINIOUS
+    + auto adjust amortization amount in case custom deduction payment was made
+
+Infrastracture.Database:
+Nhibernate.Mappings
+    + change table names

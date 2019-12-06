@@ -16,6 +16,10 @@ namespace hr.com.domain.shared {
         public decimal PreciseValue { get; protected set; }
         public string Code { get; protected set; }
 
+        public decimal DecimalValue(int decimals = 6) {
+            return decimal.Round(this.PreciseValue, decimals);
+        }
+
         public static MonetaryValue of(string code, decimal value) {
             return new MonetaryValue {
                 Code = code,
@@ -71,6 +75,7 @@ namespace hr.com.domain.shared {
         }
 
         public MonetaryValue dividedBy(decimal dividend) {
+            if(dividend == 0) return MonetaryValue.of(this.Code, 0);
             return MonetaryValue.of(this.Code, this.PreciseValue / dividend);
         }
 

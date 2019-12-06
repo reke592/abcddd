@@ -12,16 +12,6 @@ namespace hr.com.domain.models.Payrolls {
         private IList<Deduction> _deductions = new List<Deduction>();    // 1 to *
         public virtual MonetaryValue Gross { get; protected set; }    // component
 
-        // private void onCommandAddSalaryDeduction(object sender, Command cmd) {
-        //     if(cmd is CommandAddSalaryDeduction) {
-        //         var args = cmd as CommandAddSalaryDeduction;
-        //         if(this.Equals(args.Salary)) {
-        //             this._deductions.Add(args.Deduction);
-        //             EventBroker.getInstance().Emit(new EventSalaryDeductionAdded(this, args.Deduction));
-        //         }
-        //     }
-        // }
-
         private void onEventSalaryDeductionCreated(object sender, Event e) {
             if(e is EventSalaryDeductionCreated) {
                 var args = e as EventSalaryDeductionCreated;
@@ -52,7 +42,7 @@ namespace hr.com.domain.models.Payrolls {
             get {
                 var net = Gross.PreciseValue;
                 foreach(Deduction deduction in this._deductions) {
-                    net -= deduction.HasBalance() ? deduction.AmortizedAmount.PreciseValue : 0;
+                    net -= deduction.hasBalance() ? deduction.AmortizedAmount.PreciseValue : 0;
                 }
                 return MonetaryValue.of(this.Gross.Code, net);
             }

@@ -33,7 +33,7 @@ namespace console
         var p = Person.Create("Juan", "Cruz", "Dela Cruz", "Jr", Gender.MALE, Date.TryParse("September 11, 2019"));
         var e = Employee.Create(p, Date.Now);
         var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
-        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 12000m));
+        var d = Deduction.Create(s, 1, MonetaryValue.of("php", 12000m));
         uow.Session.Save(e);
         uow.Session.Save(s);
         uow.Commit();
@@ -47,6 +47,21 @@ namespace console
         uow.Session.Save(e);
         uow.Session.Save(s);
         uow.Commit();
+      }
+
+      Console.WriteLine("\n\n");
+      using(var uow = new NHUnitOfWork()) {
+        var activeEmployees = new EmployeeIsActive();
+        var ees = _employees.FindAll(activeEmployees);
+        var report = PayrollReport.Create(ees, Date.Now);
+        EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
+        
+        uow.Session.Save(report);
+        uow.Commit();
+
+        foreach(var r in report.Records) {
+          Console.WriteLine(r);
+        }
       }
 
       Console.WriteLine("\n\n");
