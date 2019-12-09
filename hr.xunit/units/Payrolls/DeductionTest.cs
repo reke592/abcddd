@@ -32,6 +32,7 @@ namespace hr.xunit.units.Payrolls {
             Assert.Equal(d.Balance.DecimalValue(), 300);
             Assert.Equal(d.Paid.DecimalValue(), 700);
             Assert.Equal(d.Total.subtractValueOf(d.Paid).DecimalValue(), d.Balance.DecimalValue());
+            Assert.Equal(d.AmortizedAmount.DecimalValue(), (1000 - 700) / (3 - 1));
             Assert.NotEqual(d.AmortizedAmount.DecimalValue(), actual);
         }
     }

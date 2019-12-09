@@ -79,7 +79,8 @@ namespace hr.com.domain.models.Payrolls {
                     return this.Total.dividedBy(this._amortization);
                 // automatically adjust amortized amount, when custom payment was made
                 // return MonetaryValue.of(this.MonetaryCode, this.Balance.PreciseValue / (this._amortization - this._paid));
-                return this.Balance.dividedBy(this._amortization);
+                // return this.Balance.dividedBy(this._amortization);
+                return this.Balance.dividedBy(this._amortization - this._payments.Count);
             }
         }
 
