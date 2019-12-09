@@ -1,7 +1,8 @@
-... make logic for Deduction so it can be temporary or permanent
+... add domain model authentication
+... add webapi infrastracture
+... create minimal web UI
++ make logic for Deduction so it can be temporary or permanent
 ... how about we support monetary value convertion?
 
 Create unit test
 Create application and domain service implementations
-Create webapi infrastracture
-Create minimal web UI
