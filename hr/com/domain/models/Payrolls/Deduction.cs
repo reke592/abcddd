@@ -9,11 +9,11 @@ using hr.com.helper.domain;
 namespace hr.com.domain.models.Payrolls {
     // aggregate for deduction payments
     public class Deduction : Entity {
-        private Employee _employee;  // reference, update via CQRS Event: SalaryDeductionAdded
         private Salary _salary;   // reference
         private decimal _paid;  // updated via CQRS Event: DeductionPaymentCreated
         private decimal _amortization;
         private IList<DeductionPayment> _payments = new List<DeductionPayment>();   // 1 to *
+        public virtual Employee Employee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
         public virtual MonetaryValue Total { get; protected set; }   // component
         public virtual Date DateGranted { get; protected set; }     // component
         public virtual DeductionMode Mode { get; protected set; }
@@ -21,9 +21,9 @@ namespace hr.com.domain.models.Payrolls {
         private void onEventDeductionPaymentCreated(object sender, Event e) {
             if(e is EventDeductionPaymentCreated) {
                 var args = e as EventDeductionPaymentCreated;
-                if(this.Equals(args.Deduction)) {
+                if(args.Deduction.Equals(this)) {
                     // ratio default: 1
-                    if(this.hasBalance()) {
+                    if(this.hasBalance) {
                         this._paid += args.DeductionPayment.PaidAmount.PreciseValue / this.AmortizedAmount.PreciseValue;
                         this._payments.Add(args.DeductionPayment);
                     }
@@ -34,15 +34,22 @@ namespace hr.com.domain.models.Payrolls {
         private void onEventSalaryDeductionAdded(object sender, Event e) {
             if(e is EventSalaryDeductionAdded) {
                 var args = e as EventSalaryDeductionAdded;
-                if(this.Equals(args.Deduction)) {
-                    this._employee = args.Salary.GetEmployee();
+                if(args.Deduction.Equals(this)) {
+                    this.Employee = args.Salary.GetEmployee();
                 }
             }
         }
 
         public Deduction() {
-            EventBroker.getInstance().addEventListener(onEventDeductionPaymentCreated);
-            EventBroker.getInstance().addEventListener(onEventSalaryDeductionAdded);
+            var broker = EventBroker.getInstance();
+            broker.addEventListener(onEventDeductionPaymentCreated);
+            broker.addEventListener(onEventSalaryDeductionAdded);
+        }
+
+        ~Deduction() {
+            var broker = EventBroker.getInstance();
+            broker.removeEventListener(onEventDeductionPaymentCreated);
+            broker.removeEventListener(onEventSalaryDeductionAdded);
         }
 
         /// <summary>
@@ -51,7 +58,7 @@ namespace hr.com.domain.models.Payrolls {
         public static Deduction Create(Salary salary, int amortization, MonetaryValue total, Date dt_granted = null, DeductionMode mode = DeductionMode.TEMPORARY) {
             var record = new Deduction {
                 _salary = salary
-                , _employee = salary.GetEmployee()
+                , Employee = salary.GetEmployee()
                 , Total = total
                 , _amortization = amortization
                 , DateGranted = dt_granted ?? Date.TryParse(DateTime.Now.ToLongDateString())
@@ -66,7 +73,7 @@ namespace hr.com.domain.models.Payrolls {
         /// <summary>
         /// Deduction total = amortized_amount * amortization
         /// </summary>
-        public static Deduction CreateAmortized(Salary salary, int amortization, MonetaryValue amortized_amount, Date dt_granted = null) {
+        public static Deduction CreateAmortized(Salary salary, int amortization, MonetaryValue amortized_amount, Date dt_granted = null, DeductionMode mode = DeductionMode.TEMPORARY) {
             return Deduction.Create(salary
                 , amortization
                 , amortized_amount.multipliedBy(amortization)
@@ -104,11 +111,14 @@ namespace hr.com.domain.models.Payrolls {
             }
         }
 
-        public virtual bool hasBalance() {
-            if(this.Mode == DeductionMode.CONTINIOUS)
-                return true;
+        public virtual bool hasBalance {
+            protected set {}    // required by nhibernate
+            get {
+                if(this.Mode == DeductionMode.CONTINIOUS)
+                    return true;
 
-            return this.Balance.PreciseValue > 0;
+                return this.Balance.PreciseValue > 0;
+            }
         }
 
         public virtual IReadOnlyCollection<DeductionPayment> Payments {
@@ -118,7 +128,7 @@ namespace hr.com.domain.models.Payrolls {
         }
 
         public virtual Employee GetEmployee() {
-            return this._employee;
+            return this.Employee;
         }
     }
 }

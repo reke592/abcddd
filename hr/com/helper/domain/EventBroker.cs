@@ -43,12 +43,24 @@ namespace hr.com.helper.domain {
             this.Commands += c;
         }
 
-        public void addQueryListener(EventHandler<Query> q) {
-            this.Queries += q;
+        public void removeCommandListener(EventHandler<Command> c) {
+            this.Commands -= c;
         }
 
-        public void addEventListener(EventHandler<Event> e) {
-            this.Events += e;
+        public void addQueryListener(EventHandler<Query> handler) {
+            this.Queries += handler;
+        }
+
+        public void removeQueryListener(EventHandler<Query> handler) {
+            this.Queries -= handler;
+        }
+
+        public void addEventListener(EventHandler<Event> handler) {
+            this.Events += handler;
+        }
+
+        public void removeEventListener(EventHandler<Event> handler) {
+            this.Events -= handler;
         }
     }
 

@@ -9,6 +9,7 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
         public SalaryMap() {
             Table("salaries");
             Id(x => x.Id);
+            Map(x => x.YearUpdated);
 
             References<Employee>(Reveal.Member<Salary>("_employee")).Cascade.None();
 

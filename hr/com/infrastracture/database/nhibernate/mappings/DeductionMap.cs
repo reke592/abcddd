@@ -9,12 +9,14 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
         public DeductionMap() {
             Table("deductions");
             Id(x => x.Id);
-            References<Employee>(Reveal.Member<Deduction>("_employee"));
+            // References<Employee>(Reveal.Member<Deduction>("_employee"));
+            References<Employee>(x => x.Employee);
             References<Salary>(Reveal.Member<Deduction>("_salary"));
-            
+        
             Map(Reveal.Member<Deduction>("_amortization"));
             Map(Reveal.Member<Deduction>("_paid"));
             Map(x => x.Mode);
+            Map(x => x.hasBalance);
 
             Component<MonetaryValue>(x => x.Total, c => {
                 c.Map(x => x.PreciseValue).Column("total");

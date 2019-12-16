@@ -1,5 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Text;
 using hr.com.domain.enums;
 using hr.com.domain.models.Employees;
 using hr.com.domain.models.Employees.specs;
@@ -11,6 +14,7 @@ using hr.com.helper.domain;
 using hr.com.infrastracture.database.nhibernate;
 using hr.com.infrastracture.database.nhibernate.repositories;
 
+
 namespace console
 {
   class Program
@@ -19,68 +23,69 @@ namespace console
     static readonly IRepository<Employee> _employees = new EmployeeRepository();
 
     static void Main(string[] args) {
-      using(var uow = new NHUnitOfWork()) {
-        var p = Person.Create("Sam", "Wilson", "Tucker", "", Gender.MALE, Date.TryParse("September 11, 2019"));
-        var e = Employee.Create(p, Date.Now, EmployeeStatus.RETIRED);
-        var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
-        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 12000m));
-        uow.Session.Save(e);
-        uow.Session.Save(s);
-        uow.Commit();
-      }
-
-      using(var uow = new NHUnitOfWork()) {
-        var p = Person.Create("Juan", "Cruz", "Dela Cruz", "Jr", Gender.MALE, Date.TryParse("September 11, 2019"));
-        var e = Employee.Create(p, Date.Now);
-        var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
-        var d = Deduction.Create(s, 1, MonetaryValue.of("php", 12000m));
-        uow.Session.Save(e);
-        uow.Session.Save(s);
-        uow.Commit();
-      }
-
-      using(var uow = new NHUnitOfWork()) {
-        var p = Person.Create("Ann", "Santos", "Abe", "", Gender.FEMALE, Date.TryParse("Feb 29, 2019"));
-        var e = Employee.Create(p, Date.Now);
-        var s = Salary.Create(e, MonetaryValue.of("php", 27000m));
-        var d = Deduction.Create(s, 12, MonetaryValue.of("php", 7000m));
-        uow.Session.Save(e);
-        uow.Session.Save(s);
-        uow.Commit();
-      }
-
-      Console.WriteLine("\n\n");
-      using(var uow = new NHUnitOfWork()) {
-        var activeEmployees = new EmployeeIsActive();
-        var ees = _employees.FindAll(activeEmployees);
-        var report = PayrollReport.Create(ees, Date.Now);
-        EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
-        
-        uow.Session.Save(report);
-        uow.Commit();
-
-        foreach(var r in report.Records) {
-          Console.WriteLine(r);
-        }
-      }
-
-      Console.WriteLine("\n\n");
-      using(var uow = new NHUnitOfWork()) {
-        var activeEmployees = new EmployeeIsActive();
-        var ees = _employees.FindAll(activeEmployees);
-        var report = PayrollReport.Create(ees, Date.Now);
-        EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
-        
-        uow.Session.Save(report);
-        uow.Commit();
-
-        foreach(var r in report.Records) {
-          Console.WriteLine(r);
-        }
-      }
     }
   }
 }
+
+      // using(var uow = new NHUnitOfWork()) {
+      //   var p = Person.Create("Sam", "Wilson", "Tucker", "", Gender.MALE, Date.TryParse("September 11, 2019"));
+      //   var e = Employee.Create(p, Date.Now, EmployeeStatus.RETIRED);
+      //   var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+      //   var d = Deduction.Create(s, 12, MonetaryValue.of("php", 12000m));
+      //   uow.Session.Save(e);
+      //   uow.Session.Save(s);
+      //   uow.Commit();
+      // }
+
+      // using(var uow = new NHUnitOfWork()) {
+      //   var p = Person.Create("Juan", "Cruz", "Dela Cruz", "Jr", Gender.MALE, Date.TryParse("September 11, 2019"));
+      //   var e = Employee.Create(p, Date.Now);
+      //   var s = Salary.Create(e, MonetaryValue.of("php", 25000m));
+      //   var d = Deduction.Create(s, 1, MonetaryValue.of("php", 12000m));
+      //   uow.Session.Save(e);
+      //   uow.Session.Save(s);
+      //   uow.Commit();
+      // }
+
+      // using(var uow = new NHUnitOfWork()) {
+      //   var p = Person.Create("Ann", "Santos", "Abe", "", Gender.FEMALE, Date.TryParse("Feb 29, 2019"));
+      //   var e = Employee.Create(p, Date.Now);
+      //   var s = Salary.Create(e, MonetaryValue.of("php", 27000m));
+      //   var d = Deduction.Create(s, 12, MonetaryValue.of("php", 7000m));
+      //   uow.Session.Save(e);
+      //   uow.Session.Save(s);
+      //   uow.Commit();
+      // }
+
+      // Console.WriteLine("\n\n");
+      // using(var uow = new NHUnitOfWork()) {
+      //   var activeEmployees = new EmployeeIsActive();
+      //   var ees = _employees.FindAll(activeEmployees);
+      //   var report = PayrollReport.Create(ees, Date.Now);
+      //   EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
+        
+      //   uow.Session.Save(report);
+      //   uow.Commit();
+
+      //   foreach(var r in report.Records) {
+      //     Console.WriteLine(r);
+      //   }
+      // }
+
+      // Console.WriteLine("\n\n");
+      // using(var uow = new NHUnitOfWork()) {
+      //   var activeEmployees = new EmployeeIsActive();
+      //   var ees = _employees.FindAll(activeEmployees);
+      //   var report = PayrollReport.Create(ees, Date.Now);
+      //   EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(report));
+        
+      //   uow.Session.Save(report);
+      //   uow.Commit();
+
+      //   foreach(var r in report.Records) {
+      //     Console.WriteLine(r);
+      //   }
+      // }
 
 //  var app = new HRApplicationTest();
 //       var e1 = app.CreateEmployee(new PersonDTO {

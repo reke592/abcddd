@@ -4,10 +4,6 @@ using System.Collections.Generic;
 // ulong max : 18,446,744,073,709,551,615
 
 namespace hr.com.domain.shared {
-
-    /// <summary>
-    /// can support value upto ulong max - 10^precision.
-    /// </summary>
     public class MonetaryValue {
         public const ushort DEFAULT_PRECISION = 6;
 

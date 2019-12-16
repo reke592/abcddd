@@ -1,9 +1,30 @@
-12-06-19
-Domain.Models:
-Payroll.Deduction
-    + support TEMPORARY and CONTINIOUS
-    + auto adjust amortization amount in case custom deduction payment was made
+12-16-19
+HR.Domain.Models:
+    + abstract class ValueObject
+    + BO class destructor method to unsubscribe event listeners
+    Payroll.DeductionPayment
+        + CommandExcludeDeductionPayment
+    Payroll.PayrollRecord
+        + EventExcludedDeductionPayment
 
-Infrastracture.Database:
-Nhibernate.Mappings
-    + change table names
+HR.Helper
+    EventBroker
+        + public unsubscribe methods
+    IRepository
+        + Find<TOther>(Specification<TOther> spec)
+        + FindAll<TOther>(Specification<TOther> spec)
+
+HR.Infrastracture.Database:
+    Nhibernate.NHRepositoryBase
+        + IRepository generic method implementations
+
+-----------------------------------------------
+12-06-19
+HR.Domain.Models:
+    Payroll.Deduction
+        + support TEMPORARY and CONTINIOUS
+        + auto adjust amortization amount in case custom deduction payment was made
+
+HR.Infrastracture.Database:
+    Nhibernate.Mappings
+        + change table names

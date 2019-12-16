@@ -4,11 +4,11 @@ using hr.com.helper.database;
 using hr.com.domain.enums;
 
 namespace hr.com.domain.models.Employees.specs {
-    public class EmployeeByStatus : Specification<Employee>
+    public class SpecificationEmployeeByStatus : Specification<Employee>
     {
         private EmployeeStatus _status;
 
-        public EmployeeByStatus(EmployeeStatus status) {
+        public SpecificationEmployeeByStatus(EmployeeStatus status) {
             this._status = status;
         }
 

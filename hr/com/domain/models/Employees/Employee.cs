@@ -15,25 +15,48 @@ namespace hr.com.domain.models.Employees {
         private void onCommandAssociateSalaryToEmployee(object sender, Command cmd) {
             if(cmd is CommandAssociateSalaryToEmployee) {
                 var args = cmd as CommandAssociateSalaryToEmployee;
-                if(this.Equals(args.Employee)) {
-                    if(this._salary != null)
-                        throw new Exception("Employee already associated to an existing salary.");
-                    else
-                        this._salary = args.Salary;
+                if(args.Employee.Equals(this)) {
+                    var previous = this._salary;
+                    this._salary = args.Salary;
+                    
+                    EventBroker.getInstance().Emit(new EventEmployeeSalaryUpdated(this, previous));
+                }
+            }
+        }
+
+        private void onCommandChangeEmployeeStatus(object sender, Command cmd) {
+            if(cmd is CommandChangeEmployeeStatus) {
+                var args = cmd as CommandChangeEmployeeStatus;
+                if(args.Employee.Equals(this)) {
+                    var old_value = this.Status;
+                    this.Status = args.Status;
+                    EventBroker.getInstance().Emit(new EventEmployeeStatusChanged(this, old_value));
                 }
             }
         }
 
         public Employee() {
-            EventBroker.getInstance().addCommandListener(onCommandAssociateSalaryToEmployee);
+            var broker = EventBroker.getInstance();
+            broker.addCommandListener(onCommandAssociateSalaryToEmployee);
+            broker.addCommandListener(onCommandChangeEmployeeStatus);
+        }
+
+        ~Employee() {
+            var broker = EventBroker.getInstance();
+            broker.removeCommandListener(onCommandAssociateSalaryToEmployee);
+            broker.removeCommandListener(onCommandChangeEmployeeStatus);
         }
 
         public static Employee Create(Person person, Date dt_hired, EmployeeStatus status = EmployeeStatus.NEW_HIRED) {
-            return new Employee {
+            var record = new Employee {
                 Person = person,
                 DateHired = dt_hired,
                 Status = status
             };
+
+            EventBroker.getInstance().Emit(new EventEmployeeCreated(record));
+
+            return record;
         }
 
         public virtual Salary GetSalary() {

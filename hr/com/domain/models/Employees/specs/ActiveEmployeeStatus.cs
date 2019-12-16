@@ -4,7 +4,7 @@ using hr.com.domain.enums;
 using hr.com.helper.database;
 
 namespace hr.com.domain.models.Employees.specs {
-    public class EmployeeIsActive : Specification<Employee>
+    public class SpecificationActiveEmployeeStatus : Specification<Employee>
     {
         public override Expression<Func<Employee, bool>> toExpression()
         {

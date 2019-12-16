@@ -12,7 +12,7 @@ namespace hr.xunit.units.Payrolls {
         [Fact]
         public void can_add_deduction() {
             var d = Deduction.Create(salary, 3, MonetaryValue.of("php", 1000));
-            Assert.Contains<Deduction>(d, salary.Deductions);
+            Assert.Contains<Deduction>(d, salary.ActiveDeductions);
         }
 
         [Fact]

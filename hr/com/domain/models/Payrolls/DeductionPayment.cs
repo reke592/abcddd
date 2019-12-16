@@ -13,14 +13,33 @@ namespace hr.com.domain.models.Payrolls {
         private void onDeductionPaymentIncludedInPayroll(object sender, Event e) {
             if(e is EventDeductionPaymentIncludedInPayroll) {
                 var args = e as EventDeductionPaymentIncludedInPayroll;
-                if(this.Equals(args.DeductionPayment)) {
+                if(args.DeductionPayment.Equals(this)) {
                     this._payroll_report = args.PayrollReport;
                 }
             }
         }
 
+        private void onCommandExcludeDeductionPayment(object sender, Command cmd) {
+            if(cmd is CommandExcludeDeductionPayment) {
+                var args = cmd as CommandExcludeDeductionPayment;
+                if(args.Employee.Equals(this._employee) 
+                && args.Report.Equals(this._payroll_report)
+                && args.Deduction.Equals(this._deduction)) {
+                    EventBroker.getInstance().Emit(new EventExcludedDeductionPayment(this, this._employee, this._payroll_report));
+                }
+            }
+        }
+
         public DeductionPayment() {
-            EventBroker.getInstance().addEventListener(onDeductionPaymentIncludedInPayroll);
+            var broker = EventBroker.getInstance();
+            broker.addEventListener(onDeductionPaymentIncludedInPayroll);
+            broker.addCommandListener(onCommandExcludeDeductionPayment);
+        }
+
+        ~DeductionPayment() {
+            var broker = EventBroker.getInstance();
+            broker.removeEventListener(onDeductionPaymentIncludedInPayroll);
+            broker.removeCommandListener(onCommandExcludeDeductionPayment);
         }
 
         public static DeductionPayment Create(Deduction deduction, MonetaryValue custom_payment = null) {

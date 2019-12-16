@@ -1,0 +1,18 @@
+eXtensible Access Control Markup Language
+https://en.wikipedia.org/wiki/XACML
+
+PAP  Policy Administration Point
+        Point which manages access authorization policies
+
+PDP  Policy Decision Point
+        Point which evaluates access requests against authorization policies before issuing access decisions
+
+PEP  Policy Enforcement Point
+        Point which intercepts user's access request to a resource, makes a decision request to the PDP to obtain the access decision.
+        (i.e. access to the resource is approved or rejected), and acts on the received decision
+
+PIP  Policy Information Point
+        The system entity that acts as a source of attribute values (i.e. a resource, subject, environment)
+
+PRP  Policy Retrieval Point
+        Point where the XACML access authorization policies are stored, typically a database or the filesystem. 

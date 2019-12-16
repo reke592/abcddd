@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using hr.com.domain.enums;
@@ -12,6 +11,17 @@ namespace hr.com.domain.models.Payrolls {
         public virtual int Month { get; protected set; }
         public virtual int Year { get; protected set; }
         public virtual double MonthlyUnit { get; protected set; }
+
+        public virtual decimal Total {
+            protected set {}    // required by nhibernate
+            get {
+                var total = 0m;
+                foreach(var record in this._records) {
+                    total += record.Net;
+                }
+                return total;
+            }
+        }
 
         public virtual IReadOnlyCollection<PayrollRecord> Records {
             get {

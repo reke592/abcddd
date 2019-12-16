@@ -14,6 +14,15 @@
           "lib/netstandard1.1/Antlr3.Runtime.dll": {}
         }
       },
+      "BCrypt.Net-Next/3.2.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/BCrypt.Net-Next.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/BCrypt.Net-Next.dll": {}
+        }
+      },
       "Castle.Core/4.3.1": {
         "type": "package",
         "dependencies": {
@@ -1256,6 +1265,40 @@
         "lib/netstandard1.1/Antlr3.Runtime.xml",
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Antlr3.Runtime.dll",
         "lib/portable-net4+sl5+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1/Antlr3.Runtime.xml"
+      ]
+    },
+    "BCrypt.Net-Next/3.2.1": {
+      "sha512": "tu4GTLU2QMeWxJZP/WDtiVK98QjvUqGABctT9XLKbIFJrp8ETMA3igWKdkZVkRunikBhWao6o3EsrbDWxPyaSw==",
+      "type": "package",
+      "path": "bcrypt.net-next/3.2.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "bcrypt.net-next.3.2.1.nupkg.sha512",
+        "bcrypt.net-next.nuspec",
+        "lib/net20/BCrypt.Net-Next.dll",
+        "lib/net20/BCrypt.Net-Next.xml",
+        "lib/net35/BCrypt.Net-Next.dll",
+        "lib/net35/BCrypt.Net-Next.xml",
+        "lib/net40/BCrypt.Net-Next.dll",
+        "lib/net40/BCrypt.Net-Next.xml",
+        "lib/net452/BCrypt.Net-Next.dll",
+        "lib/net452/BCrypt.Net-Next.xml",
+        "lib/net462/BCrypt.Net-Next.dll",
+        "lib/net462/BCrypt.Net-Next.xml",
+        "lib/net472/BCrypt.Net-Next.dll",
+        "lib/net472/BCrypt.Net-Next.xml",
+        "lib/netstandard2.0/BCrypt.Net-Next.dll",
+        "lib/netstandard2.0/BCrypt.Net-Next.xml",
+        "lib/netstandard2.1/BCrypt.Net-Next.dll",
+        "lib/netstandard2.1/BCrypt.Net-Next.xml",
+        "src/BCrypt.Net.MainPackage/BCrypt.Net.Package.csproj",
+        "src/BCrypt.Net.MainPackage/BCrypt.cs",
+        "src/BCrypt.Net.MainPackage/BcryptAuthenticationException.cs",
+        "src/BCrypt.Net.MainPackage/HashInformation.cs",
+        "src/BCrypt.Net.MainPackage/HashInformationException.cs",
+        "src/BCrypt.Net.MainPackage/HashType.cs",
+        "src/BCrypt.Net.MainPackage/SaltParseException.cs"
       ]
     },
     "Castle.Core/4.3.1": {
@@ -4748,6 +4791,7 @@
   },
   "projectFileDependencyGroups": {
     ".NETCoreApp,Version=v2.0": [
+      "BCrypt.Net-Next >= 3.2.1",
       "Microsoft.NETCore.App >= 2.0.0",
       "NHibernate >= 5.2.6",
       "System.Data.Sqlite >= 1.0.111",
@@ -4799,6 +4843,10 @@
     "frameworks": {
       "netcoreapp2.0": {
         "dependencies": {
+          "BCrypt.Net-Next": {
+            "target": "Package",
+            "version": "[3.2.1, )"
+          },
           "Microsoft.NETCore.App": {
             "suppressParent": "All",
             "target": "Package",

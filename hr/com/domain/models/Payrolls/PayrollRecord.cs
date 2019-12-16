@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using hr.com.domain.models.Employees;
@@ -27,12 +26,13 @@ namespace hr.com.domain.models.Payrolls {
             }
         }
 
+        // TODO: use CQRS Query
         private void onCommandIncludeSalaryDeductionInReport(object sender, Command cmd) {
             if(cmd is CommandIncludeSalaryDeductionInReport) {
                 var args = cmd as CommandIncludeSalaryDeductionInReport;
                 
                 if(args.PayrollReport.Equals(this._payroll_report)) {
-                    foreach(var deduction in this._salary.Deductions) {
+                    foreach(var deduction in this._salary.ActiveDeductions) {
                         // because deduction can be whole even if the payroll is half
                         // we include the MonthlyUnit for deduction payment in CQRS command
                         var amount = deduction.AmortizedAmount.PreciseValue * (decimal) args.MonthlyUnit;
@@ -46,8 +46,25 @@ namespace hr.com.domain.models.Payrolls {
             }
         }
 
+        private void onEventExcludedDeductionPayment(object sender, Event e) {
+            if(e is EventExcludedDeductionPayment) {
+                var args = e as EventExcludedDeductionPayment;
+                if(args.Report.Equals(this._payroll_report) && args.Employee.Equals(this._employee)) {
+                    this._deduction_payments.Remove(args.DeductionPayment);
+                }
+            }
+        }
+
         public PayrollRecord() {
-            EventBroker.getInstance().addCommandListener(onCommandIncludeSalaryDeductionInReport);
+            var broker = EventBroker.getInstance();
+            broker.addCommandListener(onCommandIncludeSalaryDeductionInReport);
+            broker.addEventListener(onEventExcludedDeductionPayment);
+        }
+
+        ~PayrollRecord() {
+            var broker = EventBroker.getInstance();
+            broker.removeCommandListener(onCommandIncludeSalaryDeductionInReport);
+            broker.removeEventListener(onEventExcludedDeductionPayment);
         }
 
         public static PayrollRecord Create(PayrollReport pr, Salary sal) {
