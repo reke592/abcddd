@@ -3,13 +3,14 @@ using System.IO;
 using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using hr.com.helper.domain;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Context;
 using NHibernate.Tool.hbm2ddl;
 
 namespace hr.com.infrastracture.database.nhibernate {
-    public class NHibernateHelper {
+    public class NHibernateHelper : IUnitOfWorkProvider<NHUnitOfWork> {
         private static ISessionFactory _sessionFactory;
        
         public static ISessionFactory SessionFactory {
@@ -62,6 +63,11 @@ namespace hr.com.infrastracture.database.nhibernate {
             ISession currentSession = CurrentSessionContext.Unbind(SessionFactory);
             currentSession.Close();
             currentSession.Dispose();
+        }
+
+        public NHUnitOfWork CreateTransaction()
+        {
+            return new NHUnitOfWork();
         }
     }
 }

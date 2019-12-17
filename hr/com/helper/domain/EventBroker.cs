@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 
 namespace hr.com.helper.domain {
-    public class EventBroker {
+    public class EventBroker : ICQRSBroker<Event, Command, Query>{
         private static EventBroker _instance;
         private IList<Event> AllEvents;
         event EventHandler<Command> Commands;
         event EventHandler<Query> Queries;
         event EventHandler<Event> Events;
+
+        private EventBroker() {
+            this.AllEvents = new List<Event>();
+        }
 
         public static EventBroker getInstance() {
             return _instance ?? (_instance = new EventBroker());
@@ -17,10 +21,6 @@ namespace hr.com.helper.domain {
             foreach(var e in this.AllEvents) {
                 fn(e);
             }
-        }
-
-        private EventBroker() {
-            this.AllEvents = new List<Event>();
         }
 
         public void Command(Command c) {
@@ -39,12 +39,12 @@ namespace hr.com.helper.domain {
                 this.AllEvents.Add(e);
         }
 
-        public void addCommandListener(EventHandler<Command> c) {
-            this.Commands += c;
+        public void addCommandListener(EventHandler<Command> handler) {
+            this.Commands += handler;
         }
 
-        public void removeCommandListener(EventHandler<Command> c) {
-            this.Commands -= c;
+        public void removeCommandListener(EventHandler<Command> handler) {
+            this.Commands -= handler;
         }
 
         public void addQueryListener(EventHandler<Query> handler) {
@@ -63,13 +63,4 @@ namespace hr.com.helper.domain {
             this.Events -= handler;
         }
     }
-
-    public class Command : EventArgs {
-    }
-
-    public class Query {
-        // boxing the result
-        public object Result;
-    }
-
 }

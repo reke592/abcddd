@@ -12,8 +12,8 @@ namespace hr.com.infrastracture.database.nhibernate.mappings {
             References<Salary>(Reveal.Member<PayrollRecord>("_salary")); // ?
             References<Employee>(Reveal.Member<PayrollRecord>("_employee"));
 
-            Map(Reveal.Member<PayrollRecord>("_gross"));
-            Map(Reveal.Member<PayrollRecord>("_gross_deduction"));
+            Map(x => x.Gross);
+            Map(x => x.GrossDeduction);
             
             HasMany<DeductionPayment>(Reveal.Member<PayrollRecord>("_deduction_payments")).Cascade.All();
         }

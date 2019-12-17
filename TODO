@@ -4,7 +4,6 @@
 ----
 + make logic for Deduction so it can be temporary or permanent
 ----
-
 ... add domain model authentication
     https://auth0.com/docs/tokens/jwt-claims
     iss (issuer): Issuer of the JWT

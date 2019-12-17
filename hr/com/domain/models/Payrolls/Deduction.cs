@@ -13,6 +13,7 @@ namespace hr.com.domain.models.Payrolls {
         private decimal _paid;  // updated via CQRS Event: DeductionPaymentCreated
         private decimal _amortization;
         private IList<DeductionPayment> _payments = new List<DeductionPayment>();   // 1 to *
+        public virtual DeductionAccount Account { get; protected set; }     // reference
         public virtual Employee Employee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
         public virtual MonetaryValue Total { get; protected set; }   // component
         public virtual Date DateGranted { get; protected set; }     // component
@@ -55,9 +56,12 @@ namespace hr.com.domain.models.Payrolls {
         /// <summary>
         /// Given deduction total
         /// </summary>
-        public static Deduction Create(Salary salary, int amortization, MonetaryValue total, Date dt_granted = null, DeductionMode mode = DeductionMode.TEMPORARY) {
+        public static Deduction Create(Salary salary, DeductionAccount account
+            , int amortization, MonetaryValue total, Date dt_granted = null
+            , DeductionMode mode = DeductionMode.TEMPORARY) {
             var record = new Deduction {
                 _salary = salary
+                , Account = account
                 , Employee = salary.GetEmployee()
                 , Total = total
                 , _amortization = amortization
@@ -73,8 +77,11 @@ namespace hr.com.domain.models.Payrolls {
         /// <summary>
         /// Deduction total = amortized_amount * amortization
         /// </summary>
-        public static Deduction CreateAmortized(Salary salary, int amortization, MonetaryValue amortized_amount, Date dt_granted = null, DeductionMode mode = DeductionMode.TEMPORARY) {
+        public static Deduction CreateAmortized(Salary salary, DeductionAccount account
+            , int amortization, MonetaryValue amortized_amount
+            , Date dt_granted = null, DeductionMode mode = DeductionMode.TEMPORARY) {
             return Deduction.Create(salary
+                , account
                 , amortization
                 , amortized_amount.multipliedBy(amortization)
                 , dt_granted);
@@ -85,8 +92,6 @@ namespace hr.com.domain.models.Payrolls {
                 if(this.Mode == DeductionMode.CONTINIOUS)
                     return this.Total.dividedBy(this._amortization);
                 // automatically adjust amortized amount, when custom payment was made
-                // return MonetaryValue.of(this.MonetaryCode, this.Balance.PreciseValue / (this._amortization - this._paid));
-                // return this.Balance.dividedBy(this._amortization);
                 return this.Balance.dividedBy(this._amortization - this._payments.Count);
             }
         }

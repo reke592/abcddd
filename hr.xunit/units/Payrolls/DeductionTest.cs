@@ -8,23 +8,23 @@ namespace hr.xunit.units.Payrolls {
     public class DeductionTest {
         private static Employee employee = Employee.Create(Person.Create("a", "a", "a", "", Gender.MALE, Date.Now), Date.Now);
         private static Salary salary = Salary.Create(employee, MonetaryValue.of("PHP", 15000));
-
+        private static DeductionAccount account = DeductionAccount.Create("dummy");
         [Fact]
         public void can_add_deduction() {
-            var d = Deduction.Create(salary, 3, MonetaryValue.of("php", 1000));
+            var d = Deduction.Create(salary, account, 3, MonetaryValue.of("php", 1000));
             Assert.Contains<Deduction>(d, salary.ActiveDeductions);
         }
 
         [Fact]
         public void default_payment_for_deduction_is_the_amortized_amount() {
-            var d = Deduction.Create(salary, 3, MonetaryValue.of("php", 1000));
+            var d = Deduction.Create(salary, account, 3, MonetaryValue.of("php", 1000));
             var p = DeductionPayment.Create(d);
             Assert.Equal(d.AmortizedAmount.DecimalValue(), p.PaidAmount.DecimalValue());
         }
 
         [Fact]
         public void deduction_amortization_adjusted_when_custom_payment_was_made() {
-            var d = Deduction.Create(salary, 3, MonetaryValue.of("php", 1000));
+            var d = Deduction.Create(salary, account, 3, MonetaryValue.of("php", 1000));
             var actual = d.AmortizedAmount.DecimalValue();
 
             var p = DeductionPayment.Create(d, MonetaryValue.of("php", 700));

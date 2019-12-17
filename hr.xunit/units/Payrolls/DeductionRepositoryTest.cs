@@ -15,11 +15,14 @@ namespace hr.xunit.units.Payrolls {
         [Fact]
         public void can_get_active_deductions() {
             using(var uow = new NHUnitOfWork()) {
+                var acc = DeductionAccount.Create("X");
+                var acc2 = DeductionAccount.Create("Y");
+                var acc3 = DeductionAccount.Create("Z");
                 var employee = Employee.Create(Person.Create("a", "a", "a", "", Gender.MALE, Date.Now), Date.Now);
                 var salary = Salary.Create(employee, MonetaryValue.of("PHP", 15000));
-                Deduction.Create(salary, 3, MonetaryValue.of("php", 1000));
-                Deduction.Create(salary, 3, MonetaryValue.of("php", 2000));
-                Deduction.Create(salary, 3, MonetaryValue.of("php", 3000));
+                Deduction.Create(salary, acc, 3, MonetaryValue.of("php", 1000));
+                Deduction.Create(salary, acc2, 3, MonetaryValue.of("php", 2000));
+                Deduction.Create(salary, acc3, 3, MonetaryValue.of("php", 3000));
                 // Deduction.Create(salary, 3, MonetaryValue.of("php", 0));
                 EventBroker.getInstance().Command(new CommandAssociateSalaryToEmployee(salary, employee));
                 
