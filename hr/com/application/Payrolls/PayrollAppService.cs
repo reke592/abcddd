@@ -2,7 +2,6 @@ using hr.com.domain.models.Employees;
 using hr.com.domain.models.Payrolls;
 using hr.com.helper.database;
 using hr.com.helper.domain;
-using hr.com.infrastracture.database.nhibernate;
 
 namespace hr.com.application.Payrolls {
     public class PayrollAppService : IPayrollAppService

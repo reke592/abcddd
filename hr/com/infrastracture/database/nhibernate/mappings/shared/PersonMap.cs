@@ -1,4 +1,3 @@
-using FluentNHibernate;
 using FluentNHibernate.Mapping;
 using hr.com.domain.shared;
 

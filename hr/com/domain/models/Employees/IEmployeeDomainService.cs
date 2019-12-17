@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using hr.com.domain.enums;
 using hr.com.domain.shared;
 

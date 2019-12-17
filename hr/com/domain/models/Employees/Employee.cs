@@ -1,4 +1,3 @@
-using System;
 using hr.com.domain.enums;
 using hr.com.domain.models.Payrolls;
 using hr.com.domain.shared;

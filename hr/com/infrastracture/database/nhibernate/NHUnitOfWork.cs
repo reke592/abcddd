@@ -1,6 +1,6 @@
 using System;
-using hr.com.helper.database;
 using NHibernate;
+using hr.com.helper.database;
 
 namespace hr.com.infrastracture.database.nhibernate {
     public class NHUnitOfWork : IUnitOfWork, IDisposable

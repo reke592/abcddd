@@ -1,5 +1,3 @@
-using System;
-
 namespace hr.com.domain {
     // not nullable T Id
     public abstract class ValueObject<T> where T : struct {

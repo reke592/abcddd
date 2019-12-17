@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.IO;
-using FluentNHibernate.Automapping;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using hr.com.helper.domain;
