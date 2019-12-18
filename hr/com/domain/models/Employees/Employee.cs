@@ -6,7 +6,7 @@ using hr.com.helper.domain;
 namespace hr.com.domain.models.Employees {
     // Root Aggregate
     public class Employee : Entity {
-        private Salary _salary;  // reference
+        public virtual Salary ReferenceSalary { get; protected set; }  // reference
         public virtual Person Person { get; protected set; }    // component
         public virtual Date DateHired { get; protected set; }
         public virtual EmployeeStatus Status { get; protected set; }
@@ -15,8 +15,8 @@ namespace hr.com.domain.models.Employees {
             if(cmd is CommandAssociateSalaryToEmployee) {
                 var args = cmd as CommandAssociateSalaryToEmployee;
                 if(args.Employee.Equals(this)) {
-                    var previous = this._salary;
-                    this._salary = args.Salary;
+                    var previous = this.ReferenceSalary;
+                    this.ReferenceSalary = args.Salary;
                     
                     EventBroker.getInstance().Emit(new EventEmployeeSalaryUpdated(this, previous));
                 }
@@ -56,10 +56,6 @@ namespace hr.com.domain.models.Employees {
             EventBroker.getInstance().Emit(new EventEmployeeCreated(record));
 
             return record;
-        }
-
-        public virtual Salary GetSalary() {
-            return this._salary;
         }
     }
 }

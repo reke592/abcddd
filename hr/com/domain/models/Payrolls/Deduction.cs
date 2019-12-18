@@ -9,12 +9,12 @@ using hr.com.helper.domain;
 namespace hr.com.domain.models.Payrolls {
     // aggregate for deduction payments
     public class Deduction : Entity {
-        private Salary _salary;   // reference
         private decimal _paid;  // updated via CQRS Event: DeductionPaymentCreated
         private decimal _amortization;
         private IList<DeductionPayment> _payments = new List<DeductionPayment>();   // 1 to *
-        public virtual DeductionAccount Account { get; protected set; }     // reference
-        public virtual Employee Employee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
+        public virtual Salary ReferenceSalary { get; protected set; }   // reference
+        public virtual DeductionAccount ReferenceAccount { get; protected set; }     // reference
+        public virtual Employee ReferenceEmployee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
         public virtual MonetaryValue Total { get; protected set; }   // component
         public virtual Date DateGranted { get; protected set; }     // component
         public virtual DeductionMode Mode { get; protected set; }
@@ -24,10 +24,10 @@ namespace hr.com.domain.models.Payrolls {
                 var args = e as EventDeductionPaymentCreated;
                 if(args.Deduction.Equals(this)) {
                     // ratio default: 1
-                    if(this.hasBalance) {
-                        this._paid += args.DeductionPayment.PaidAmount.PreciseValue / this.AmortizedAmount.PreciseValue;
-                        this._payments.Add(args.DeductionPayment);
-                    }
+                    // if(this.hasBalance) {
+                    this._paid += args.DeductionPayment.PaidAmount.PreciseValue / this.AmortizedAmount.PreciseValue;
+                    this._payments.Add(args.DeductionPayment);
+                    // }
                 }
             }
         }
@@ -36,7 +36,7 @@ namespace hr.com.domain.models.Payrolls {
             if(e is EventSalaryDeductionAdded) {
                 var args = e as EventSalaryDeductionAdded;
                 if(args.Deduction.Equals(this)) {
-                    this.Employee = args.Salary.GetEmployee();
+                    this.ReferenceEmployee = args.Salary.GetEmployee();
                 }
             }
         }
@@ -60,9 +60,9 @@ namespace hr.com.domain.models.Payrolls {
             , int amortization, MonetaryValue total, Date dt_granted = null
             , DeductionMode mode = DeductionMode.TEMPORARY) {
             var record = new Deduction {
-                _salary = salary
-                , Account = account
-                , Employee = salary.GetEmployee()
+                ReferenceSalary = salary
+                , ReferenceAccount = account
+                , ReferenceEmployee = salary.GetEmployee()
                 , Total = total
                 , _amortization = amortization
                 , DateGranted = dt_granted ?? Date.TryParse(DateTime.Now.ToLongDateString())
@@ -87,12 +87,32 @@ namespace hr.com.domain.models.Payrolls {
                 , dt_granted);
         }
 
+        // TODO: fix deduction computation
+        // how about we add a method
+        // DeductionPayment CreatePayment(default decimal unit = 1)
+        public virtual DeductionPayment CreatePayment(decimal unit = 1) {
+            if(!this.hasBalance)
+                throw new Exception("Deduction already paid.");
+
+            var payment = (this.Total.PreciseValue / this._amortization) * unit;
+            if(this.Balance.PreciseValue > payment)
+                return DeductionPayment.Create(this, MonetaryValue.of(this.MonetaryCode, payment));
+            else
+                return DeductionPayment.Create(this, this.Balance);
+        }
+
         public virtual MonetaryValue AmortizedAmount {
             get {
-                if(this.Mode == DeductionMode.CONTINIOUS)
-                    return this.Total.dividedBy(this._amortization);
+                // if(this.Mode == DeductionMode.CONTINIOUS)
+                return this.Total.dividedBy(this._amortization);
                 // automatically adjust amortized amount, when custom payment was made
-                return this.Balance.dividedBy(this._amortization - this._payments.Count);
+                // bug: when custom payments was made, paid counts eq amortization count
+                // return this.Balance.dividedBy(this._amortization - this._payments.Count);
+                // fix:
+                // var gives = this._amortization - this._payments.Count;
+                // return (gives > 1)
+                //     ? this.Balance.dividedBy(gives)
+                //     : this.Balance;
             }
         }
 
@@ -133,7 +153,7 @@ namespace hr.com.domain.models.Payrolls {
         }
 
         public virtual Employee GetEmployee() {
-            return this.Employee;
+            return this.ReferenceEmployee;
         }
     }
 }

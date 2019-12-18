@@ -4,14 +4,14 @@ using hr.com.helper.domain;
 
 namespace hr.com.domain.models.Payrolls {
     public class DeductionPayment : Entity {
-        private Employee _employee;                  // reference
-        private PayrollReport _payroll_report;       // reference, updated via CQRS event: DeductionPaymentIncludedInPayroll
-        private Deduction _deduction;                // reference
+        public virtual Employee ReferenceEmployee { get; protected set; }   // reference
+        public virtual PayrollReport ReferencePayrollReport { get; protected set; }       // reference, updated via CQRS event: DeductionPaymentIncludedInPayroll
+        public virtual Deduction ReferenceDeduction { get; protected set; }                // reference
         public virtual MonetaryValue PaidAmount { get; protected set; }              // component
 
-        public DeductionAccount DeductionAccount {
+        public virtual DeductionAccount DeductionAccount {
             get {
-                return this._deduction.Account;
+                return this.ReferenceDeduction.ReferenceAccount;
             }
         }
 
@@ -19,7 +19,7 @@ namespace hr.com.domain.models.Payrolls {
             if(e is EventDeductionPaymentIncludedInPayroll) {
                 var args = e as EventDeductionPaymentIncludedInPayroll;
                 if(args.DeductionPayment.Equals(this)) {
-                    this._payroll_report = args.PayrollReport;
+                    this.ReferencePayrollReport = args.PayrollReport;
                 }
             }
         }
@@ -27,10 +27,10 @@ namespace hr.com.domain.models.Payrolls {
         private void onCommandExcludeDeductionPayment(object sender, Command cmd) {
             if(cmd is CommandExcludeDeductionPayment) {
                 var args = cmd as CommandExcludeDeductionPayment;
-                if(args.Employee.Equals(this._employee) 
-                && args.Report.Equals(this._payroll_report)
-                && args.Deduction.Equals(this._deduction)) {
-                    EventBroker.getInstance().Emit(new EventExcludedDeductionPayment(this, this._employee, this._payroll_report));
+                if(args.Employee.Equals(this.ReferenceEmployee) 
+                && args.Report.Equals(this.ReferencePayrollReport)
+                && args.Deduction.Equals(this.ReferenceDeduction)) {
+                    EventBroker.getInstance().Emit(new EventExcludedDeductionPayment(this, this.ReferenceEmployee, this.ReferencePayrollReport));
                 }
             }
         }
@@ -47,13 +47,12 @@ namespace hr.com.domain.models.Payrolls {
             broker.removeCommandListener(onCommandExcludeDeductionPayment);
         }
 
-        public static DeductionPayment Create(Deduction deduction, MonetaryValue custom_payment = null) {
+        public static DeductionPayment Create(Deduction deduction, MonetaryValue payment) {
             
             var record = new DeductionPayment {
-                _employee = deduction.GetEmployee(),
-                _deduction = deduction,
-                // PaidAmount = (custom_payment is null) ? deduction.AmortizedAmount : custom_payment.PreciseValue
-                PaidAmount = custom_payment ?? deduction.AmortizedAmount
+                ReferenceEmployee = deduction.GetEmployee(),
+                ReferenceDeduction = deduction,
+                PaidAmount = payment
             };
 
             // emit event

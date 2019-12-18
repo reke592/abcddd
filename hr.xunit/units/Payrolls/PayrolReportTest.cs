@@ -13,14 +13,15 @@ namespace hr.xunit.units.Payrolls {
         private static readonly IPayrollRepository _payrolls = new PayrollRepository();
         
         [Fact]
-        public void can_create_payroll_of_active_employees() {
-            using(var uow = new NHUnitOfWork()) {
+        public void can_create_active_employees_payroll() {
+            using(var uow = NHUnitOfWork.Statefull) {
                 var ees = _employees.FetchAllActive();
                 var actual = ees.Count;
                 var pr = PayrollReport.Create(ees, Date.Now);
                 EventBroker.getInstance().Command(new CommandIncludeSalaryDeductionInReport(pr));
                 Assert.True(ees.Count > 0);
                 Assert.Equal(pr.Records.Count, actual);
+                
                 _payrolls.Save(pr);
                 uow.Commit();
             }

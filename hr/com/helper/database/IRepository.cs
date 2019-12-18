@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace hr.com.helper.database {
     public interface IRepository<TEntity> {
@@ -8,7 +9,7 @@ namespace hr.com.helper.database {
         // generics
         T Find<T>(Specification<T> spec);
         IList<T> FindAll<T>(Specification<T> spec);
-
+        IList<T> Query<T>(string sql);
 
         TEntity Save(TEntity obj);
         void Update(TEntity obj);

@@ -18,7 +18,7 @@ namespace hr.xunit.units.Payrolls {
         [Fact]
         public void default_payment_for_deduction_is_the_amortized_amount() {
             var d = Deduction.Create(salary, account, 3, MonetaryValue.of("php", 1000));
-            var p = DeductionPayment.Create(d);
+            var p = d.CreatePayment(1);
             Assert.Equal(d.AmortizedAmount.DecimalValue(), p.PaidAmount.DecimalValue());
         }
 

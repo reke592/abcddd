@@ -7,9 +7,9 @@ using hr.com.helper.domain;
 // TODO: add payroll period
 namespace hr.com.domain.models.Payrolls {
     public class PayrollRecord : Entity {
-        private PayrollReport _payroll_report;       // reference
-        private Salary _salary;                      // reference
-        private Employee _employee;                  // reference
+        public virtual PayrollReport ReferencePayrollReport { get; protected set; }       // reference
+        public virtual Salary ReferenceSalary { get; protected set; }                      // reference
+        public virtual Employee ReferenceEmployee { get; protected set; }                  // reference
         private IList<DeductionPayment> _deduction_payments = new List<DeductionPayment>();
         public virtual decimal Gross { get; protected set; }                      // copy of current salary.gross value
         public virtual decimal GrossDeduction { get; protected set; }        // updated via CQRS command: IncludeSalaryDeduction
@@ -31,16 +31,17 @@ namespace hr.com.domain.models.Payrolls {
             if(cmd is CommandIncludeSalaryDeductionInReport) {
                 var args = cmd as CommandIncludeSalaryDeductionInReport;
                 
-                if(args.PayrollReport.Equals(this._payroll_report)) {
-                    foreach(var deduction in this._salary.ActiveDeductions) {
+                if(args.PayrollReport.Equals(this.ReferencePayrollReport)) {
+                    foreach(var deduction in this.ReferenceSalary.ActiveDeductions) {
                         // because deduction can be whole even if the payroll is half
                         // we include the MonthlyUnit for deduction payment in CQRS command
-                        var amount = deduction.AmortizedAmount.PreciseValue * (decimal) args.MonthlyUnit;
-                        var payment = DeductionPayment.Create(deduction, MonetaryValue.of(deduction.MonetaryCode, amount));
+                        // var amount = deduction.AmortizedAmount.PreciseValue * (decimal) args.MonthlyUnit;
+                        // var payment = DeductionPayment.Create(deduction, MonetaryValue.of(deduction.MonetaryCode, amount));
+                        var payment = deduction.CreatePayment((decimal) args.MonthlyUnit);
                         this._deduction_payments.Add(payment);
                         this.GrossDeduction += payment.PaidAmount.PreciseValue;
 
-                        EventBroker.getInstance().Emit(new EventDeductionPaymentIncludedInPayroll(this._payroll_report, payment));
+                        EventBroker.getInstance().Emit(new EventDeductionPaymentIncludedInPayroll(this.ReferencePayrollReport, payment));
                     }
                 }
             }
@@ -49,7 +50,7 @@ namespace hr.com.domain.models.Payrolls {
         private void onEventExcludedDeductionPayment(object sender, Event e) {
             if(e is EventExcludedDeductionPayment) {
                 var args = e as EventExcludedDeductionPayment;
-                if(args.Report.Equals(this._payroll_report) && args.Employee.Equals(this._employee)) {
+                if(args.Report.Equals(this.ReferencePayrollReport) && args.Employee.Equals(this.ReferenceEmployee)) {
                     this._deduction_payments.Remove(args.DeductionPayment);
                 }
             }
@@ -69,9 +70,9 @@ namespace hr.com.domain.models.Payrolls {
 
         public static PayrollRecord Create(PayrollReport pr, Salary sal) {
             return new PayrollRecord {
-                _payroll_report = pr,
-                _salary = sal,
-                _employee = sal.GetEmployee(),
+                ReferencePayrollReport = pr,
+                ReferenceSalary = sal,
+                ReferenceEmployee = sal.GetEmployee(),
 
                 // copy the gross value to avoid miscalculation in future
                 Gross = sal.Gross.PreciseValue * (decimal) pr.MonthlyUnit
@@ -80,12 +81,12 @@ namespace hr.com.domain.models.Payrolls {
 
         public virtual Person Person {
             get {
-                return this._employee.Person;
+                return this.ReferenceEmployee.Person;
             }
         }
 
         public override string ToString() {
-            return $"Payroll Report ID: {this._payroll_report.Id}, Record ID: {this.Id}, Gross: {this.Gross}, Deduction: {decimal.Round(this.GrossDeduction, 3)}, Net: {decimal.Round(this.Net, 3)}";
+            return $"Payroll Report ID: {this.ReferencePayrollReport.Id}, Record ID: {this.Id}, Gross: {this.Gross}, Deduction: {decimal.Round(this.GrossDeduction, 3)}, Net: {decimal.Round(this.Net, 3)}";
         }
     }
 }

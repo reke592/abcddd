@@ -30,16 +30,13 @@ namespace hr.com.application.Payrolls {
             _salary_repo = salary_repo;
         }
 
-        public PayrollReportDTO GeneratePayroll(int month, int year, bool include_deductions = true)
+        public PayrollReportDTO GeneratePayroll(int month, int year, double month_unit, bool include_deductions = true)
         {
             using(var transaction = _uow.CreateTransaction()) {
                 var ees = _employee_repo.FetchAllActive();
-                var pr = _payroll_domain.GeneratePayrollReport(ees, month, year);
+                var pr = _payroll_domain.GeneratePayrollReport(ees, month, year, include_deductions, month_unit);              
                 
-                if(include_deductions) {
-                    _broker.Command(new CommandIncludeSalaryDeductionInReport(pr));
-                }
-
+                _payroll_repo.Save(pr);
                 transaction.Commit();
                 return new PayrollReportDTO(pr);
             }

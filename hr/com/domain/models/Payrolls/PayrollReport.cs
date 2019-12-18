@@ -31,13 +31,14 @@ namespace hr.com.domain.models.Payrolls {
 
         public PayrollReport() { }
 
-        private PayrollReport(IList<Salary> salaries, int month, int year, double monthly_unit) {
+        // TODO: fix time complexity: caused by n+1 queries
+        private PayrollReport(IList<Employee> employees, int month, int year, double monthly_unit) {
             this.Month = month;
             this.Year = year;
             this.MonthlyUnit = monthly_unit;
             // we add reference to each PayrollRecord
-            foreach(var salary in salaries) {
-                this._records.Add(PayrollRecord.Create(this, salary));
+            foreach(var employee in employees) {
+                this._records.Add(PayrollRecord.Create(this, employee.ReferenceSalary));
             }
         }
 
@@ -45,11 +46,8 @@ namespace hr.com.domain.models.Payrolls {
         /// Collects all Salary record, create PayrollRecord for each Salary.
         /// </summary>
         public static PayrollReport Create(IList<Employee> employees, Date date, double monthly_unit = Unit.WHOLE) {
-            List<Salary> salaries = new List<Salary>();
-            foreach(var employee in employees) {
-                salaries.Add(employee.GetSalary());
-            }
-            return new PayrollReport(salaries, date.Month, date.Year, monthly_unit);
+            var record = new PayrollReport(employees, date.Month, date.Year, monthly_unit);
+            return record;
         }
     }
 }

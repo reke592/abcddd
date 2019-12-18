@@ -14,7 +14,7 @@ namespace hr.com.domain.models.Payrolls.specs {
 
         public override Expression<Func<Deduction, bool>> toExpression()
         {
-            return x => x.hasBalance && (x.Employee.Id == this._reference.Id);
+            return x => x.hasBalance && (x.ReferenceEmployee.Id == this._reference.Id);
         }
     }
 }
