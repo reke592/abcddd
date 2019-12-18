@@ -7,11 +7,12 @@ using hr.com.domain.shared;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class DeductionMap : ClassMap<Deduction> {
         public DeductionMap() {
-            Table("deductions");
             Id(x => x.Id);
             // References<Employee>(Reveal.Member<Deduction>("_employee"));
-            References<Employee>(x => x.Employee);
-            References<Salary>(Reveal.Member<Deduction>("_salary"));
+            References<Employee>(x => x.ReferenceEmployee);
+            References<DeductionAccount>(x => x.ReferenceAccount);
+            References<Salary>(x => x.ReferenceSalary);
+            // References<Salary>(Reveal.Member<Deduction>("_salary"));
         
             Map(Reveal.Member<Deduction>("_amortization"));
             Map(Reveal.Member<Deduction>("_paid"));

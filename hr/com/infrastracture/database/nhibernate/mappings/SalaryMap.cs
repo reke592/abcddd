@@ -7,11 +7,11 @@ using hr.com.domain.shared;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class SalaryMap : ClassMap<Salary> {
         public SalaryMap() {
-            Table("salaries");
             Id(x => x.Id);
             Map(x => x.YearUpdated);
 
-            References<Employee>(Reveal.Member<Salary>("_employee")).Cascade.None();
+            // References<Employee>(Reveal.Member<Salary>("_employee")).Cascade.None();
+            References<Employee>(x => x.ReferenceEmployee).Cascade.None();
 
             Component<MonetaryValue>(x => x.Gross, c => {
                 c.Map(x => x.Code).Column("money_code");

@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using hr.com.helper.database;
+using System.Threading.Tasks;
+using hr.com.domain;
 
 namespace hr.com.infrastracture.database.nhibernate {
     // NOTE:
@@ -43,6 +45,12 @@ namespace hr.com.infrastracture.database.nhibernate {
             var s = NHibernateHelper.GetCurrentSession();
             var records = s.Query<TOther>().Where(spec.toExpression()).ToList();
             return records;
+        }
+
+        public IList<T> Query<T>(string sql)
+        {
+            var s = NHibernateHelper.GetCurrentSession();
+            return s.CreateQuery(sql).List<T>();
         }
 
         public TEntity Save(TEntity obj)

@@ -7,12 +7,12 @@ using hr.com.domain.shared;
 namespace hr.com.infrastracture.database.nhibernate.mappings {
     public class EmployeeMap : ClassMap<Employee> {
         public EmployeeMap() {
-            Table("employees");
             Id(x => x.Id);
             // will add person_id column to employee table (* - 1)
             // References<Person>(Reveal.Member<Employee>("personDetails")).Cascade.All();
             References<Person>(x => x.Person).Cascade.All();
-            References<Salary>(Reveal.Member<Employee>("_salary")).Cascade.None();
+            // References<Salary>(Reveal.Member<Employee>("_salary")).Cascade.None();
+            References<Salary>(x => x.ReferenceSalary).Cascade.None();
             
             Map(x => x.Status);
 

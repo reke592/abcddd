@@ -1,16 +1,18 @@
 using System.IO;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
-using hr.com.helper.domain;
 using NHibernate;
 using NHibernate.Cfg;
 using NHibernate.Context;
 using NHibernate.Tool.hbm2ddl;
+using hr.com.helper.domain;
+using hr.com.helper.database;
+using System.Data;
 
 namespace hr.com.infrastracture.database.nhibernate {
-    public class NHibernateHelper : IUnitOfWorkProvider<NHUnitOfWork> {
+    public class NHibernateHelper : IUnitOfWorkProvider<IUnitOfWork> {
         private static ISessionFactory _sessionFactory;
-       
+        
         public static ISessionFactory SessionFactory {
             get => _sessionFactory ?? (_sessionFactory = CreateSessionFactory());
         }
@@ -34,6 +36,7 @@ namespace hr.com.infrastracture.database.nhibernate {
                     m.FluentMappings.AddFromAssemblyOf<NHibernateHelper>();
                 })
                 .ExposeConfiguration(BuildSchema)
+                .ExposeConfiguration(x => x.SetInterceptor(new SqlInterceptor()))
                 .BuildSessionFactory();
         }
 
@@ -47,7 +50,7 @@ namespace hr.com.infrastracture.database.nhibernate {
         /// <summary>
         /// Bind the SessionFactory to CurrentSessionContext and return the current session.
         /// </summary>
-        public static ISession GetCurrentSession() {
+        public static ISession GetCurrentSession(bool stateless = false) {
             if(!CurrentSessionContext.HasBind(SessionFactory)) {
                 CurrentSessionContext.Bind(SessionFactory.OpenSession());
             }
@@ -63,9 +66,9 @@ namespace hr.com.infrastracture.database.nhibernate {
             currentSession.Dispose();
         }
 
-        public NHUnitOfWork CreateTransaction()
+        public IUnitOfWork CreateTransaction()
         {
-            return new NHUnitOfWork();
+            return NHUnitOfWork.Statefull;
         }
     }
 }
