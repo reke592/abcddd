@@ -1,0 +1,25 @@
+carefull for CQRS, it can add more complexity to the project
+
+use memory repository for testing
+model = new Model() --- model early-life    // unit trasaction start
+repository.add(model) --- model mid-life    // can be rolled back
+repository.archive --- model end-life       // unit transaction commit
+
+use QuerySpecification
+  specification suffix with "Rule"
+
+use IEnumerable --- if only need to enumerate
+use IList --- if need to access each item by index[]
+use IReadOnlyCollection --- if need to return readonly, and only enumerate
+use IReadOnlyList --- if need to return readonly, and need to access each item by index[]
+
+[serializable]
+create base class for Entity and ValueObject
+EntityBase must support any kind of Identity field
+  entity base can validate if the instance is in trancient state
+
+ValueObject base has no identity
+  equality test by fields (maybe an abstract bool is good for this one)
+
+use #region when writing the implementation of any interface
+

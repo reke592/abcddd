@@ -1,3 +1,10 @@
+use factory pattern
+    PayrollReport
+move 
+
+... fix n+1 queries
+    we can use stateless session bulk insert
+
 ----
 + deduction payment can be excluded in payroll report
 + class destructor to unsubscribe event listeners
@@ -6,8 +13,6 @@
 + make logic for Deduction so it can be temporary or permanent
 ----
 
-... fix n+1 queries
-    we can use stateless session bulk insert
 
 ... add domain model authentication
     https://auth0.com/docs/tokens/jwt-claims
