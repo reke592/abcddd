@@ -1,7 +1,8 @@
 using System;
+using System.Collections.Generic;
 
 namespace hr.core.domain.shared {
-    public class Date {
+    public class Date : ValueObject {
         public virtual int Year { get; protected set; }
         public virtual int Month { get; protected set; }
         public virtual int Day { get; protected set; }
@@ -42,6 +43,13 @@ namespace hr.core.domain.shared {
 
         public override string ToString() {
             return string.Format($"{Year}-{Month}-{Day}");
+        }
+
+        protected override IEnumerable<object> GetAtomicValues()
+        {
+            yield return Year;
+            yield return Month;
+            yield return Day;
         }
     }
 }

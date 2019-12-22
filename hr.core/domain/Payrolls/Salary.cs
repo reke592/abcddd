@@ -8,24 +8,36 @@ using hr.core.domain.shared;
 namespace hr.core.domain.Payrolls {
     // aggregate for salary deductions
     public class Salary : Entity {
+        
         // public virtual Employee ReferenceEmployee { get; protected set; }  // reference
         private IList<Deduction> _deductions = new List<Deduction>();    // 1 to *
         public virtual MonetaryValue Gross { get; protected set; }    // component
+        public virtual MonetaryValue GrossDeduction { get; protected set; }     // updated when adding new or finish deduction
         public virtual int YearUpdated { get; protected set; }
-
-        // TODO: use CQRS Query instead of eager-loading + iteration in associated deductions
         
-        // this should be in a service
-        public virtual IReadOnlyCollection<Deduction> ActiveDeductions {
+        public bool CanBeAssignedToEmployee {
             get {
-                var records = new List<Deduction>();
-                foreach(var item in this._deductions) {
-                    if(item.hasBalance)
-                        records.Add(item);
-                }
-                return new ReadOnlyCollection<Deduction>(records);
+                return new MinimumWageRule().isSatisfiedBy(this.Gross);
             }
         }
+
+        public MonetaryValue Net {
+            get {
+                return Gross.subtractValueOf(GrossDeduction);
+            }
+        }
+
+        // // this should be in a service
+        // public virtual IReadOnlyCollection<Deduction> ActiveDeductions {
+        //     get {
+        //         var records = new List<Deduction>();
+        //         foreach(var item in this._deductions) {
+        //             if(item.hasBalance)
+        //                 records.Add(item);
+        //         }
+        //         return new ReadOnlyCollection<Deduction>(records);
+        //     }
+        // }
 
         // private void onEventSalaryDeductionCreated(object sender, Event e) {
         //     if(e is EventSalaryDeductionCreated) {

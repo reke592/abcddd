@@ -8,6 +8,11 @@ namespace hr.core.domain.Employees {
         public virtual Date DateHired { get; protected set; }
         public virtual EmployeeStatus Status { get; protected set; }
         
+        public bool IsActive {
+            get { 
+                return new ActiveStatusRule().isSatisfiedBy(this);
+            }
+        }
         // private void onCommandAssociateSalaryToEmployee(object sender, Command cmd) {
         //     if(cmd is CommandAssociateSalaryToEmployee) {
         //         var args = cmd as CommandAssociateSalaryToEmployee;

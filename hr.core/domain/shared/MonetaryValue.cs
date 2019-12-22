@@ -4,29 +4,31 @@ using System.Collections.Generic;
 // ulong max : 18,446,744,073,709,551,615
 
 namespace hr.core.domain.shared {
-    public class MonetaryValue {
-        public const ushort DEFAULT_PRECISION = 6;
+    public class MonetaryValue : ValueObject {
+        // public const ushort DEFAULT_PRECISION = 6;
 
         // eg. PHP:6:100000
         public virtual string Raw { get; protected set; }
         public decimal PreciseValue { get; protected set; }
         public string Code { get; protected set; }
+        public char Separator { get; protected set; }
 
         public decimal DecimalValue(int decimals = 6) {
             return decimal.Round(this.PreciseValue, decimals);
         }
 
-        public static MonetaryValue of(string code, decimal value) {
+        public static MonetaryValue of(string code, decimal value, char separator = ':') {
             return new MonetaryValue {
                 Code = code,
                 PreciseValue = value,
-                Raw = $"{code}:{value}"
+                Raw = $"{code}{separator}{value}",
+                Separator = separator
             };
         }
 
-        public static MonetaryValue of(string raw, char splitter = ':') {
+        public static MonetaryValue of(string raw, char separator = ':') {
             try {
-                var parts = raw.Split(splitter);
+                var parts = raw.Split(separator);
                 if(parts.Length != 2)
                     throw new FormatException("Invalid MonetaryValue Format.");
                 // may throw invalid format exception
@@ -35,7 +37,8 @@ namespace hr.core.domain.shared {
                 return new MonetaryValue {
                     Code = parts[0],
                     PreciseValue = value,
-                    Raw = raw
+                    Raw = raw,
+                    Separator = separator
                 };
             }
             catch (Exception e) {
@@ -85,6 +88,13 @@ namespace hr.core.domain.shared {
 
         public override string ToString() {
             return $"{this.Code}:{this.PreciseValue}";
+        }
+
+        protected override IEnumerable<object> GetAtomicValues()
+        {
+            yield return Code;
+            yield return Separator;
+            yield return PreciseValue;
         }
     }
 }

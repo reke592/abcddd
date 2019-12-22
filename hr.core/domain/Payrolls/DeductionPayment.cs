@@ -7,11 +7,11 @@ namespace hr.core.domain.Payrolls {
         public virtual Deduction ReferenceDeduction { get; protected set; }                // reference
         public virtual MonetaryValue PaidAmount { get; protected set; }              // component
 
-        public virtual DeductionAccount DeductionAccount {
-            get {
-                return this.ReferenceDeduction.ReferenceAccount;
-            }
-        }
+        // public virtual DeductionAccount DeductionAccount {
+        //     get {
+        //         return this.ReferenceDeduction.ReferenceAccount;
+        //     }
+        // }
 
         // private void onDeductionPaymentIncludedInPayroll(object sender, Event e) {
         //     if(e is EventDeductionPaymentIncludedInPayroll) {

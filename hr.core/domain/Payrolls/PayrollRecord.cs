@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace hr.core.domain.Payrolls {
     public class PayrollRecord : Entity {
         public virtual PayrollReport ReferencePayrollReport { get; protected set; }       // reference
-        public virtual Salary ReferenceSalary { get; protected set; }                      // reference
+        public virtual CanAddSalaryDeductionRule ReferenceSalary { get; protected set; }                      // reference
         // public virtual Employee ReferenceEmployee { get; protected set; }                  // reference
         private IList<DeductionPayment> _deduction_payments = new List<DeductionPayment>();
         public virtual decimal Gross { get; protected set; }                      // copy of current salary.gross value

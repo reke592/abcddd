@@ -6,14 +6,34 @@ namespace hr.core.domain.Payrolls {
     // aggregate for deduction payments
     public class Deduction : Entity {
         private decimal _paid;  // updated via CQRS Event: DeductionPaymentCreated
-        private decimal _amortization;
-        private IList<DeductionPayment> _payments = new List<DeductionPayment>();   // 1 to *
-        public virtual Salary ReferenceSalary { get; protected set; }   // reference
-        public virtual DeductionAccount ReferenceAccount { get; protected set; }     // reference
-        // public virtual Employee ReferenceEmployee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
+        public DeductionAccount Account { get; protected set; }
+        public decimal Amortization { get; protected set; }
         public virtual MonetaryValue Total { get; protected set; }   // component
-        public virtual Date DateGranted { get; protected set; }     // component
         public virtual DeductionMode Mode { get; protected set; }
+        public virtual Date DateGranted { get; protected set; }     // component
+
+        public bool CanBeGranted {
+            get {
+                return new CanGrantDeductionRule().isSatisfiedBy(this);
+            }
+        }
+
+        public bool CanBeCancelled {
+            get {
+                return new CanCancelDeductionRule().isSatisfiedBy(this);
+            }
+        }
+
+        public bool CanBeAdded {
+            get {
+                return new CanAddDeductionRule().isSatisfiedBy(this);
+            }
+        }
+
+        // private IList<DeductionPayment> _payments = new List<DeductionPayment>();   // 1 to *
+        // public virtual CanAddSalaryDeductionRule ReferenceSalary { get; protected set; }   // reference
+        // public virtual DeductionAccount ReferenceAccount { get; protected set; }     // reference
+        // public virtual Employee ReferenceEmployee { get; protected set; }  // reference, update via CQRS Event: SalaryDeductionAdded
 
         // private void onEventDeductionPaymentCreated(object sender, Event e) {
         //     if(e is EventDeductionPaymentCreated) {
@@ -102,7 +122,7 @@ namespace hr.core.domain.Payrolls {
         public virtual MonetaryValue AmortizedAmount {
             get {
                 // if(this.Mode == DeductionMode.CONTINIOUS)
-                return this.Total.dividedBy(this._amortization);
+                return this.Total.dividedBy(this.Amortization);
                 // automatically adjust amortized amount, when custom payment was made
                 // bug: when custom payments was made, paid counts eq amortization count
                 // return this.Balance.dividedBy(this._amortization - this._payments.Count);
@@ -116,7 +136,7 @@ namespace hr.core.domain.Payrolls {
 
         public virtual MonetaryValue Paid {
             get {
-                return this.Total.dividedBy(this._amortization).multipliedBy(this._paid);
+                return this.Total.dividedBy(this.Amortization).multipliedBy(this._paid);
                 // return MonetaryValue.of(this.MonetaryCode, (this._total.PreciseValue / this._amortization) * this._paid);
             }
         }
@@ -144,11 +164,11 @@ namespace hr.core.domain.Payrolls {
             }
         }
 
-        public virtual IReadOnlyCollection<DeductionPayment> Payments {
-            get {
-                return new ReadOnlyCollection<DeductionPayment>(this._payments);
-            }
-        }
+        // public virtual IReadOnlyCollection<DeductionPayment> Payments {
+        //     get {
+        //         return new ReadOnlyCollection<DeductionPayment>(this._payments);
+        //     }
+        // }
 
         // public virtual Employee GetEmployee() {
         //     return this.ReferenceEmployee;

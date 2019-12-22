@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,8 @@ namespace hr.core.domain {
     /// base class for all value objects.
     /// https://docs.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/implement-value-objects
     /// </summary>
+    
+    [Serializable]
     public abstract class ValueObject {
         protected abstract IEnumerable<object> GetAtomicValues();
 

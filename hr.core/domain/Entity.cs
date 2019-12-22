@@ -1,10 +1,15 @@
+using System;
+
 namespace hr.core.domain {
     /// <summary>
     /// base class for all domain entities. 
     /// https://enterprisecraftsmanship.com/posts/entity-base-class/
     /// </summary>
+    
+    [Serializable]
     public abstract class Entity {
         // version Id is a persistence layer concern
+        // transient test is a persistence layer concern
         public virtual long Id { get; protected set; }
         public virtual object Actual => this;
 
