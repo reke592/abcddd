@@ -2,8 +2,9 @@
                             ^
                             |
                     Payroll_Record : A
-                        ^       ^
-                .-------'       '-------.
+                        ^       |
+                .-------'       '----------.
+                |                          v
         Deduction_Payment : E           Employee : AR                  Account : E
                 |                       ^      ^                            ^
                 |           .-----------'      '------------.               |
