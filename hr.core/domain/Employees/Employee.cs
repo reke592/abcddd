@@ -1,63 +1,37 @@
-using hr.core.domain.shared;
-
 namespace hr.core.domain.Employees {
-    // Root Aggregate
+    // Aggregate Root
     public class Employee : Entity {
-        // public virtual Salary ReferenceSalary { get; protected set; }  // reference
-        public virtual Person Person { get; protected set; }    // component
-        public virtual Date DateHired { get; protected set; }
+        private long _bio_id;
+        private long _salary_grade_id;
+        private long _work_schedule_id;
+        private long _department_id;
+
+        public virtual Bio Bio { get; protected set; }
         public virtual EmployeeStatus Status { get; protected set; }
-        
+
         public bool IsActive {
             get { 
                 return new ActiveStatusRule().isSatisfiedBy(this);
             }
         }
-        // private void onCommandAssociateSalaryToEmployee(object sender, Command cmd) {
-        //     if(cmd is CommandAssociateSalaryToEmployee) {
-        //         var args = cmd as CommandAssociateSalaryToEmployee;
-        //         if(args.Employee.Equals(this)) {
-        //             var previous = this.ReferenceSalary;
-        //             this.ReferenceSalary = args.Salary;
-                    
-        //             EventBroker.getInstance().Emit(new EventEmployeeSalaryUpdated(this, previous));
-        //         }
+
+        // public void setDepartment(Department department) {
+        //     if(department.CanAddEmployee) {
+        //         _department_id = department.Id;
+        //         // emit command AddEmployeeToDepartment(this, department)
         //     }
         // }
 
-        // private void onCommandChangeEmployeeStatus(object sender, Command cmd) {
-        //     if(cmd is CommandChangeEmployeeStatus) {
-        //         var args = cmd as CommandChangeEmployeeStatus;
-        //         if(args.Employee.Equals(this)) {
-        //             var old_value = this.Status;
-        //             this.Status = args.Status;
-        //             EventBroker.getInstance().Emit(new EventEmployeeStatusChanged(this, old_value));
-        //         }
-        //     }
+        // public void leaveDepartment() {
+        //     var current_department = _department_id;   
+        //     _department_id = 0;
+        //     // emit event EmployeeHasLeaveTheDepartment(this, current_department)
         // }
 
-        // public Employee() {
-        //     var broker = EventBroker.getInstance();
-        //     broker.addCommandListener(onCommandAssociateSalaryToEmployee);
-        //     broker.addCommandListener(onCommandChangeEmployeeStatus);
+        // public void changeStatus(EmployeeStatus status) {
+        //     var current_status = Status;
+        //     Status = status;
+        //     // emit event EmployeeStatusChanged(this, current_status)
         // }
-
-        // ~Employee() {
-        //     var broker = EventBroker.getInstance();
-        //     broker.removeCommandListener(onCommandAssociateSalaryToEmployee);
-        //     broker.removeCommandListener(onCommandChangeEmployeeStatus);
-        // }
-
-        public static Employee Create(Person person, Date dt_hired, EmployeeStatus status = EmployeeStatus.NEW_HIRED) {
-            var record = new Employee {
-                Person = person,
-                DateHired = dt_hired,
-                Status = status
-            };
-
-            // EventBroker.getInstance().Emit(new EventEmployeeCreated(record));
-
-            return record;
-        }
     }
 }

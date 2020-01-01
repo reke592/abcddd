@@ -8,8 +8,9 @@ namespace hr.core.domain.Employees {
         public override Expression<Func<Employee, bool>> toExpression()
         {
             return candidate => 
-                candidate.Status != EmployeeStatus.RESIGNED
-                || candidate.Status != EmployeeStatus.RETIRED;
+                candidate.Status != EmployeeStatus.INACTIVE;
+                // candidate.Status != EmployeeStatus.RESIGNED
+                // || candidate.Status != EmployeeStatus.RETIRED;
         }
     }
 }
