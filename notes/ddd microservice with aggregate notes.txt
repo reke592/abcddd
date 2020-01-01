@@ -1,0 +1,17 @@
+1 service = 1 database
+1 transaction = 1 aggregate update
+
+were about to break the ACID transaction
+avoid 2PC (2 phase commit)
+save the event to event store to re-create the data
+
+each command must return an event
+each event may or may not return a command
+
+...
+let say we need to fetch the item stock in a concurrent user sessions
+
+on confirmation event, we will use the data version before persisting the record
+if the version did not match, we will run a re-check for the newest event that happened
+we update the record in database iff there is no rules broken by the newest event
+emit the integration event to update the data version
