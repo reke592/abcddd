@@ -1,1 +1,4 @@
+finish creating command and events
+test class shared.Time
+
 a persistence layer using a BinaryFormatter

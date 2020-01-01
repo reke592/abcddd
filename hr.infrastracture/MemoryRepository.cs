@@ -16,12 +16,12 @@ namespace hr.infrastracture
             }
         }
 
-        public T Find(Specification<T> spec, bool err_notfound = false)
+        public T Find(Specification<T> spec)
         {
             return _db.AsQueryable().FirstOrDefault(spec.toExpression());
         }
 
-        public IList<T> FindAll(Specification<T> spec, bool err_notfound = false)
+        public IList<T> FindAll(Specification<T> spec)
         {
             return _db.AsQueryable().Where(spec.isSatisfiedBy).ToList();
         }

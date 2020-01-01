@@ -8,6 +8,18 @@ repository.archive --- model end-life       // unit transaction commit
 use QuerySpecification
   specification suffix with "Rule"
 
+1 bounded context = 1 service = 1 database
+1 transaction = 1 aggregate update
+a transaction doesn't mean always a database session transaction
+we can say that a transaction is done, when we receive the confirmation hence the integration event
+
+use event sourcing to overcome the conflicts on ACID transaction between microservices
+emit an integration event to persist the updates
+
+Repository to archive an Aggregate (to a database or a file)
+Repository to save an Aggregate (to a database)
+Factory to reconstitute an Aggregate using the stored records (retrieved from a database or a file)
+
 use IEnumerable --- if only need to enumerate
 use IList --- if need to access each item by index[]
 use IReadOnlyCollection --- if need to return readonly, and only enumerate

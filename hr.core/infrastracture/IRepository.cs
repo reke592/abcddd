@@ -8,8 +8,8 @@ namespace hr.core.infrastracture {
         // transient processing, mid-life
         void Add(TEntity obj);
         bool Remove(TEntity obj);
-        TEntity Find(Specification<TEntity> spec, bool err_notfound = false);
-        IList<TEntity> FindAll(Specification<TEntity> spec, bool err_notfound = false);
+        TEntity Find(Specification<TEntity> spec);
+        IList<TEntity> FindAll(Specification<TEntity> spec);
 
         // persistence, end-life
         TEntity Save(TEntity obj);
