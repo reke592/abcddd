@@ -1,19 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\hr\hr.csproj" />
+    <ProjectReference Include="..\hr.core\hr.core.csproj" />
+    <ProjectReference Include="..\hr.infrastracture\hr.infrastracture.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NHibernate" Version="5.2.6" />
-    <PackageReference Include="System.Data.Sqlite" Version="1.0.111.0" />
-    <!-- <PackageReference Include="System.Security.Cryptography.Cng" Version="4.7.0" /> -->
-    <PackageReference Include="BCrypt.Net-Next" Version="3.2.1" />
+    <PackageReference Include="System.Data.SQlite.Core" Version="1.0.112.0" />
   </ItemGroup>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
 </Project>

@@ -12,6 +12,11 @@ Entity
  - attributes associated with identity, stays with the ENTITY
  - when an ID symbol is obtained and stored as an attribute of the ENTITY, it is designated immutable.
  - restrict access to state setters, expose only behavior and getters.
+ - ... checked by business rules
+
+Business Rules
+ - rules that tell if the transaction is valid and can be done (eg. Department.CanAddEmployee)
+ - ... how about we have a static empty instance per each entity type, that way we can avoid massive null checks.
 
 ValueObjects
  - No identity

@@ -1,4 +1,7 @@
-finish creating command and events
-test class shared.Time
+infrastructure:
+    create mapping profile for entity and dto
+    create a dummy persistence setup for entity id
+    use rabbitmq for integration events
 
-a persistence layer using a BinaryFormatter
+domain:
+* finish creating command and events
