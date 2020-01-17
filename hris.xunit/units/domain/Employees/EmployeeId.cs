@@ -15,5 +15,6 @@ namespace hris.xunit.units.domain.Employees {
         // Guid x = id;
         public static implicit operator Guid(EmployeeId self) => self._value;
 
+        public override string ToString() => _value.ToString();
     }
 }
