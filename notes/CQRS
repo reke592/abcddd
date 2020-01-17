@@ -1,0 +1,15 @@
+https://blogs.cuttingedge.it/steven/posts/2012/returning-data-from-command-handlers/
+
+create a handler
+create a command
+    add aggregate id as result
+
+api:
+    run the command
+    redirect the action result to a GET query with the aggregate id in command.result
+
+in terms of AQMP
+    create basic prop for correlation id in producer
+    on each consumer, use the correlation id when propagating the request to other services
+    return the correlation id in producer command
+    redirect the user to an endpoint, supplying the correlation id to get the result

@@ -24,6 +24,10 @@ namespace receive
                         var body = ea.Body;
                         var message = Encoding.UTF8.GetString(body);
                         Console.WriteLine($"---\n{message}");
+                        Console.WriteLine(ea.DeliveryTag);
+                        Console.WriteLine(ea.ConsumerTag);
+                        Console.WriteLine(ea.BasicProperties.CorrelationId);
+                        // channel.BasicAck(ea.DeliveryTag, false);
                     };
 
                     channel.BasicConsume(queue: "hello",

@@ -1,0 +1,200 @@
+DDD
+CQRS
+
+Event sourcing:
+commands -> state mutations
+createAd -> id: 3243
+id: 3243    title: null
+            published: false
+renameAd               id: 3243
+id: 3243               title: "Green sofa"
+title: "Green sofa"    published: false 
+...
+every change in aggregate state is recorded
+
+aggregate events
+commands -> events -> read model
+
+event is a class
+needs the aggregate id
+contains information about what has happened
+
+public class AdPriceUpdated
+{
+  public Guid Id { get; set; }
+  public double Price { get; set; }
+}
+
+Aggregates as streams
+stream is a collection of events
+one stream per aggregate
+stream id is derived from the aggregate root id
+you can only append events to a stream
+events cannot be changed (immutable)
+events cannot be removed
+streams can be deleted
+
+aggregave (v2)
++
+command
+=
+aggregate (v3)
+
+Handling commands:
+load aggregate events from event store
+call when for each event to rebuild aggregate state
+check if the command can be performed
+one or more new events are generated as a reaction for the action
+those new events are appended to the stream
+
+versioning is important for events
+use a static class to wrap the events, instead of using a namespace
+
+public static class Events
+{
+  public static class V1
+  {
+    public class SomeEventHappened
+    {
+      public Guid Id { get; set; }
+      public Guid Owner { get; set; }
+      public string Title { get; set; }
+      public DateTimeOffset CreatedAt { get; set; }
+      public Guid CreatedBy { get; set; }
+      public override string toString() => $"Some event happened {Id} was created";
+    }
+  }
+}
+
+use static method to create an aggregate
+so we can preserve the default constructor for the class
+
+we create an event inside the aggregate method
+eg.
+static Create(params):
+  create the event
+  supply the params
+  aggregate.apply(event)
+
+aggregate record must have the capability to detect who created it for auditing
+on create:
+Guid AggreagateId = the id for the aggregate record
+Guid Owner = the user who created
+DateTimeOffset CreatedAt
+on do something:
+Guid doneBy
+DateTimeOffset doneAt
+
+API:
+[HTTPPost]
+public void doSomething(Events.V1.RenameAd cmd) => _appService.Handle(cmd)
+ inside app layer
+ ... load aggregate from store
+ ... app will validate the comand if can be executed
+ ... iff valid
+ ... perform operation
+ ... update store
+
+we will not throw a domain logic error as exception in application layer
+it should be and event containing the failed attempt
+we apply that event inside the aggregate in domain layer
+
+public void Rename(Title title, DateTimeOffset renamedAt, UserId renamedBy)
+{
+  if(_title == title)
+  {
+    Apply(new Event.v1.RenameAttemptFailed
+    {
+      AttemptedTitle = title,
+      TriedToRenameBy = renamedBy
+    }
+  }
+  else
+  {
+    Apply(new Events.V1.ClassifiedAdRenamed
+    {
+      Id = Id,
+      Title = title,
+      RenamedBy = renamedBy,
+      RenamedAt = renamedAt
+    }
+  }
+}
+
+application layer (webapi)
+  asynchronous for updates
+  synchronous for posting data to create new aggregate
+
+add logging mechanism (read about Liblog)
+
+
+We must have a type mapper to string, so we can change the versioning on each events or change their class name / namespace
+Mapper.Map<Events.v1.someEventHappened>("SomeEventHappened");
+Mapper.Map<Events.v1.AnotherEventHappened>("AnotherEventHappened");
+
+
+1 transaction = 1 aggregate update
+
+
+Projection:
+using a stream of events we rebuild the aggregate
+we create and store read-model, instead of querying events store everytime
+
+we can create a projection from anything not only those data in event store
+
+            [projection]      [projection]
+Events          MyAds           PublicAds
+--------------------------------------------
+adCreated    -> empty: title ->
+titleChanged -> title: Green ->
+                Inactive
+adPublished  -> title: Green -> Green
+                Active
+
+
+We need a checkpoint store
+
+public interface ICheckpointStore
+{
+  Task<T> GetLastCheckpoint<T>(string projection);
+  Task SetCheckpoint<T>(T checkpoint, string projection);
+}
+
+Never create morethan one projection per subscription
+Never run one projection in multiple subscriptions
+
+We use JSON serializer
+
+for api testing (read about Swagger)
+
+we can use ravenDb for projection checkpoint store
+... EventStore for events
+... RavenDB for projection checkpoint store
+... every time we have an event, we also update the projection
+... readmodels will use the projections NOT the stream of events
+... we use the stream of events for auditing and creating new projections
+
+# NoSql DB is best for DDD and Event sourcing
+# we will use GUID instead of autoincrementing ID
+  because we are not using the ACID transaction principle
+  we need to avoid the 2 phase commit
+  it is hard to maintain / create functions to handle the Id sequence
+  the only way to overcome the problem is to create the Id before persisting the record
+
+
+GDPR??
+
+killing a stream is fine
+killing an event from stream is problematic
+
+
+Application Layer:
+  Projections
+  API services
+  Contracts / Commands
+
+Domain Layer
+  Aggregate
+  ValueObjects
+  Events
+
