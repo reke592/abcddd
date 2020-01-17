@@ -2,6 +2,7 @@ using System;
 using hris.xunit.units.application;
 using hris.xunit.units.application.Employees.Projections;
 using hris.xunit.units.domain.Employees;
+using hris.xunit.units.EventSourcing;
 using Xunit;
 
 namespace hris.xunit
@@ -11,7 +12,13 @@ namespace hris.xunit
         [Fact]
         public void CanCreateProjections()
         {
-            var event_store = new MemoryEventStore();
+            var mapper = new TypeMapper();
+            mapper.Map<Events.V1.EmployeeActivated>("EmployeeActivated");
+            mapper.Map<Events.V1.EmployeeBioUpdated>("EmployeeBioUpdated");
+            mapper.Map<Events.V1.EmployeeCreated>("EmployeeCreated");
+            mapper.Map<Events.V1.EmployeeDeactivated>("EmployeeDeactivated");
+            mapper.Map<Events.V1.EmployeeLeaveGranted>("EmployeeLeaveGranted");
+            var event_store = new MemoryEventStore(mapper);
             var snapshot_store = new MemorySnapshotStore();
             var projections = new ProjectionManager(snapshot_store);
             projections.Register(new ActiveEmployeesProjection());

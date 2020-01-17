@@ -25,12 +25,19 @@ namespace hris.xunit {
         [Fact]
         public void EventStoreCanSaveAggregateUpdates()
         {
-            IEventStore x = new MemoryEventStore();
+            var mapper = new TypeMapper();
+            var store = new MemoryEventStore(mapper);
             var stubEmployee = Employee.Create(Guid.NewGuid(), DateTimeOffset.Now);
+            mapper.Map<Events.V1.EmployeeActivated>("EmployeeActivated");
+            mapper.Map<Events.V1.EmployeeBioUpdated>("EmployeeBioUpdated");
+            mapper.Map<Events.V1.EmployeeCreated>("EmployeeCreated");
+            mapper.Map<Events.V1.EmployeeDeactivated>("EmployeeDeactivated");
+            mapper.Map<Events.V1.EmployeeLeaveGranted>("EmployeeLeaveGranted");
+
             stubEmployee.updateBio(new Bio("juan", "santos", "dela cruz", "1/1/2000"), DateTimeOffset.Now);
-            x.Save<Employee>(stubEmployee);
+            store.Save<Employee>(stubEmployee);
             
-            var actual = x.Version(stubEmployee);
+            var actual = store.Version(stubEmployee);
 
             Assert.Equal(actual, 1);
         }
@@ -38,9 +45,16 @@ namespace hris.xunit {
         [Fact]
         public void CanRebuildAggregateUsingEventsInEventStore()
         {
-            var store = new MemoryEventStore();
+            var mapper = new TypeMapper();
+            var store = new MemoryEventStore(mapper);
             var id = new EmployeeId(Guid.NewGuid());
             var stubEmployee = Employee.Create(id, DateTimeOffset.Now);
+            mapper.Map<Events.V1.EmployeeActivated>("EmployeeActivated");
+            mapper.Map<Events.V1.EmployeeBioUpdated>("EmployeeBioUpdated");
+            mapper.Map<Events.V1.EmployeeCreated>("EmployeeCreated");
+            mapper.Map<Events.V1.EmployeeDeactivated>("EmployeeDeactivated");
+            mapper.Map<Events.V1.EmployeeLeaveGranted>("EmployeeLeaveGranted");
+
             stubEmployee.updateBio(new Bio("juan", "santos", "dela cruz", "1/1/2000"), DateTimeOffset.Now);
             store.Save<Employee>(stubEmployee);
             var events = store.Get<Employee>(id);

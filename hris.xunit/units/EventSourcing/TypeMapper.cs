@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace hris.xunit.units.EventSourcing
@@ -8,18 +9,36 @@ namespace hris.xunit.units.EventSourcing
     /// Map the event class to a certain string event name.
     /// This can make us use any event class to handle a certain event in stream.
     /// </summary>
-    public static class TypeMapper
+    public class TypeMapper
     {
-        static IDictionary<string, Type>  _types = new Dictionary<string, Type>();
+        private IDictionary<string, Type>  _types = new Dictionary<string, Type>();
         
-        static void Map<T>(string eventName)
+        public void Map<T>(string eventName)
         {
             _types.Add(eventName, typeof(T));
         }
 
-        static Type TryEventType(string eventName) {
-            _types.TryGetValue(eventName, out var type);
-            return type;
+        /// <summary>
+        /// domain event type resolution
+        /// </summary>
+        public Type GetEventType(string eventName) {
+            if(_types.TryGetValue(eventName, out var type))
+            {
+                return type;
+            }
+            throw new Exception($"Can't resolve event type for event: {eventName}");
+        }
+
+        /// <summary>
+        /// event type to string
+        /// </summary>
+        public string GetEventName(object meta) {
+            var key = _types.Where(x => x.Value == meta.GetType()).FirstOrDefault().Key;
+            
+            if(key is null)
+                throw new Exception($"Can't resolve event name for event: {meta.GetType()}");
+            // else
+            return key;
         }
     }
 }
