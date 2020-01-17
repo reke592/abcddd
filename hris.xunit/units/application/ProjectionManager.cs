@@ -16,11 +16,6 @@ namespace hris.xunit.units.application
              _projections = new HashSet<IProjection>();
         }
 
-        public T GetProjection<T>(Guid id) where T : IProjection
-        {
-            throw new NotImplementedException();
-        }
-
         public void Register(IProjection projection)
         {
             _projections.Add(projection);
