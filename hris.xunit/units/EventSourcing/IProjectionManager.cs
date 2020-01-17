@@ -7,6 +7,5 @@ namespace hris.xunit.units.EventSourcing
     {
         void UpdateProjections(object sender, object[] events);
         void Register(IProjection projection);
-        T GetProjection<T>(Guid id) where T : IProjection;
     }
 }
