@@ -32,7 +32,7 @@ namespace hris.xunit {
             
             var actual = x.Version(stubEmployee);
 
-            Assert.Equal(actual, 2);
+            Assert.Equal(actual, 1);
         }
 
         [Fact]
