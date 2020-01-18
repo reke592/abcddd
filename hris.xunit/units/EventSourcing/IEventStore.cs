@@ -12,6 +12,6 @@ namespace hris.xunit.units.EventSourcing
         object[] Get<T>(Guid id) where T : Aggregate;
 
         // returns the current most current version of the aggregate
-        long Version<T>(T record) where T : Aggregate;
+        long LatestVersion<T>(T record) where T : Aggregate;
     }
 }
