@@ -9,7 +9,7 @@ namespace hris.xunit.units.EventSourcing
     /// Map the event class to a certain string event name.
     /// This can make us use any event class to handle a certain event in stream.
     /// </summary>
-    public class TypeMapper
+    public class TypeMapper : ITypeMapper
     {
         private IDictionary<string, Type>  _types = new Dictionary<string, Type>();
         
@@ -18,9 +18,6 @@ namespace hris.xunit.units.EventSourcing
             _types.Add(eventName, typeof(T));
         }
 
-        /// <summary>
-        /// domain event type resolution
-        /// </summary>
         public Type GetEventType(string eventName) {
             if(_types.TryGetValue(eventName, out var type))
             {
@@ -29,16 +26,28 @@ namespace hris.xunit.units.EventSourcing
             throw new Exception($"Can't resolve event type for event: {eventName}");
         }
 
-        /// <summary>
-        /// event type to string
-        /// </summary>
         public string GetEventName(object meta) {
-            var key = _types.Where(x => x.Value == meta.GetType()).FirstOrDefault().Key;
+            return GetEventName(meta.GetType());
+        }
+
+        public string GetEventName(Type event_type)
+        {
+            var key = _types.Where(x => x.Value == event_type).FirstOrDefault().Key;
             
             if(key is null)
-                throw new Exception($"Can't resolve event name for event: {meta.GetType()}");
+                throw new Exception($"Can't resolve event name for event: {event_type}");
             // else
             return key;
+        }
+
+        public Type GetEventType(object meta)
+        {
+            var type = _types.Where(x => x.Value == meta.GetType()).FirstOrDefault().Value;
+            
+            if(type is null)
+                throw new Exception($"Can't resolve event type for metadata: {meta.GetType()}");
+            // else
+            return type;
         }
     }
 }

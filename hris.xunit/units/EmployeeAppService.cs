@@ -6,7 +6,7 @@ using hris.xunit.units.application.Employees.Projections;
 using hris.xunit.units.domain.Employees;
 using hris.xunit.units.EventSourcing;
 
-namespace hris.xunit.units.application
+namespace hris.xunit.units
 {
     public class EmployeeAppService : IEmployeeAppService
     {

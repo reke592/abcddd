@@ -1,9 +1,7 @@
-using System;
 using System.Collections.Generic;
-using hris.xunit.units.domain;
 using hris.xunit.units.EventSourcing;
 
-namespace hris.xunit.units.application
+namespace hris.xunit.units
 {
     public class ProjectionManager : IProjectionManager
     {

@@ -1,6 +1,3 @@
-using System;
-using hris.xunit.units.domain;
-
 namespace hris.xunit.units.EventSourcing
 {
     public interface IProjectionManager

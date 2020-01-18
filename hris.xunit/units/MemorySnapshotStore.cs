@@ -5,14 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using hris.xunit.units.EventSourcing;
 
-namespace hris.xunit.units.application
+namespace hris.xunit.units
 {
     public class MemorySnapshotStore : ISnapshotStore
     {
         private IDictionary<Type, IDictionary<Guid, object>> _store 
             = new Dictionary<Type, IDictionary<Guid, object>>();
-
-        private ISet<Guid> _dirty = new HashSet<Guid>();
 
         public void Store<T>(Guid id, T document)
         {
@@ -27,8 +25,6 @@ namespace hris.xunit.units.application
                 new_collection.Add(id, document);
                 _store.Add(doc_type, new_collection);
             }
-            
-            _dirty.Add(id);
         }
 
         public void Delete<T>(Guid id)
@@ -37,7 +33,6 @@ namespace hris.xunit.units.application
             if(_store.TryGetValue(doc_type, out var records))
             {
                 records.Remove(id);
-                _dirty.Add(id);
 
                 if(records.Count == 0)
                     _store.Remove(doc_type);
@@ -50,19 +45,9 @@ namespace hris.xunit.units.application
             if(_store.TryGetValue(doc_type, out var records)) {
                 if(records.ContainsKey(id))
                 {
-                    Console.WriteLine($"apply: {typeof(T)}");
                     apply((T) records[id]);
-                    _dirty.Add(id);
                 }
             }
-        }
-
-        public Task SaveAsync()
-        {
-            if(_dirty.Count > 0)
-                return new Task(() => Console.WriteLine($"push {_dirty.Count} projection updates to database"));
-            
-            return default(Task);
         }
 
         public T Get<T>(Guid id)

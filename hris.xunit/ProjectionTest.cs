@@ -1,5 +1,5 @@
 using System;
-using hris.xunit.units.application;
+using hris.xunit.units;
 using hris.xunit.units.application.Employees.Projections;
 using hris.xunit.units.domain.Employees;
 using hris.xunit.units.EventSourcing;

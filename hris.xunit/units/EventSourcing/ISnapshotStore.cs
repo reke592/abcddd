@@ -15,9 +15,6 @@ namespace hris.xunit.units.EventSourcing
         // delete document in memory
         void Delete<T>(Guid id);
 
-        // save to database / flat file
-        Task SaveAsync();
-
         // returns projection document
         T Get<T>(Guid id);
 

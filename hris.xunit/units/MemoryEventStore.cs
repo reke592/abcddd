@@ -4,7 +4,7 @@ using System.Linq;
 using hris.xunit.units.domain;
 using hris.xunit.units.EventSourcing;
 
-namespace hris.xunit.units.application
+namespace hris.xunit.units
 {
     public class MemoryEventStore : IEventStore
     {
@@ -22,7 +22,6 @@ namespace hris.xunit.units.application
         {
             if(_store.ContainsKey(id))
             {
-                // return _store[id].ToArray();
                 return _store[id].Select(x => x.Metadata).ToArray();
             }
             return Empty;
@@ -30,17 +29,22 @@ namespace hris.xunit.units.application
 
         public void Save<T>(T record) where T : Aggregate
         {
-            if(!_store.ContainsKey(record.Id))
-                _store.Add(record.Id, new List<Event>());
-            
-            foreach(var e in record.Events)
-                _store[record.Id].Add(new Event(_mapper.GetEventName(e), e));
-            
-            // inform projection manager to update projections
-            afterSave?.Invoke(this, record.Events);
+            if(record.Version != LatestVersion<T>(record))
+                throw new DataIntegrityException(record);
+            else
+            {
+                if(!_store.ContainsKey(record.Id))
+                    _store.Add(record.Id, new List<Event>());
+                
+                foreach(var e in record.Events)
+                    _store[record.Id].Add(new Event(_mapper.GetEventName(e), e));
+                
+                // inform projection manager to update projections
+                afterSave?.Invoke(this, record.Events);
+            }
         }
 
-        public long Version<T>(T record) where T : Aggregate
+        public long LatestVersion<T>(T record) where T : Aggregate
         {
             if(_store.ContainsKey(record.Id))
                 return _store[record.Id].Count - 1;

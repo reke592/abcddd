@@ -1,5 +1,5 @@
 using System;
-using hris.xunit.units.application;
+using hris.xunit.units;
 using hris.xunit.units.domain.Employees;
 using hris.xunit.units.EventSourcing;
 using Xunit;
@@ -37,7 +37,7 @@ namespace hris.xunit {
             stubEmployee.updateBio(new Bio("juan", "santos", "dela cruz", "1/1/2000"), DateTimeOffset.Now);
             store.Save<Employee>(stubEmployee);
             
-            var actual = store.Version(stubEmployee);
+            var actual = store.LatestVersion(stubEmployee);
 
             Assert.Equal(actual, 1);
         }
