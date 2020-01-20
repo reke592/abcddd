@@ -41,32 +41,33 @@ namespace hris.xunit.units.Serialization
             return false;
         }
 
-        object Extract(Type type, object raw_value)
+        object Extract(Type value_type, object raw_value)
         {
-            if(type == typeof(Guid))
+            if(value_type == typeof(Guid))
             {
                 return Guid.Parse(raw_value.ToString());
             }
-            else if(type == typeof(DateTimeOffset))
+            else if(value_type == typeof(DateTimeOffset))
             {
                 return DateTimeOffset.Parse(raw_value.ToString());
             }
-            else if(type.IsSubclassOf(typeof(Enum)))
+            else if(value_type.IsSubclassOf(typeof(Enum)))
             {
-                return Enum.Parse(type, raw_value.ToString());
+                return Enum.Parse(value_type, raw_value.ToString());
             }
             else if(raw_value.GetType() == typeof(Dictionary<object, object>))
             {
                 var meta = raw_value as Dictionary<object, object>;
-                Console.WriteLine(type);
-                var value_object = Activator.CreateInstance(type);
+                // Console.WriteLine(type);
+                var instance = Activator.CreateInstance(value_type);
+                var binding_flags = BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic;
                 foreach(var key in meta.Keys)
                 {
-                    var inner_type = type.GetField(key.ToString(), BindingFlags.Instance | BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic);
-                    Console.WriteLine(inner_type);
-                    inner_type.SetValue(value_object, Extract(inner_type.FieldType, meta[key]));
+                    var field = value_type.GetField(key.ToString(), binding_flags);
+                    // Console.WriteLine(inner_type);
+                    field.SetValue(instance, Extract(field.FieldType, meta[key]));
                 }
-                return value_object;
+                return instance;
             }
             else
             {
