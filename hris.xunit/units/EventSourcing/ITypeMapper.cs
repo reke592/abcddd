@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace hris.xunit.units.EventSourcing
 {
@@ -27,5 +28,7 @@ namespace hris.xunit.units.EventSourcing
         //   we use the eventName to query for thesame event that happened before
         //   if the result is empty, we simply set the value to the empty representation of that value object
         void Map<T>(string eventName);
+
+        IEnumerable<string> RegisteredKeys { get; }
     }
 }

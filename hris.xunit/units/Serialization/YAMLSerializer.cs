@@ -1,36 +1,37 @@
 using System.IO;
+using hris.xunit.units.EventSourcing;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
+using YamlDotNet.Serialization.NodeDeserializers;
 
 namespace hris.xunit.units.Serialization {
-    public class YAMLSerializer
+    public class YAMLSerializer : IYAMLSerializer
     {
-        private static Serializer _serializer;
+        private static ISerializer _serializer;
         private static IDeserializer _deserializer;
+        private ITypeMapper _mapper;
 
-        public static Serializer GetSerializer {
-            get {
-                return _serializer ?? (_serializer = new Serializer());
-            }
-        }
-
-        public static IDeserializer GetDeserializer {
-            get {
-                return _deserializer ?? (_deserializer = new DeserializerBuilder()
-                                        .IgnoreUnmatchedProperties()
-                                        // .WithNamingConvention(CamelCaseNamingConvention.Instance)
-                                        .Build());
-            }
+        public YAMLSerializer(ITypeMapper mapper)
+        {
+            _mapper = mapper;
+            _serializer = new SerializerBuilder()
+                        .WithTypeConverter(new DateTimeOffsetConverter(true))
+                        .Build();
+            _deserializer = new DeserializerBuilder()
+                        .WithTypeConverter(new DateTimeOffsetConverter(true))
+                        .WithNodeDeserializer(inner => new EventNodeDeserializer(inner, _mapper),
+                                            s => s.InsteadOf<ObjectNodeDeserializer>())
+                        .Build();
         }
 
         public string Serialize(object o)
         {
-            return GetSerializer.Serialize(o);
+            return _serializer.Serialize(o);
         }
-        
-        public object Deserialize(string str)
+
+        public T Deserialize<T>(string raw)
         {
-            return GetDeserializer.Deserialize(new StringReader(str));
+            return _deserializer.Deserialize<T>(raw);
         }
     }
 }

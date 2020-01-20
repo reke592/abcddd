@@ -5,6 +5,8 @@ namespace hris.xunit.units.EventSourcing
         public string Name { get; private set; }
         public object Metadata { get; private set; }
 
+        public Event() { }
+
         public Event(string name, object meta)
         {
             Name = name;

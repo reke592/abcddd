@@ -12,6 +12,7 @@ namespace hris.xunit.units.EventSourcing
     public class TypeMapper : ITypeMapper
     {
         private IDictionary<string, Type>  _types = new Dictionary<string, Type>();
+        public IEnumerable<string> RegisteredKeys => _types.Keys;
         
         public void Map<T>(string eventName)
         {
@@ -49,5 +50,6 @@ namespace hris.xunit.units.EventSourcing
             // else
             return type;
         }
+
     }
 }

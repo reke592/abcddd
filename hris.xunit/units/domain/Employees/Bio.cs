@@ -9,6 +9,8 @@ namespace hris.xunit.units.domain.Employees {
         public readonly string LastName;
         public readonly string DateOfBirth;
         
+        public Bio() { }
+
         public Bio(string firstName, string middleName, string lastName, string dateOfBirth)
         {
             FirstName = firstName;
