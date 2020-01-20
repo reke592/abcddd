@@ -8,11 +8,11 @@ using Xunit;
 
 namespace hris.xunit
 {
-    public abstract class TestBase : IDisposable
+    public abstract class EmployeeAppServiceTestBase : IDisposable
     {
         protected IEmployeeAppService _emp_app;
         
-        public TestBase()
+        public EmployeeAppServiceTestBase()
         {
             var mapper = new TypeMapper();
             var event_store = new MemoryEventStore(mapper);
@@ -27,7 +27,8 @@ namespace hris.xunit
             // register projection for active employees
             projection_manager.Register(new ActiveEmployeesProjection());
             // update projections when store updated
-            event_store.afterSave += projection_manager.UpdateProjections;
+            // event_store._afterSave += projection_manager.UpdateProjections;
+            event_store.AfterSave(projection_manager.UpdateProjections);
             // create app service
             _emp_app = new EmployeeAppService(event_store, snapshot_store);
         }
@@ -39,7 +40,7 @@ namespace hris.xunit
     }
 
 
-    public class EmployeeAppServiceTest : TestBase
+    public class EmployeeAppServiceTest : EmployeeAppServiceTestBase
     {
         [Fact]
         public void CanAddEmployeeUsingCommand()
