@@ -54,6 +54,7 @@ namespace hris.xunit.units.v2.domain.Employees {
                 _fail_update("not the record owner", bio, updatedBy, updatedAt);
             else
                 Apply(new Events.V2.EmployeeBioUpdated{
+                    Id = Id,
                     Bio = bio,
                     UpdatedBy = updatedBy,
                     UpdatedAt = updatedAt
@@ -101,6 +102,7 @@ namespace hris.xunit.units.v2.domain.Employees {
         {
                 Apply(new Events.V2.UpdateAttemptFailed {
                     Reason = reason,
+                    AggregateId = Id,
                     AttemptedBy = attemptedBy,
                     AttemptedValue = value,
                     AttemptedAt = attemptedAt

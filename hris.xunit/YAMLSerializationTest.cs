@@ -1,9 +1,7 @@
 using System;
 using hris.xunit.units;
-using hris.xunit.units.application.Employees.Projections;
 using hris.xunit.units.EventSourcing;
 using hris.xunit.units.Serialization;
-using hris.xunit.units.v2.domain.Employees;
 using hris.xunit.units.domain.Employees;
 using Xunit;
 
@@ -115,7 +113,7 @@ namespace hris.xunit
                 , Projections = new ProjectionManager(v2_snapshots)
             };
             v2.Projections.Register(new units.v2.application.Employees.Projections.ActiveEmployeesProjection());
-            v2.Store.AfterSave(v1.Projections.UpdateProjections);
+            v2.Store.AfterSave(v2.Projections.UpdateProjections);
 
             // test start
             // insert data using v1 events

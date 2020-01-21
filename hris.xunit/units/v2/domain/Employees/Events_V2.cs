@@ -36,6 +36,7 @@ namespace hris.xunit.units.domain.Employees
             public class UpdateAttemptFailed
             {
                 public string Reason { get; set; }
+                public Guid AggregateId { get; set; }
                 public Guid AttemptedBy { get; set; }
                 public object AttemptedValue { get; set; }
                 public DateTimeOffset AttemptedAt { get; set; }
