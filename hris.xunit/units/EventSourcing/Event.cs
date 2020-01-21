@@ -3,6 +3,7 @@ namespace hris.xunit.units.EventSourcing
     public class Event
     {
         public string Name { get; private set; }
+        public string MetaVersion { get; private set; }
         public object Metadata { get; private set; }
 
         public Event() { }
@@ -11,6 +12,7 @@ namespace hris.xunit.units.EventSourcing
         {
             Name = name;
             Metadata = meta;
+            MetaVersion = meta.GetType().DeclaringType.Name;
         }
     }
 }

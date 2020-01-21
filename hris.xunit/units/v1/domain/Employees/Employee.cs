@@ -4,6 +4,9 @@ namespace hris.xunit.units.domain.Employees {
     public class Employee : Aggregate {
         public Bio Bio { get; private set; }
         public EmployeeStatus Status { get; private set; }
+        
+        // v2
+        public Guid CreatedBy { get; private set;}
 
         protected override void When(object e)
         {
@@ -24,6 +27,16 @@ namespace hris.xunit.units.domain.Employees {
         }
 
         internal static Employee Create(EmployeeId id, DateTimeOffset createdAt) {
+            var ee = new Employee();
+            ee.Apply(new Events.V1.EmployeeCreated {
+                Id = id,
+                CreatedAt = createdAt
+            });
+            return ee;
+        }
+
+        internal static Employee CreateV2(EmployeeId id, Guid createdBy, DateTimeOffset createdAt)
+        {
             var ee = new Employee();
             ee.Apply(new Events.V1.EmployeeCreated {
                 Id = id,

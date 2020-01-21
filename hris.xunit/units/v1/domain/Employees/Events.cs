@@ -1,7 +1,7 @@
 using System;
 
 namespace hris.xunit.units.domain.Employees {
-    public static class Events
+    public static partial class Events
     {
         public static class V1
         {
