@@ -1,7 +1,15 @@
-check the EventNodeDeserializer
-- can't create projections using events created 
+CASE: having 2 same micro-service instance running in different event versions.
+TODO: create anti-corruption layer for different event version in aggregate event stream:
+  50%   application layer projections
+        ... need more clarifications
+  0%    domain logic 
+        ... pretty hard to picture,
+        ... what if the updates is for security meassures in domain aggregate,
+        ... do we permit the old version on committing actions?
+        ... how about,
+        ... we avoid running an outdated microservice, no need to create a compatibility layer. :P
 
-fix YAMLSerializationTest
-- it's ugly
+optimize YAMLSerializationTest
+- remove monolithic test case
 
 * finish creating command and events
