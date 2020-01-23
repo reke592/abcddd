@@ -9,6 +9,7 @@ namespace hris.xunit
 {
     public abstract class YAMLSerializationTestBase : IDisposable
     {
+        
         protected ITypeMapper _v1_mapper;
         protected ITypeMapper _v2_mapper;
 
@@ -102,6 +103,7 @@ namespace hris.xunit
             };
             v1.Projections.Register(new units.application.Employees.Projections.ActiveEmployeesProjection());
             v1.Store.AfterSave(v1.Projections.UpdateProjections);
+            v1.Store.AfterDBReload(v1.Projections.UpdateProjections);
             
             // v2 configuration
             var v2_serializer = new YAMLSerializer(_v2_mapper);
@@ -114,6 +116,7 @@ namespace hris.xunit
             };
             v2.Projections.Register(new units.v2.application.Employees.Projections.ActiveEmployeesProjection());
             v2.Store.AfterSave(v2.Projections.UpdateProjections);
+            v2.Store.AfterDBReload(v2.Projections.UpdateProjections);
 
             // test start
             // insert data using v1 events
@@ -142,18 +145,19 @@ namespace hris.xunit
             Console.WriteLine("--------- v2 ----------");
             Console.WriteLine(raw_string2);
 
-            // read using v1_mapper
+            // reload both store
             v1.Store.YAML_Load(raw_string2);
+            v2.Store.YAML_Load(raw_string2);
 
             // fetch sample v1 events
-            var v1_events = v1.Store.Get<units.domain.Employees.Employee>(stub3);
+            var v1_events = v2.Store.Get<units.domain.Employees.Employee>(stub3);
 
             // fetch sample v2 events
             var v2_events = v2.Store.Get<units.v2.domain.Employees.Employee>(stub6[1]);     // [owner, id]
 
             // test load aggregate
-            var v2_actual = new units.v2.domain.Employees.Employee();
             var v1_actual = new units.domain.Employees.Employee();
+            var v2_actual = new units.v2.domain.Employees.Employee();
 
             // load different events to different aggregate version
             v1_actual.Load(v2_events);

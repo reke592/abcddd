@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using hris.xunit.units.EventSourcing;
 
@@ -21,6 +22,7 @@ namespace hris.xunit.units
 
         public void UpdateProjections(object sender, object[] events)
         {
+            Console.WriteLine(sender);
             foreach(var projection in _projections)
                 foreach(var e in events)
                     projection.Handle(e, _snapshots);

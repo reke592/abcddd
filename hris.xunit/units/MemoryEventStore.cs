@@ -16,6 +16,7 @@ namespace hris.xunit.units
     public class MemoryEventStore : IEventStore, IYAMLSerializable
     {
         private event EventHandler<object[]> _afterSave;
+        private event EventHandler<object[]> _afterDBReload;
         private ITypeMapper _mapper;
         private IYAMLSerializer _serializer;
         public object[] Empty => new object[] { };
@@ -55,7 +56,7 @@ namespace hris.xunit.units
                     _store[record.Id].Add(new Event(_mapper.GetEventName(e), e));
                 
                 // inform projection manager to update projections
-                _afterSave?.Invoke(this, record.Events);
+                _afterSave?.Invoke("store.afterSave", record.Events);
             }
         }
 
@@ -80,15 +81,23 @@ namespace hris.xunit.units
             _afterSave += handler;
         }
 
+        public void AfterDBReload(EventHandler<object[]> handler) {
+            _afterDBReload += handler;
+        }
+
         public void YAML_Load(string raw)
         {
-            var data = _serializer.Deserialize<IDictionary<Guid, IList<Event>>>(raw);
-            _store = data;
+            var stream = _serializer.Deserialize<IDictionary<Guid, IList<Event>>>(raw);
+            foreach(var events in stream.Values)
+            {
+                _afterDBReload?.Invoke("store.afterDbReload", events.Select(x => x.Metadata).ToArray());
+            }
+            _store = stream;
         }
 
         public string YAML_Export()
         {
             return _serializer.Serialize(new ReadOnlyDictionary<Guid, IList<Event>>(_store));
         }
-    }
+  }
 }

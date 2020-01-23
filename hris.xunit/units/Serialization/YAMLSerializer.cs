@@ -7,8 +7,8 @@ using YamlDotNet.Serialization.NodeDeserializers;
 namespace hris.xunit.units.Serialization {
     public class YAMLSerializer : IYAMLSerializer
     {
-        private static ISerializer _serializer;
-        private static IDeserializer _deserializer;
+        private ISerializer _serializer;
+        private IDeserializer _deserializer;
         private ITypeMapper _mapper;
 
         public YAMLSerializer(ITypeMapper mapper)

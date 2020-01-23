@@ -18,5 +18,7 @@ namespace hris.xunit.units.EventSourcing
         long LatestVersion<T>(T record) where T : Aggregate;
 
         void AfterSave(EventHandler<object[]> handler);
+
+        void AfterDBReload(EventHandler<object[]> handler);
     }
 }

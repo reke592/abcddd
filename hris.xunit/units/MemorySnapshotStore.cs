@@ -17,6 +17,11 @@ namespace hris.xunit.units
             var doc_type = typeof(T);
             if(_store.TryGetValue(doc_type, out var records))
             {
+                if(records.Keys.Contains(id))
+                {
+                    // replace on re-projection
+                    records.Remove(id);
+                }
                 records.Add(id, document);
             }
             else 
@@ -42,7 +47,8 @@ namespace hris.xunit.units
         public void UpdateIfFound<T>(Guid id, Action<T> apply)
         {
             var doc_type = typeof(T);
-            if(_store.TryGetValue(doc_type, out var records)) {
+            if(_store.TryGetValue(doc_type, out var records))
+            {
                 if(records.ContainsKey(id))
                 {
                     apply((T) records[id]);
