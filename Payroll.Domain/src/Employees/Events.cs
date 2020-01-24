@@ -1,4 +1,5 @@
 using System;
+using Payroll.Domain.Salaries;
 using Payroll.Domain.Users;
 
 namespace Payroll.Domain.Employees
@@ -14,12 +15,28 @@ namespace Payroll.Domain.Employees
         public UserId CreatedBy { get; set; }
       }
 
-      public class BioDataUpdated
+      public class EmployeeBioDataUpdated
       {
         public EmployeeId Id { get; set; }
         public BioData BioData { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
         public UserId UpdatedBy { get; set; }
+      }
+
+      public class EmployeeStatusChanged
+      {
+        public EmployeeId Id { get; set; }
+        public EmployeeStatus NewStatus { get; set; }
+        public UserId ChangedBy { get; set; }
+        public DateTimeOffset ChangedAt { get; set; }
+      }
+
+      public class EmployeeSalaryGradeUpdated
+      {
+        public EmployeeId Id { get; set; }
+        public SalaryGradeId SalaryGrade { get; set; }
+        public UserId UpdatedBy { get; set; }
+        public DateTimeOffset UpdatedAt { get; set; }
       }
 
       public class EmployeeUpdateAttemptFailed

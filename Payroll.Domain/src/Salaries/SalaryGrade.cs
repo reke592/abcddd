@@ -1,26 +1,38 @@
 using System;
+using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Employees;
 using Payroll.Domain.Users;
 
 namespace Payroll.Domain.Salaries
 {
-  public class Salary : Aggregate
+  public class SalaryGrade : Aggregate
   {
-    public EmployeeId Employee { get; private set; }
     public UserId Owner { get; private set; }
+    public BusinessYearId BusinessYear { get; private set; }
     public decimal Gross { get; private set; }
 
     protected override void When(object e) {
-      throw new System.NotImplementedException();
+      switch(e)
+      {
+        case Events.V1.SalaryCreated x:
+          Id = x.Id;
+          Owner = x.CreatedBy;
+          BusinessYear = x.BusinessYear;
+          break;
+        
+        case Events.V1.SalaryGrossUpdated x:
+          Gross = x.NewGrossValue;
+          break;
+      }
     }
 
-    public static Salary Create(SalaryId id, EmployeeId employee, UserId createdBy, DateTimeOffset createdAt)
+    public static SalaryGrade Create(SalaryGradeId id, BusinessYearId currentYear, UserId createdBy, DateTimeOffset createdAt)
     {
-      var record = new Salary();
+      var record = new SalaryGrade();
       record.Apply(new Events.V1.SalaryCreated
       {
         Id = id,
-        Employee = employee,
+        BusinessYear = currentYear,
         CreatedBy = createdBy,
         CreatedAt = createdAt
       });

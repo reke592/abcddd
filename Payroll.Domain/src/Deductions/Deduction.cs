@@ -1,4 +1,5 @@
 using System;
+using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Employees;
 using Payroll.Domain.Users;
 
@@ -6,61 +7,125 @@ namespace Payroll.Domain.Deductions
 {
   public class Deduction : Aggregate
   {
-    public EmployeeId Employee { get; private set; }
     public UserId Owner { get; private set; }
+    public EmployeeId Employee { get; private set; }
+    public BusinessYearId BusinessYear { get; set; }
+    public DeductionSchedule Schedule { get; private set; }
+    public int Amortization { get; private set; }
     public decimal Balance { get; private set; }
-
+    public decimal Payments { get; private set; }
+    public bool Completed { get; private set; }
     public bool HasBalance => this.Balance > 0;
 
     protected override void When(object e) {
-      throw new System.NotImplementedException();
+      switch(e)
+      {
+        case Events.V1.DeductionCreated x:
+          Id = x.Id;
+          BusinessYear = x.BusinessYear;
+          Owner = x.CreatedBy;
+          Employee = x.Employee;
+          break;
+        
+        case Events.V1.DeductionAmountSettled x:
+          Balance = x.NewAmount;
+          break;
+
+        case Events.V1.DeductionScheduleSettled x:
+          Schedule = x.NewSchedule;
+          Amortization = x.NewAmortization;
+          break;
+
+        case Events.V1.DeductionPaymentCreated x:
+          Balance = Balance - x.PaidAmount;
+          Payments = Payments + x.PaidAmount;
+          break;
+        
+        case Events.V1.DeductionPaymentCompleted x:
+          Completed = true;
+          break;
+      }
     }
 
-    public static Deduction Create(DeductionId id, EmployeeId employee, UserId createdBy, DateTimeOffset createdAt)
+    public static Deduction Create(DeductionId id, EmployeeId employee, BusinessYearId businessYear, UserId createdBy, DateTimeOffset createdAt)
     {
       var record = new Deduction();
       record.Apply(new Events.V1.DeductionCreated {
         Id = id,
         Employee = employee,
+        BusinessYear = businessYear,
         CreatedBy = createdBy,
         CreatedAt = createdAt
       });
       return record;
     }
 
-    public void setBalance(decimal newAmount, UserId updatedBy, DateTimeOffset updatedAt)
+    public void setAmount(decimal newAmount, UserId settledBy, DateTimeOffset settledAt)
     {
-      if(this.Owner != updatedBy)
-        _updateFailed("can't update deduction balance. not the record owner", newAmount, updatedBy, updatedAt);
+      if(this.Owner != settledBy)
+        _updateFailed("can't update deduction amount. not the record owner", newAmount, settledBy, settledAt);
       else
-        this.Apply(new Events.V1.DeductionBalanceUpdated {
+        this.Apply(new Events.V1.DeductionAmountSettled {
           Id = this.Id,
-          NewBalance = newAmount,
-          UpdatedBy = updatedBy,
-          UpdatedAt = updatedAt
+          NewAmount = newAmount,
+          SettledBy = settledBy,
+          SettledAt = settledAt
         });
     }
 
-    public void createPayment(decimal paymentAmount, UserId createdBy, DateTimeOffset createdAt)
+    public void setSchedule(int amortization, DeductionSchedule schedule, UserId settledBy, DateTimeOffset settledAt)
+    {
+      if(this.Owner != settledBy)
+      {
+        _updateFailed("can't set deduction amortization. not the record owner", amortization, settledBy, settledAt);
+        _updateFailed("can't set deduction schedule. not the record owner", schedule, settledBy, settledAt);
+      }
+      else if(amortization < 0)
+      {
+        _updateFailed("can't set amortization. invalid amortization value", amortization, settledBy, settledAt);
+      }
+      else
+        this.Apply(new Events.V1.DeductionScheduleSettled {
+          Id = this.Id,
+          NewSchedule = schedule,
+          NewAmortization = amortization,
+          SettledBy = settledBy,
+          SettledAt = settledAt
+        });
+    }
+
+    public void createPayment(decimal paymentAmount, BusinessYearId currentYear, UserId createdBy, DateTimeOffset createdAt)
     {
       if(this.Owner != createdBy)
-      {
         _updateFailed("can't create deduction payment. not the record owner", paymentAmount, createdBy, createdAt);
-        return;
-      }
-        
-      if(this.HasBalance == false)
-      {
+      else if(this.HasBalance == false)
         _updateFailed("can't create deduction payment. No balance to pay", paymentAmount, createdBy, createdAt);
-        return;
-      }
+      else
+      {
+        this.Apply(new Events.V1.DeductionPaymentCreated {
+          Id = this.Id,
+          PaidAmount = paymentAmount,
+          CreatedBy = createdBy,
+          CreatedAt = createdAt
+        });
 
-      this.Apply(new Events.V1.DeductionPaymentCreated {
-        Id = this.Id,
-        PaidAmount = paymentAmount,
-        CreatedBy = createdBy,
-        CreatedAt = createdAt
-      });
+        if(this.HasBalance == false)
+          StopDeduction(currentYear, createdBy, createdAt);
+      }
+    }
+
+    public void StopDeduction(BusinessYearId currentYear, UserId haltedBy, DateTimeOffset haltedAt)
+    {
+      if(Completed)
+        _updateFailed("can't stop deduction, deduction already completed", currentYear, haltedBy, haltedAt);
+      else
+        this.Apply(new Events.V1.DeductionPaymentCompleted {
+          Id = this.Id,
+          BusinessYear = currentYear,
+          PaymentTotal = Payments,
+          SettledBy = haltedBy,
+          CompletedAt = haltedAt
+       });
     }
 
     private void _updateFailed(string reason, object value, UserId attemptedBy, DateTimeOffset attemptedAt)
