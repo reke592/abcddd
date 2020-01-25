@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using hris.xunit.units;
 using hris.xunit.units.application.Employees.Projections;
 using hris.xunit.units.domain.Employees;
@@ -59,6 +61,25 @@ namespace hris.xunit
 
             var actual = _db_snapshots.All<ActiveEmployeeDocument>();
             Assert.Equal(1, actual.Count);
+        }
+
+        [Fact]
+        public void CanSearchProjectionByMemberValue()
+        {
+            var id = new EmployeeId(Guid.NewGuid());
+            var stubEmployee = Employee.Create(id, DateTimeOffset.Now);
+            stubEmployee.updateBio(new Bio("juan", "santos", "dela cruz", "1/1/2000"), DateTimeOffset.Now);
+            stubEmployee.setActive(DateTimeOffset.Now);
+            _db_events.Save(stubEmployee);
+
+            var id2 = new EmployeeId(Guid.NewGuid());
+            var stubEmployee2 = Employee.Create(id2, DateTimeOffset.Now);
+            stubEmployee2.updateBio(new Bio("camilla", "", "dela torre", "1/1/2000"), DateTimeOffset.Now);
+            stubEmployee2.setActive(DateTimeOffset.Now);
+            _db_events.Save(stubEmployee2);
+
+            var actual = _db_snapshots.All<ActiveEmployeeDocument>().Where(x => x.Bio.FirstName == "camilla").SingleOrDefault();
+            Assert.Equal("dela torre", actual.Bio.LastName);
         }
 
         [Fact]
