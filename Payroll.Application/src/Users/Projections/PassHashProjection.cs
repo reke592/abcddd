@@ -4,24 +4,25 @@ using Payroll.EventSourcing;
 
 namespace Payroll.Application.Users.Projections
 {
-  public class ActiveUserRecord
+  public class UserPassHashRecord
   {
     public UserId Id { get; internal set; }
     public string Username { get; internal set; }
-    public ISet<string> Claims { get; internal set; } = new HashSet<string>();
+    public string PassHash { get; internal set; }
     public int Version { get; internal set; } = 0;
   }
 
-  public class ActiveUserProjection : IProjection
+  public class PassHashProjection : IProjection
   {
     public void Handle(object e, ISnapshotStore snapshots) {
-      ActiveUserRecord doc;
+      UserPassHashRecord doc;
       switch(e)
       {
         case Events.V1.UserCreated x:
-          doc = new ActiveUserRecord();
+          doc = new UserPassHashRecord();
           doc.Id = x.Id;
           doc.Username = x.Username;
+          doc.PassHash = x.PassHash;
           snapshots.Store(x.Id, doc);
           break;
         
