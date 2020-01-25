@@ -1,6 +1,6 @@
 using System;
 
-namespace Payroll.Domain.SalariesGrades
+namespace Payroll.Domain.SalaryGrades
 {
   public class SalaryGradeId
   {

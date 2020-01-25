@@ -3,13 +3,13 @@ using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Employees;
 using Payroll.Domain.Users;
 
-namespace Payroll.Domain.SalariesGrades
+namespace Payroll.Domain.SalaryGrades
 {
   public static class Events
   {
     public static class V1
     {
-      public class SalaryCreated
+      public class SalaryGradeCreated
       {
         public SalaryGradeId Id { get; set; }
         public BusinessYearId BusinessYear { get; set; }
@@ -17,7 +17,7 @@ namespace Payroll.Domain.SalariesGrades
         public DateTimeOffset CreatedAt { get; set; }
       }
 
-      public class SalaryGrossUpdated
+      public class SalaryGradeGrossUpdated
       {
         public SalaryGradeId Id { get; set; }
         public decimal NewGrossValue { get; set; }
@@ -25,7 +25,7 @@ namespace Payroll.Domain.SalariesGrades
         public DateTimeOffset UpdatedAt { get; set; }
       }
 
-      public class SalaryUpdateFailed
+      public class SalaryGradeUpdateAttemptFailed
       {
         public SalaryGradeId Id { get; set; }
         public string Reason { get; set; }
