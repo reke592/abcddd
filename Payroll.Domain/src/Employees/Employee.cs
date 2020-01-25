@@ -1,5 +1,5 @@
 using System;
-using Payroll.Domain.Salaries;
+using Payroll.Domain.SalariesGrades;
 using Payroll.Domain.Users;
 
 namespace Payroll.Domain.Employees
@@ -49,7 +49,7 @@ namespace Payroll.Domain.Employees
         });
     }
 
-    public void updateBio(BioData bioData, UserId updatedBy, DateTimeOffset updatedAt)
+    public void updateBioData(BioData bioData, UserId updatedBy, DateTimeOffset updatedAt)
     {
       if(this.Owner != updatedBy)
         _updateFailed("not the record owner", bioData, updatedBy, updatedAt);

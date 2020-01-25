@@ -3,7 +3,7 @@ using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Employees;
 using Payroll.Domain.Users;
 
-namespace Payroll.Domain.Salaries
+namespace Payroll.Domain.SalariesGrades
 {
   public static class Events
   {

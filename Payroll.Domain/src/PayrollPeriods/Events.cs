@@ -1,6 +1,7 @@
 using System;
 using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Employees;
+using Payroll.Domain.Shared;
 using Payroll.Domain.Users;
 
 namespace Payroll.Domain.PayrollPeriods
@@ -17,11 +18,20 @@ namespace Payroll.Domain.PayrollPeriods
         public DateTimeOffset CreatedAt { get; set; }
       }
 
+      public class PayrollPeriodApplicableMonthSettled
+      {
+        public PayrollPeriodId Id { get; set; }
+        public LongMonth NewApplicableMonth { get; set; }
+        public UserId SettledBy { get; set; }
+        public DateTimeOffset SettledAt { get; set; }
+      }
+
       public class PayrollPeriodConsigneeIncluded
       {
         public PayrollPeriodId Id { get; set; }
-        public ConsigneePerson Consignee { get; set; }
-        public string ConsigneeAction { get; set; }
+        // public ConsigneePerson Consignee { get; set; }
+        // public string ConsigneeAction { get; set; }
+        public PayrollConsignee Consignee { get; set; }
         public UserId IncludedBy { get; set; }
         public DateTimeOffset IncludedAt { get; set; }
       }
@@ -29,7 +39,8 @@ namespace Payroll.Domain.PayrollPeriods
       public class PayrollPeriodConsigneeRemoved
       {
         public PayrollPeriodId Id { get; set; }
-        public ConsigneePerson Consignee { get; set; }
+        // public ConsigneePerson Consignee { get; set; }
+        public PayrollConsignee Consignee { get; set; }
         public UserId RemovedBy { get; set; }
         public DateTimeOffset RemovedAt { get; set; }
       }
