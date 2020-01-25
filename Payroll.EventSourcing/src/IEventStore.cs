@@ -11,6 +11,8 @@ namespace Payroll.EventSourcing
         // returns the whole event stream related to aggregate
         object[] Get<T>(Guid id) where T : Aggregate;
 
+        bool TryGet<T>(Guid id, out object[] events);
+
         // return all events in stream to project the previous version of an aggregate
         object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1);
 
