@@ -1,8 +1,8 @@
 namespace Payroll.Application
 {
-  public interface IPasswordServiceProvider
+  public interface IEncryptionProvider
   {
-    string CreateHash(char[] plain_text);
-    bool Test(string hash, char[] plain_text);
+    string CreateHash(string plain_text);
+    bool Test(string plain_text, string hash);
   }
 }

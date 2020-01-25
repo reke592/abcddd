@@ -1,5 +1,5 @@
 using Payroll.Domain.Employees;
-using Payroll.Domain.SalariesGrades;
+using Payroll.Domain.SalaryGrades;
 
 namespace Payroll.Application.Employees
 {

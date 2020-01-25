@@ -10,7 +10,7 @@ using Payroll.EventSourcing;
 using Payroll.Domain.Employees;
 using Payroll.Domain.Shared;
 using Payroll.Domain.Deductions;
-using Payroll.Domain.SalariesGrades;
+using Payroll.Domain.SalaryGrades;
 using Payroll.Domain.PayrollPeriods;
 
 namespace Payroll.Application

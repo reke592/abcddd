@@ -8,5 +8,6 @@ namespace Payroll.Application
   {
     void ReadToken(string token, Action<ActiveUserRecord> cb);
     string CreateToken(ActiveUserRecord user);
+    bool IsValidToken(string token);
   }
 }

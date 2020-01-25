@@ -1,5 +1,5 @@
 using Payroll.Domain.BusinessYears;
-using Payroll.Domain.SalariesGrades;
+using Payroll.Domain.SalaryGrades;
 
 namespace Payroll.Application.SalaryGrades
 {
