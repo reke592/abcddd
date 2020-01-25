@@ -27,7 +27,7 @@ namespace Payroll.EventSourcing
         // To get the previous version of projection:
         //   we use the eventName to query for thesame event that happened before
         //   if the result is empty, we simply set the value to the empty representation of that value object
-        void Map<T>(string eventName);
+        ITypeMapper Map<T>(string eventName);
 
         IEnumerable<string> RegisteredKeys { get; }
     }

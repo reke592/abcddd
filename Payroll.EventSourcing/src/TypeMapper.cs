@@ -14,9 +14,10 @@ namespace Payroll.EventSourcing
         private IDictionary<string, Type>  _types = new Dictionary<string, Type>();
         public IEnumerable<string> RegisteredKeys => _types.Keys;
         
-        public void Map<T>(string eventName)
+        public ITypeMapper Map<T>(string eventName)
         {
             _types.Add(eventName, typeof(T));
+            return this;
         }
 
         public Type GetEventType(string eventName) {
