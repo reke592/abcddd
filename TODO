@@ -1,3 +1,11 @@
+create marker interface for errored events for realtime projections
+
+optimize aggregate loading:
+  include aggregate version to commands
+
+fix user claims
+
+-----------------------------------
 CASE: having 2 same micro-service instance running in different event versions.
 TODO: create anti-corruption layer for different event version in aggregate event stream:
   50%   application layer projections
