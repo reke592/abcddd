@@ -1,3 +1,4 @@
+using System;
 using Payroll.Application;
 using Payroll.EventSourcing;
 using Users = Payroll.Domain.Users.Events.V1;
@@ -7,11 +8,12 @@ using Deductions = Payroll.Domain.Deductions.Events.V1;
 using SalaryGrades = Payroll.Domain.SalaryGrades.Events.V1;
 using PayrollPeriods = Payroll.Domain.PayrollPeriods.Events.V1;
 using Payroll.Infrastructure;
-using Payroll.Application.Users.Projections;
-using System;
 using Payroll.Domain.Users;
-using static Payroll.Application.Users.Contracts.V1;
 using Payroll.Application.Employees.Projections;
+using Payroll.Application.Users.Projections;
+using Payroll.Application.BusinessYears.Projections;
+using static Payroll.Application.Users.Contracts.V1;
+using Payroll.Application.SalaryGrades.Projections;
 
 namespace Payroll.Test.UnitTest
 {
@@ -47,6 +49,7 @@ namespace Payroll.Test.UnitTest
         .Map<Employees.EmployeeStatusEmployed>("Employee Employed")
         .Map<Employees.EmployeeStatusSeparated>("Employee Separated")
         .Map<Employees.EmployeeLeaveGranted>("Employee Leave Granted")
+        .Map<Employees.EmployeeLeaveRevoked>("Employee Leave Revoked")
         .Map<Employees.EmployeeLeaveEnded>("Employee Leave Ended")
         .Map<Employees.EmployeeUpdateAttemptFailed>("Employee Update Attempt Failed")
         .Map<Deductions.DeductionCreated>("Deduction Created")
@@ -83,6 +86,8 @@ namespace Payroll.Test.UnitTest
       _projections.Register(new ActiveEmployeesProjection());
       _projections.Register(new SeparatedEmployeesProjection());
       _projections.Register(new EmployeesOnLeaveProjection());
+      _projections.Register(new BusinessYearHistoryProjection());
+      _projections.Register(new SalaryGradeHistoryProjection());
 
       // hook projection updates
       _eventStore.AfterDBReload(_projections.UpdateProjections);
