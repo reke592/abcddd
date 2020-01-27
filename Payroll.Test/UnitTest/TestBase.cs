@@ -9,8 +9,9 @@ using PayrollPeriods = Payroll.Domain.PayrollPeriods.Events.V1;
 using Payroll.Infrastructure;
 using Payroll.Application.Users.Projections;
 using System;
-using static Payroll.Domain.Users.Events.V1;
 using Payroll.Domain.Users;
+using static Payroll.Application.Users.Contracts.V1;
+using Payroll.Application.Employees.Projections;
 
 namespace Payroll.Test.UnitTest
 {
@@ -25,6 +26,7 @@ namespace Payroll.Test.UnitTest
     protected AuthService _auth;
     protected IAccessTokenProvider _tokenProvider;
     protected Guid _rootId;
+    protected string _accessTokenStub;
 
     public TestBase()
     {
@@ -41,7 +43,11 @@ namespace Payroll.Test.UnitTest
         .Map<Employees.EmployeeCreated>("Employee Created")
         .Map<Employees.EmployeeBioDataUpdated>("Employee BioData Updated")
         .Map<Employees.EmployeeSalaryGradeUpdated>("Employee SalaryGrade Updated")
-        .Map<Employees.EmployeeStatusChanged>("Employee Status Changed")
+        // .Map<Employees.EmployeeStatusChanged>("Employee Status Changed")
+        .Map<Employees.EmployeeStatusEmployed>("Employee Employed")
+        .Map<Employees.EmployeeStatusSeparated>("Employee Separated")
+        .Map<Employees.EmployeeLeaveGranted>("Employee Leave Granted")
+        .Map<Employees.EmployeeLeaveEnded>("Employee Leave Ended")
         .Map<Employees.EmployeeUpdateAttemptFailed>("Employee Update Attempt Failed")
         .Map<Deductions.DeductionCreated>("Deduction Created")
         .Map<Deductions.DeductionAmountSettled>("Deduction Amount Settled")
@@ -72,15 +78,18 @@ namespace Payroll.Test.UnitTest
       _auth = new AuthService(_eventStore, _tokenProvider, _snapshots, _enc);
 
       // register projections
-      _projections.Register(new ActiveUserProjection());
+      _projections.Register(new ActiveUsersProjection());
       _projections.Register(new PassHashProjection());
+      _projections.Register(new ActiveEmployeesProjection());
+      _projections.Register(new SeparatedEmployeesProjection());
+      _projections.Register(new EmployeesOnLeaveProjection());
 
       // hook projection updates
       _eventStore.AfterDBReload(_projections.UpdateProjections);
       _eventStore.AfterSave(_projections.UpdateProjections);
 
       _rootId = Guid.NewGuid();
-      var root_event = new UserCreated {
+      var root_event = new Users.UserCreated {
         Id = _rootId,
         Username = "test",
         PassHash = "$2a$11$VQiq2RnPyec5V9D3bGX1CufYgOK8jtKwZwD0nHqkQAQKQ7kWKIPYK",
@@ -90,6 +99,11 @@ namespace Payroll.Test.UnitTest
       var stubRoot = new User();
       stubRoot.Apply(root_event);
       _eventStore.Save(stubRoot);
+
+      _accessTokenStub = _auth.Handle(new PasswordLogin {
+        Username = "test",
+        Password = "p4ssw0d"
+      });
     }
 
     public void Dispose() {
