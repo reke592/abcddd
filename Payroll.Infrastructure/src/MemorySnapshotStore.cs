@@ -76,5 +76,13 @@ namespace Payroll.Infrastructure
       }
       return default(ReadOnlyCollection<T>);
     }
+
+    public void NukeUpdate<T>(Action<T> update) {
+      if(_store.TryGetValue(typeof(T), out var documents))
+      {
+        foreach(var document in documents.Values)
+          update((T) document);
+      }
+    }
   }
 }
