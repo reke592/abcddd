@@ -53,7 +53,7 @@ namespace Payroll.Application
         throw new UserLoginException();
 
       if(_enc.Test(cmd.Password, user.PassHash) == true)
-        return _tokenService.CreateToken(_snapshots.Get<ActiveUserRecord>(user.Id));
+        return _tokenService.CreateToken(_snapshots.Get<ActiveUsersProjection.ActiveUserRecord>(user.Id));
       else
         throw new UserLoginException();
     }

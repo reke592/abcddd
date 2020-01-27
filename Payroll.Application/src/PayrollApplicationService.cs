@@ -43,7 +43,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<BusinessYear>(cmd.BusinessYearId, out var events))
         {
           var record = new BusinessYear();
-          record.Apply(events);
+          record.Load(events);
           record.End(user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -56,7 +56,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<BusinessYear>(cmd.BusinessYearId, out var events))
         {
           var record = new BusinessYear();
-          record.Apply(events);
+          record.Load(events);
           record.addConsignee(ConsigneePerson.Create(cmd.Name, cmd.Position), user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -71,7 +71,7 @@ namespace Payroll.Application
           var record = new BusinessYear();
           var old = ConsigneePerson.Create(cmd.OldName, cmd.OldPosition);
           var new_ = ConsigneePerson.Create(cmd.NewName, cmd.NewPosition);
-          record.Apply(events);
+          record.Load(events);
           record.updateConsignee(old, new_, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -92,14 +92,79 @@ namespace Payroll.Application
       });
     }
 
-    public void Handle(EmployeeCommands.ChangeStatus cmd)
+    // public void Handle(EmployeeCommands.ChangeStatus cmd)
+    // {
+    //   _tokenService.ReadToken(cmd.AccessToken, user => {
+    //     if(_eventStore.TryGet<Employee>(cmd.EmplyoeeId, out var events))
+    //     {
+    //       var record = new Employee();
+    //       record.Load(events);
+    //       record.changeStatus(cmd.NewStatus, user.Id, DateTimeOffset.Now);
+    //       _eventStore.Save(record);
+    //     }
+    //   });
+    // }
+
+    public void Handle(EmployeeCommands.EmployEmployee cmd)
     {
       _tokenService.ReadToken(cmd.AccessToken, user => {
-        if(_eventStore.TryGet<Employee>(cmd.EmplyoeeId, out var events))
+        if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
         {
           var record = new Employee();
-          record.Apply(events);
-          record.changeStatus(cmd.NewStatus, user.Id, DateTimeOffset.Now);
+          record.Load(events);
+          record.markEmployed(user.Id, DateTimeOffset.Now);
+          _eventStore.Save(record);
+        }
+      });
+    }
+
+    public void Handle(EmployeeCommands.SeparateEmployee cmd)
+    {
+      _tokenService.ReadToken(cmd.AccessToken, user => {
+        if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
+        {
+          var record = new Employee();
+          record.Load(events);
+          record.markSeparated(user.Id, DateTimeOffset.Now);
+          _eventStore.Save(record);
+        }
+      });
+    }
+
+    public void Handle(EmployeeCommands.GrantLeave cmd)
+    {
+      _tokenService.ReadToken(cmd.AccessToken, user => {
+        if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
+        {
+          var record = new Employee();
+          record.Load(events);
+          record.grantLeave(cmd.Start, cmd.Return, user.Id, DateTimeOffset.Now);
+          _eventStore.Save(record);
+        }
+      });
+    }
+
+    public void Handle(EmployeeCommands.RevokeLeave cmd)
+    {
+      _tokenService.ReadToken(cmd.AccessToken, user => {
+        if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
+        {
+          var record = new Employee();
+          record.Load(events);
+          record.revokeLeave(user.Id, DateTimeOffset.Now);
+          _eventStore.Save(record);
+        }
+      });
+    }
+
+      public void Handle(EmployeeCommands.EndLeave cmd)
+    {
+      _tokenService.ReadToken(cmd.AccessToken, user => {
+        if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
+        {
+          var record = new Employee();
+          record.Load(events);
+          record.endLeave(user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -111,7 +176,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<Employee>(cmd.EmployeeId, out var events))
         {
           var record = new Employee();
-          record.Apply(events);
+          record.Load(events);
           record.updateSalaryGrade(cmd.SalaryGradeId, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -138,7 +203,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<Deduction>(cmd.DeductionId, out var events))
         {
           var record = new Deduction();
-          record.Apply(events);
+          record.Load(events);
           record.createPayment(cmd.Payment, cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -151,7 +216,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<Deduction>(cmd.DeductionId, out var events))
         {
           var record = new Deduction();
-          record.Apply(events);
+          record.Load(events);
           record.StopDeduction(cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -177,7 +242,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<SalaryGrade>(cmd.SalaryGradeId, out var events))
         {
           var record = new SalaryGrade();
-          record.Apply(events);
+          record.Load(events);
           _eventStore.Save(record);
         }
       });
@@ -203,7 +268,7 @@ namespace Payroll.Application
         {
           var record = new PayrollPeriod();
           var consignee = ConsigneePerson.Create(cmd.Name, cmd.Position);
-          record.Apply(events);
+          record.Load(events);
           record.addConsignee(consignee, cmd.ConsigneeAction, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -217,7 +282,7 @@ namespace Payroll.Application
         {
           var record = new PayrollPeriod();
           var consignee = PayrollConsignee.Create(cmd.Name, cmd.Position, cmd.ConsigneeAction);
-          record.Apply(events);
+          record.Load(events);
           record.removeConsignee(consignee, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -230,7 +295,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<PayrollPeriod>(cmd.PayrollPeriodId, out var events))
         {
           var record = new PayrollPeriod();
-          record.Apply(events);
+          record.Load(events);
           foreach(var employee in cmd.EmployeeIds)
           {
             record.includeEmployee(employee, user.Id, DateTimeOffset.Now);
@@ -246,7 +311,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<PayrollPeriod>(cmd.PayrollPeriodId, out var events))
         {
           var record = new PayrollPeriod();
-          record.Apply(events);
+          record.Load(events);
           foreach(var employee in cmd.EmployeeIds)
           {
             record.excludeEmployee(employee, user.Id, DateTimeOffset.Now);
@@ -264,7 +329,7 @@ namespace Payroll.Application
         {
           var record = new PayrollPeriod();
           var adjustment = AdjustedDeductionPayment.Create(cmd.EmployeeId, cmd.DeductionId, cmd.AdjustedAmount);
-          record.Apply(events);
+          record.Load(events);
           record.adjustDeductionPayment(cmd.EmployeeId, adjustment, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
@@ -277,7 +342,7 @@ namespace Payroll.Application
         if(_eventStore.TryGet<PayrollPeriod>(cmd.PayrollPeriodId, out var events))
         {
           var record = new PayrollPeriod();
-          record.Apply(events);
+          record.Load(events);
           record.giveOutSalary(cmd.EmployeeId, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }

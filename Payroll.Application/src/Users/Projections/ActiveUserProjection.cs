@@ -4,16 +4,16 @@ using Payroll.EventSourcing;
 
 namespace Payroll.Application.Users.Projections
 {
-  public class ActiveUserRecord
+  public class ActiveUsersProjection : IProjection
   {
-    public UserId Id { get; internal set; }
-    public string Username { get; internal set; }
-    public ISet<string> Claims { get; internal set; } = new HashSet<string>();
-    public int Version { get; internal set; } = 0;
-  }
-
-  public class ActiveUserProjection : IProjection
-  {
+    public class ActiveUserRecord
+    {
+      public UserId Id { get; internal set; }
+      public string Username { get; internal set; }
+      public ISet<string> Claims { get; internal set; } = new HashSet<string>();
+      public int Version { get; internal set; } = 0;
+    }
+    
     public void Handle(object e, ISnapshotStore snapshots) {
       ActiveUserRecord doc;
       switch(e)
