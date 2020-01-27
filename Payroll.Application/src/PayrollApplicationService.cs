@@ -31,9 +31,21 @@ namespace Payroll.Application
     public void Handle(BusinessYearCommands.CreateBusinessYear cmd)
     {
       _tokenService.ReadToken(cmd.AccessToken, user => {
-        var record = BusinessYear.Create(Guid.NewGuid(), user.Id, DateTimeOffset.Now);
-        record.Start(cmd.ApplicableYear, user.Id, DateTimeOffset.Now);
+        var record = BusinessYear.Create(Guid.NewGuid(), cmd.ApplicableYear, user.Id, DateTimeOffset.Now);
         _eventStore.Save(record);
+      });
+    }
+
+    public void Handle(BusinessYearCommands.StartBusinessYear cmd)
+    {
+      _tokenService.ReadToken(cmd.AccessToken, user => {
+        if(_eventStore.TryGet<BusinessYear>(cmd.BusinessYearId, out var events))
+        {
+          var record = new BusinessYear();
+          record.Load(events);
+          record.Start(user.Id, DateTimeOffset.Now);
+          _eventStore.Save(record);
+        }
       });
     }
 
@@ -230,8 +242,8 @@ namespace Payroll.Application
     public void Handle(SalaryGradeCommands.CreateSalaryGrade cmd)
     {
       _tokenService.ReadToken(cmd.AccessToken, user => {
-        var record = SalaryGrade.Create(Guid.NewGuid(), cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
-        record.updateGross(cmd.GrossValue, user.Id, DateTimeOffset.Now);
+        var record = SalaryGrade.Create(Guid.NewGuid(), cmd.BusinessYearId, cmd.GrossValue, user.Id, DateTimeOffset.Now);
+        // record.updateGross(cmd.GrossValue, user.Id, DateTimeOffset.Now);
         _eventStore.Save(record);
       });
     }
@@ -243,6 +255,7 @@ namespace Payroll.Application
         {
           var record = new SalaryGrade();
           record.Load(events);
+          record.updateGross(cmd.NewGrossValue, user.Id, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

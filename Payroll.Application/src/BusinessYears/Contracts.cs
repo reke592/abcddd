@@ -30,6 +30,12 @@ namespace Payroll.Application.BusinessYears
         public string NewPosition { get; set; }
       }
 
+      public class StartBusinessYear
+      {
+        public string AccessToken { get; set; }
+        public BusinessYearId BusinessYearId { get; set; }
+      }
+
       public class EndBusinessYear
       {
         public string AccessToken { get; set; }

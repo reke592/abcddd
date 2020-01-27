@@ -1,6 +1,7 @@
 using Payroll.Domain.Employees;
-using Payroll.Domain.Shared;
 using Payroll.EventSourcing;
+using static Payroll.Application.SalaryGrades.Projections.SalaryGradeHistoryProjection;
+using BusinessYearEvents = Payroll.Domain.BusinessYears.Events.V1;
 
 namespace Payroll.Application.Employees.Projections
 {
@@ -10,6 +11,8 @@ namespace Payroll.Application.Employees.Projections
     {
       public EmployeeId Id { get; internal set; }
       public BioData BioData { get; internal set; }
+      public int BusinessYear { get; internal set; }
+      public decimal GrossPay { get; internal set; } = 0;
       public EmployeeStatus Status { get; internal set; } = EmployeeStatus.EMPLOYED;
     }
     
@@ -30,6 +33,11 @@ namespace Payroll.Application.Employees.Projections
 
         case Events.V1.EmployeeStatusSeparated x:
           snapshots.Delete<ActiveEmployeeRecord>(x.Id);
+          break;
+        
+        case Events.V1.EmployeeSalaryGradeUpdated x:
+          var gross = snapshots.Get<SalaryGradeRecord>(x.SalaryGradeId).Gross;
+          snapshots.UpdateIfFound<ActiveEmployeeRecord>(x.Id, r => r.GrossPay = gross);
           break;
       }
     }

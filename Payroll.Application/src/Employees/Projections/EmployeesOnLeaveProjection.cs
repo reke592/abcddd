@@ -36,6 +36,10 @@ namespace Payroll.Application.Employees.Projections
         case Events.V1.EmployeeLeaveEnded x:
           snapshots.Delete<OnLeaveEmployeeRecord>(x.Id);
           break;
+
+        case Events.V1.EmployeeLeaveRevoked x:
+          snapshots.Delete<OnLeaveEmployeeRecord>(x.Id);
+          break;
       }
     }
   }

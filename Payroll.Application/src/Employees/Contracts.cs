@@ -67,6 +67,7 @@ namespace Payroll.Application.Employees
         public EmployeeId EmployeeId { get; set; }
       }
 
+      // internal command 
       public class EndLeave
       {
         public string AccessToken { get; set; }
