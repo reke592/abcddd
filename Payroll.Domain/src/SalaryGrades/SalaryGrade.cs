@@ -17,6 +17,7 @@ namespace Payroll.Domain.SalaryGrades
           Id = x.Id;
           Owner = x.CreatedBy;
           BusinessYear = x.BusinessYear;
+          Gross = x.GrossValue;
           break;
         
         case Events.V1.SalaryGradeGrossUpdated x:
@@ -25,13 +26,14 @@ namespace Payroll.Domain.SalaryGrades
       }
     }
 
-    public static SalaryGrade Create(SalaryGradeId id, BusinessYearId currentYear, UserId createdBy, DateTimeOffset createdAt)
+    public static SalaryGrade Create(SalaryGradeId id, BusinessYearId currentYear, decimal grossValue, UserId createdBy, DateTimeOffset createdAt)
     {
       var record = new SalaryGrade();
       record.Apply(new Events.V1.SalaryGradeCreated
       {
         Id = id,
         BusinessYear = currentYear,
+        GrossValue = grossValue,
         CreatedBy = createdBy,
         CreatedAt = createdAt
       });
@@ -49,7 +51,6 @@ namespace Payroll.Domain.SalaryGrades
           UpdatedBy = updatedBy,
           UpdatedAt = updatedAt
         });
-        
     }
 
     private void _updateFailed(string reason, object value, UserId attemptedBy, DateTimeOffset attemptedAt)

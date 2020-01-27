@@ -44,8 +44,43 @@ namespace Payroll.Domain.Shared {
             }
         }
 
+        /// <summary>
+        /// compare b to a, 0 if equal, 1 if greater, -1 if less than
+        /// </summary>
+        public static int Compare(Date a, Date b)
+        {
+            // current
+            if(a.Equals(b)) return 0;
+            // past
+            if(b.Year == a.Year && b.Month == a.Month && b.Day < a.Day) return -1;
+            if(b.Year == a.Year && b.Month < a.Month) return -1;
+            if(b.Year < a.Year) return -1;
+            // future
+            return 1;
+        }
+
+        public static int ComapreNow(Date other)
+        {
+            return Date.Compare(Date.Now, other);
+        }
+
+        public bool isPast()
+        {
+            return Date.ComapreNow(this) == -1;
+        }
+
+        public bool isFuture()
+        {
+            return Date.ComapreNow(this) == 1;
+        }
+
+        public bool isToday()
+        {
+            return Date.ComapreNow(this) == 0;
+        }
+
         public override string ToString() {
-            return string.Format($"{Year}-{Month}-{Day}");
+            return string.Format($"{Year}/{Month}/{Day}");
         }
 
         protected override IEnumerable<object> GetAtomicValues()

@@ -13,5 +13,6 @@ namespace Payroll.Domain.Deductions
 
     public static implicit operator DeductionId(Guid value) => new DeductionId(value);
     public static implicit operator Guid(DeductionId self) => self._value;
+    public override string ToString() => _value.ToString();
   }
 }

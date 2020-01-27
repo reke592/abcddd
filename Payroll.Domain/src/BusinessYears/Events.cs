@@ -10,6 +10,7 @@ namespace Payroll.Domain.BusinessYears
       public class BusinessYearCreated
       {
         public BusinessYearId Id { get; set; }
+        public int ApplicableYear { get; set; }
         public UserId CreatedBy { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
       }
@@ -17,7 +18,7 @@ namespace Payroll.Domain.BusinessYears
       public class BusinessYearStarted
       {
         public BusinessYearId Id { get; set; }
-        public int ApplicableYear { get; set; }
+        public int Year { get; set; }
         public UserId StartedBy { get; set; }
         public DateTimeOffset StartedAt { get; set; }
       }
@@ -25,6 +26,7 @@ namespace Payroll.Domain.BusinessYears
       public class BusinessYearEnded
       {
         public BusinessYearId Id { get; set; }
+        public int Year { get; set; }
         public UserId EndedBy { get; set; }
         public DateTimeOffset EndedAt { get; set; }
       }

@@ -76,7 +76,7 @@ namespace Payroll.Domain.Employees
       public class EmployeeSalaryGradeUpdated
       {
         public EmployeeId Id { get; set; }
-        public SalaryGradeId SalaryGrade { get; set; }
+        public SalaryGradeId SalaryGradeId { get; set; }
         public UserId UpdatedBy { get; set; }
         public DateTimeOffset UpdatedAt { get; set; }
       }

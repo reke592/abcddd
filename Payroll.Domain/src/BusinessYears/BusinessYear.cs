@@ -19,41 +19,51 @@ namespace Payroll.Domain.BusinessYears
       {
         case Events.V1.BusinessYearCreated x:
           Id = x.Id;
+          ApplicableYear = x.ApplicableYear;
           Owner = x.CreatedBy;
           break;
 
         case Events.V1.BusinessYearStarted x:
           Started = true;
-          ApplicableYear = x.ApplicableYear;
           break;
 
         case Events.V1.BusinessYearEnded x:
           Ended = true;
           break;
+        
+        case Events.V1.BusinessYearConsigneeCreated x:
+          _consigneeList.Add(x.Consignee);
+          break;
+        
+        case Events.V1.BusinessYearConsigneeUpdated x:
+          _consigneeList.Remove(x.OldValue);
+          _consigneeList.Add(x.NewValue);
+          break;
       }
     }
 
-    public static BusinessYear Create(BusinessYearId id, UserId createdBy, DateTimeOffset createdAt)
+    public static BusinessYear Create(BusinessYearId id, int appYear, UserId createdBy, DateTimeOffset createdAt)
     {
       var record = new BusinessYear();
       record.Apply(new Events.V1.BusinessYearCreated{
         Id = id,
+        ApplicableYear = appYear,
         CreatedBy = createdBy,
         CreatedAt = createdAt
       });
       return record;
     }
 
-    public void Start(int year, UserId startedBy, DateTimeOffset startedAt)
+    public void Start(UserId startedBy, DateTimeOffset startedAt)
     {
       if(Ended)
-        _updateFailed("can't start business year. already ended", year, startedBy, startedAt);
+        _updateFailed("can't start business year. already ended", this.ApplicableYear, startedBy, startedAt);
       else if(Started)
-        _updateFailed("can't start business year. already started", year, startedBy, startedAt);
+        _updateFailed("can't start business year. already started", this.ApplicableYear, startedBy, startedAt);
       else
         this.Apply(new Events.V1.BusinessYearStarted {
           Id = this.Id,
-          ApplicableYear = year,
+          Year = this.ApplicableYear,
           StartedBy = startedBy,
           StartedAt = startedAt
         });
@@ -68,6 +78,7 @@ namespace Payroll.Domain.BusinessYears
       else
         this.Apply(new Events.V1.BusinessYearEnded {
           Id = this.Id,
+          Year = this.ApplicableYear,
           EndedBy = endedBy,
           EndedAt = endedAt
         });
@@ -90,6 +101,8 @@ namespace Payroll.Domain.BusinessYears
     {
       if(!_consigneeList.Contains(record))
         _updateFailed("can't replace consignee. not exist", record, updatedBy, updatedAt);
+      else if(record.Equals(replacement))
+        return; // ignore
       else
         this.Apply(new Events.V1.BusinessYearConsigneeUpdated {
           Id = this.Id,

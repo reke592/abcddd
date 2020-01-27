@@ -47,6 +47,10 @@ namespace Payroll.Domain.Employees
           Status = EmployeeStatus.EMPLOYED;
           CurrentLeave = null;
           break;
+        
+        case Events.V1.EmployeeSalaryGradeUpdated x:
+          SalaryGrade = x.SalaryGradeId;
+          break;
       }
     }
 
@@ -102,15 +106,20 @@ namespace Payroll.Domain.Employees
 
     public void grantLeave(Date start, Date end, UserId grantedBy, DateTimeOffset grantedAt)
     {
+      var request = EmployeeLeaveRequest.Create(start, end);
       if(this.Owner != grantedBy)
-        _updateFailed("can't grant leave. not the record owner", new { start, end }, grantedBy, grantedAt);
+        _updateFailed("can't grant leave. not the record owner", request, grantedBy, grantedAt);
+      else if(Status == EmployeeStatus.SEPARATED)
+        _updateFailed("can't grant leave. employee is separated", request, grantedBy, grantedAt);
       else if(CurrentLeave != null)
-        _updateFailed("can't grant leave. employee has active leave", CurrentLeave, grantedBy, grantedAt);
+        _updateFailed("can't grant leave. employee has active leave", request, grantedBy, grantedAt);
+      else if(start.isPast() || end.isPast() || Date.Compare(start, end) < 0)
+        _updateFailed("can't grant leave. invalid request", request, grantedBy, grantedAt);
       else
         this.Apply(new Events.V1.EmployeeLeaveGranted {
           Id = this.Id,
           BioData = this.BioData,
-          LeaveRequest = EmployeeLeaveRequest.Create(start, end),
+          LeaveRequest = request,
           GrantedBy = grantedBy,
           GrantedAt = grantedAt
         });
@@ -163,7 +172,7 @@ namespace Payroll.Domain.Employees
     {
       this.Apply(new Events.V1.EmployeeSalaryGradeUpdated {
         Id = this.Id,
-        SalaryGrade = salaryGrade,
+        SalaryGradeId = salaryGrade,
         UpdatedBy = updatedBy,
         UpdatedAt = updatedAt
       });

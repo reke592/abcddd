@@ -13,6 +13,7 @@ namespace Payroll.Domain.SalaryGrades
       {
         public SalaryGradeId Id { get; set; }
         public BusinessYearId BusinessYear { get; set; }
+        public decimal GrossValue { get; set; }
         public UserId CreatedBy { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
       }

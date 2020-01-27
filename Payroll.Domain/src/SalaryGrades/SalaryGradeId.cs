@@ -13,5 +13,6 @@ namespace Payroll.Domain.SalaryGrades
 
     public static implicit operator SalaryGradeId(Guid value) => new SalaryGradeId(value);
     public static implicit operator Guid(SalaryGradeId self) => self._value;
+    public override string ToString() => _value.ToString();
   }
 }
