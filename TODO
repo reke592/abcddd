@@ -6,6 +6,11 @@ optimize aggregate loading:
 complete application layer projections
   active record setters MUST be internal
 
+create test
+  employees:
+    on leave
+    separated
+
 -----------------------------------
 CASE: having 2 same micro-service instance running in different event versions.
 TODO: create anti-corruption layer for different event version in aggregate event stream:
