@@ -2,6 +2,7 @@ using System;
 using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
+using Newtonsoft.Json;
 using Payroll.Application;
 using Payroll.Application.Users.Projections;
 using Payroll.EventSourcing;
@@ -19,7 +20,7 @@ namespace Payroll.Infrastructure
       _snapshots = snapshots;
     }
 
-    public string CreateToken(ActiveUserRecord user) {
+    public string CreateToken(ActiveUsersProjection.ActiveUserRecord user) {
       var token = new JwtBuilder()
         .WithAlgorithm(new HMACSHA256Algorithm())
         .WithSecret(_secret.ToString());
@@ -31,21 +32,18 @@ namespace Payroll.Infrastructure
       return token.Build();
     }
 
-    public void ReadToken(string token, Action<ActiveUserRecord> cb) {
+    public void ReadToken(string token, Action<ActiveUsersProjection.ActiveUserRecord> cb) {
       try{
         var json = new JwtBuilder()
           .WithSecret(_secret.ToString())
           .MustVerifySignature()
           .Decode(token);
-        var record = System.Text.Json.JsonSerializer.Deserialize(json, typeof(object));
-        var type = record.GetType();
-        var tid = type.GetProperty("tid")?.GetValue(record);
-        var version = type.GetProperty("verison")?.GetValue(record);
-        if(tid is null || version is null)
-          return;
+        var record = JsonConvert.DeserializeAnonymousType(json, new { jti = Guid.Empty, version = 0 });
+        if(record.jti == Guid.Empty)
+          throw new Exception("invalid token data");
         else
         {
-          var user = _snapshots.Get<ActiveUserRecord>(Guid.Parse(tid.ToString()));
+          var user = _snapshots.Get<ActiveUsersProjection.ActiveUserRecord>(record.jti);
           if(user != null)
             cb(user);
         }

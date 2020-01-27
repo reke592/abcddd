@@ -96,7 +96,15 @@ namespace Payroll.Infrastructure
     }
 
     public bool TryGet<T>(Guid id, out object[] events) {
-      throw new NotImplementedException();
+      if(_store.ContainsKey(id) == false) {
+        events = null;
+        return false;
+      }
+      else
+      {
+        events = _store[id].Select(x => x.Metadata).ToArray();
+        return true;
+      }
     }
   }
 }
