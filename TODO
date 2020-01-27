@@ -8,8 +8,56 @@ complete application layer projections
 
 create test
   employees:
+    + create
+    + employ
+    + separate
+    + grantLeave
+    + revokeLeave
+    + endLeave
+    + update salary grade
+  salaryGrade:
+    + create
+    + update
+  businessYear:
+    + create
+    + createConsignee
+    + updateConsignee
+    start
+    end
+  deductions:
+    create
+    create payment
+    stop
+  payroll:
+    create
+    add payroll consignee
+    remove payroll consignee
+    include employee
+    exclude employee
+    adjust deduction
+    dispense salary
+
+PS: all record with (history) means golden copies
+projections:
+  employees:
+    active
     on leave
     separated
+    registered employees (history) = a registry of all created employee stream
+    granted leave requests (history) = request granted and consumed
+    revoked leave requests (history) = request granted then revoked
+  payroll:
+    current payroll
+    employee salaries (history)
+    previous payrolls (history)
+  deductions:
+    employee non-mandatory deductions
+    employee mandatory deductions (history)
+    completed deductions (history)
+  business year:
+    business year with consignee (history)
+    annual payroll summary (history)
+
 
 -----------------------------------
 CASE: having 2 same micro-service instance running in different event versions.
