@@ -19,5 +19,8 @@ namespace Payroll.EventSourcing
 
         // returns all projection document
         IReadOnlyCollection<T> All<T>();
+
+        // apply same updates to all record, DO NOT use in golded copies
+        void NukeUpdate<T>(Action<T> update);
     }
 }
