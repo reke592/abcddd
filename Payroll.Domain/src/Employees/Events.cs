@@ -23,12 +23,54 @@ namespace Payroll.Domain.Employees
         public UserId UpdatedBy { get; set; }
       }
 
-      public class EmployeeStatusChanged
+      // public class EmployeeStatusChanged
+      // {
+      //   public EmployeeId Id { get; set; }
+      //   public EmployeeStatus NewStatus { get; set; }
+      //   public UserId ChangedBy { get; set; }
+      //   public DateTimeOffset ChangedAt { get; set; }
+      // }
+
+      public class EmployeeStatusEmployed
       {
         public EmployeeId Id { get; set; }
-        public EmployeeStatus NewStatus { get; set; }
-        public UserId ChangedBy { get; set; }
-        public DateTimeOffset ChangedAt { get; set; }
+        public BioData BioData { get; set; }
+        public UserId SettledBy { get; set; }
+        public DateTimeOffset SettledAt { get; set; }
+      }
+
+      public class EmployeeStatusSeparated
+      {
+        public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
+        public UserId SettledBy { get; set; }
+        public DateTimeOffset SettledAt { get; set; }
+      }
+
+      public class EmployeeLeaveGranted
+      {
+        public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
+        public EmployeeLeaveRequest LeaveRequest { get; set; }
+        public UserId GrantedBy { get; set; }
+        public DateTimeOffset GrantedAt { get; set; }
+      }
+
+      public class EmployeeLeaveEnded
+      {
+        public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
+        public EmployeeLeaveRequest EndedLeaveRequest { get; set; }
+        public UserId EndedBy { get; set; }
+        public DateTimeOffset EndedAt { get; set; }
+      }
+
+      public class EmployeeLeaveRevoked
+      {
+        public EmployeeId Id { get; set; }
+        public EmployeeLeaveRequest RevokedLeaveRequest { get; set; }
+        public UserId RevokedBy { get; set; }
+        public DateTimeOffset RevokedAt { get; set; }
       }
 
       public class EmployeeSalaryGradeUpdated
