@@ -55,6 +55,7 @@ projections:
     employee mandatory deductions (history)
     completed deductions (history)
   business year:
+    current businessYear  -- we store the latest created Id in memory
     business year with consignee (history)
     annual payroll summary (history)
 
