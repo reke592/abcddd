@@ -17,7 +17,7 @@ namespace Payroll.Test.UnitTest.Application
         ApplicableYear = year
       });
 
-      var record = _snapshots.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var record = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
       return record;
     }
 
@@ -31,7 +31,7 @@ namespace Payroll.Test.UnitTest.Application
         GrossValue = 10000
       });
 
-      var actual = _snapshots.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
+      var actual = _cache.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
       Assert.Equal(10000, actual.Gross);
     }
 
@@ -45,7 +45,7 @@ namespace Payroll.Test.UnitTest.Application
         GrossValue = 10000
       });
 
-      var record = _snapshots.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
+      var record = _cache.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
       
       _app.Handle(new SalaryGradeCommands.UpdateSalaryGrade {
         AccessToken = _accessTokenStub,
@@ -53,7 +53,7 @@ namespace Payroll.Test.UnitTest.Application
         NewGrossValue = 15000
       });
 
-      var actual = _snapshots.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
+      var actual = _cache.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
 
       Assert.Equal(15000, actual.Gross);
     }

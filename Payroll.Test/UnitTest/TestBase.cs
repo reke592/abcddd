@@ -14,14 +14,16 @@ using Payroll.Application.Users.Projections;
 using Payroll.Application.BusinessYears.Projections;
 using static Payroll.Application.Users.Contracts.V1;
 using Payroll.Application.SalaryGrades.Projections;
+using Payroll.EventSourcing.Serialization;
 
 namespace Payroll.Test.UnitTest
 {
   public abstract class TestBase : IDisposable
   {
     protected ITypeMapper _typeMapper;
+    protected IYAMLSerializer _serializer;
     protected IEventStore _eventStore;
-    protected ISnapshotStore _snapshots;
+    protected ICacheStore _cache;
     protected IProjectionManager _projections;
     protected IEncryptionProvider _enc;
     protected PayrollApplicationService _app;
@@ -71,14 +73,15 @@ namespace Payroll.Test.UnitTest
         .Map<PayrollPeriods.PayrollPeriodEmployeeSalaryReceived>("PayrollPeriod Employee Salary Received")
         .Map<PayrollPeriods.PayrollPeriodUpdateAttemptFailed>("PayrollPeriod Update Attempt Failed");
       
+      _serializer = new YAMLSerializer(_typeMapper);
       // initialize
-      _eventStore = new MemoryEventStore(_typeMapper);
-      _snapshots = new MemorySnapshotStore();
-      _projections = new ProjectionManager(_snapshots);
-      _tokenProvider = new TokenProvider("some secret", _snapshots);
+      _eventStore = new MemoryEventStore(_typeMapper, _serializer);
+      _cache = new MemoryCacheStore();
+      _projections = new ProjectionManager(_cache);
+      _tokenProvider = new TokenProvider("some secret", _cache);
       _enc = new BCryptEncryptionProvider();
-      _app = new PayrollApplicationService(_tokenProvider, _eventStore);
-      _auth = new AuthService(_eventStore, _tokenProvider, _snapshots, _enc);
+      _app = new PayrollApplicationService(_tokenProvider, _eventStore, _cache);
+      _auth = new AuthService(_eventStore, _tokenProvider, _cache, _enc);
 
       // register projections
       _projections.Register(new ActiveUsersProjection());
@@ -114,7 +117,7 @@ namespace Payroll.Test.UnitTest
     public void Dispose() {
       _typeMapper = null;
       _eventStore = null;
-      _snapshots = null;
+      _cache = null;
       _projections = null;
       _enc = null;
       _app = null;

@@ -9,8 +9,8 @@ namespace Payroll.Test.UnitTest.Infrastructure
     [Fact]
     public void CanCreateToken()
     {
-      var _provider = new TokenProvider("some secret", _snapshots);
-      var record = _snapshots.Get<ActiveUsersProjection.ActiveUserRecord>(_rootId);
+      var _provider = new TokenProvider("some secret", _cache);
+      var record = _cache.Get<ActiveUsersProjection.ActiveUserRecord>(_rootId);
       var actual = _provider.CreateToken(record);
       Assert.True(_provider.IsValidToken(actual));
     }
@@ -18,7 +18,7 @@ namespace Payroll.Test.UnitTest.Infrastructure
     [Fact]
     public void CanReadToken()
     {
-      var active = _snapshots.Get<ActiveUsersProjection.ActiveUserRecord>(_rootId);
+      var active = _cache.Get<ActiveUsersProjection.ActiveUserRecord>(_rootId);
       _tokenProvider.ReadToken(_accessTokenStub, user => {
         Assert.Equal("test", user.Username);
         return;

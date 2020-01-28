@@ -1,4 +1,5 @@
 using System;
+using Payroll.Domain.Users;
 using Xunit;
 
 namespace Payroll.Test
@@ -8,7 +9,7 @@ namespace Payroll.Test
         [Fact]
         public void Test1()
         {
-
+            var x = new UserId(Guid.NewGuid()).ToString();
         }
     }
 }

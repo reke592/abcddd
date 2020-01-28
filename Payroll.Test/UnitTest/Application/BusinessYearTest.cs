@@ -16,7 +16,7 @@ namespace Payroll.Test.UnitTest.Application
         ApplicableYear = 2020
       });
 
-      var actual = _snapshots.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var actual = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
 
       Assert.Equal(2020, actual.Year);
     }
@@ -29,7 +29,7 @@ namespace Payroll.Test.UnitTest.Application
         ApplicableYear = 2020
       });
 
-      var yearStub = _snapshots.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var yearStub = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
       var consignee = ConsigneePerson.Create("camilla dela torre", "finance officer");
       _app.Handle(new BusinessYearCommands.CreateConsignee {
         AccessToken = _accessTokenStub,
@@ -38,7 +38,7 @@ namespace Payroll.Test.UnitTest.Application
         BusinessYearId = yearStub.Id
       });
 
-      var actual = _snapshots.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
 
       Assert.True(actual.Consignees.Contains(consignee));
     }
@@ -51,7 +51,7 @@ namespace Payroll.Test.UnitTest.Application
         ApplicableYear = 2020
       });
 
-      var yearStub = _snapshots.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var yearStub = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
       var old = ConsigneePerson.Create("camilla dela torre", "finance officer");
       var new_ = ConsigneePerson.Create("juan felipe", "finance officer");
 
@@ -62,7 +62,7 @@ namespace Payroll.Test.UnitTest.Application
         BusinessYearId = yearStub.Id
       });
 
-      var year = _snapshots.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var year = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
 
       Assert.Contains<ConsigneePerson>(old, year.Consignees);
 
@@ -75,7 +75,7 @@ namespace Payroll.Test.UnitTest.Application
         NewPosition = new_.Position
       });
 
-      var actual = _snapshots.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
 
       Assert.False(actual.Consignees.Contains(old));
       Assert.True(actual.Consignees.Contains(new_));

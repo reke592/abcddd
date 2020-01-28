@@ -9,6 +9,9 @@ using Payroll.Domain.Shared;
 using static Payroll.Application.BusinessYears.Projections.BusinessYearHistoryProjection;
 using static Payroll.Application.SalaryGrades.Projections.SalaryGradeHistoryProjection;
 using System;
+using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing;
+using System.Collections.Generic;
 
 namespace Payroll.Test.UnitTest.Application
 {
@@ -26,7 +29,7 @@ namespace Payroll.Test.UnitTest.Application
         DateOfBirth = "1/1/2000"
       });
 
-      var record = _snapshots.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == $"Employee-{_stubCount++}").SingleOrDefault();
+      var record = _cache.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == $"Employee-{_stubCount++}").SingleOrDefault();
       return record.Id;
     }
 
@@ -41,7 +44,7 @@ namespace Payroll.Test.UnitTest.Application
         DateOfBirth = "1/1/2000"
       });
 
-      var record = _snapshots.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == "Juan").SingleOrDefault();
+      var record = _cache.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == "Juan").SingleOrDefault();
       Assert.Equal("Juan", record.BioData.Firstname);
     }
 
@@ -55,7 +58,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _snapshots.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var actual = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
       Assert.Equal(actual.Status, EmployeeStatus.EMPLOYED);
     }
 
@@ -68,7 +71,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var ee = _snapshots.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var ee = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
       Assert.Equal(EmployeeStatus.EMPLOYED, ee.Status);
 
       _app.Handle(new EmployeeCommands.SeparateEmployee {
@@ -76,10 +79,10 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var removed = _snapshots.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var removed = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
       Assert.Equal(null, removed);
 
-      var actual = _snapshots.Get<SeparatedEmployeesProjection.SeparatedEmployeeRecord>(stub);
+      var actual = _cache.Get<SeparatedEmployeesProjection.SeparatedEmployeeRecord>(stub);
       Assert.Equal(EmployeeStatus.SEPARATED, actual.Status);
     }
 
@@ -99,7 +102,7 @@ namespace Payroll.Test.UnitTest.Application
         Return = Date.Create(2020, 2, 2)
       });
 
-      var actual = _snapshots.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, actual.Status);
       Assert.Equal($"Employee-{_stubCount - 1}", actual.BioData.Firstname);
@@ -121,7 +124,7 @@ namespace Payroll.Test.UnitTest.Application
         Return = Date.Create(2020, 2, 2)
       });
 
-      var ee_on_leave = _snapshots.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var ee_on_leave = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, ee_on_leave.Status);
 
@@ -130,7 +133,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _snapshots.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
       Assert.Equal(null, actual);
     }
 
@@ -150,7 +153,7 @@ namespace Payroll.Test.UnitTest.Application
         Return = Date.Create(2020, 2, 2)
       });
 
-      var ee_on_leave = _snapshots.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var ee_on_leave = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, ee_on_leave.Status);
 
@@ -159,7 +162,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _snapshots.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
       Assert.Equal(null, actual);
     }
 
@@ -171,7 +174,12 @@ namespace Payroll.Test.UnitTest.Application
         ApplicableYear = 2020
       });
 
-      var year = _snapshots.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var year = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+
+      _app.Handle(new BusinessYearCommands.StartBusinessYear {
+        AccessToken = _accessTokenStub,
+        BusinessYearId = year.Id
+      });
 
       _app.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
@@ -179,7 +187,7 @@ namespace Payroll.Test.UnitTest.Application
         GrossValue = 10000
       });
 
-      var sg = _snapshots.All<SalaryGradeRecord>().Where(x => x.BusinessYear == year.Year).SingleOrDefault();
+      var sg = _cache.All<SalaryGradeRecord>().Where(x => x.BusinessYear == year.Year).SingleOrDefault();
 
       var stub = createStub();
 
