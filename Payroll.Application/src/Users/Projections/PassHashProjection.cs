@@ -14,7 +14,7 @@ namespace Payroll.Application.Users.Projections
 
   public class PassHashProjection : IProjection
   {
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       UserPassHashRecord doc;
       switch(e)
       {

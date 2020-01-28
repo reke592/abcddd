@@ -16,7 +16,7 @@ namespace Payroll.Application.Employees.Projections
       public string Return { get; internal set; }
     }
 
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       OnLeaveEmployeeRecord doc;
       switch(e)
       {

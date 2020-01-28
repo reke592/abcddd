@@ -7,6 +7,7 @@ namespace Payroll.Application.BusinessYears.Projections
 {
   public class BusinessYearHistoryProjection : IProjection
   {
+
     public class BusinessYearHistoryRecord
     {
       public BusinessYearId Id { get; internal set; }
@@ -15,7 +16,7 @@ namespace Payroll.Application.BusinessYears.Projections
       public bool Ended { get; internal set; } = false;
     }
 
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       BusinessYearHistoryRecord doc;
       switch(e)
       {
@@ -35,6 +36,10 @@ namespace Payroll.Application.BusinessYears.Projections
             r.Consignees.Remove(x.OldValue);
             r.Consignees.Add(x.NewValue);
           });
+          break;
+        
+        case BusinessYearEvents.BusinessYearStarted x:
+          doc = snapshots.Get<BusinessYearHistoryRecord>(x.Id);
           break;
         
         case BusinessYearEvents.BusinessYearEnded x:

@@ -16,7 +16,7 @@ namespace Payroll.Application.Employees.Projections
       public EmployeeStatus Status { get; internal set; } = EmployeeStatus.EMPLOYED;
     }
     
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       ActiveEmployeeRecord active_doc;
       switch(e)
       {

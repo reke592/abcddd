@@ -14,7 +14,7 @@ namespace Payroll.Application.SalaryGrades.Projections
       public decimal Gross { get; internal set; }
     }
 
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       SalaryGradeRecord doc;
       switch(e)
       {

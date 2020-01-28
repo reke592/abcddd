@@ -19,11 +19,13 @@ namespace Payroll.Application
   {
     private readonly IAccessTokenProvider _tokenService;
     private readonly IEventStore _eventStore;
+    private readonly ICacheStore _snapshots;
 
-    public PayrollApplicationService(IAccessTokenProvider tokenService, IEventStore eventStore)
+    public PayrollApplicationService(IAccessTokenProvider tokenService, IEventStore eventStore, ICacheStore snapshots)
     {
       _tokenService = tokenService;
       _eventStore = eventStore;
+      _snapshots = snapshots;
     }
 
     //------------------------------------------

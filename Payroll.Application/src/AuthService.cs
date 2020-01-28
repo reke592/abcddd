@@ -12,10 +12,10 @@ namespace Payroll.Application
   {
     private readonly IAccessTokenProvider _tokenService;
     private readonly IEventStore _eventStore;
-    private readonly ISnapshotStore _snapshots;
+    private readonly ICacheStore _snapshots;
     private readonly IEncryptionProvider _enc;
 
-    public AuthService(IEventStore eventStore, IAccessTokenProvider tokenService, ISnapshotStore snapshots, IEncryptionProvider enc)
+    public AuthService(IEventStore eventStore, IAccessTokenProvider tokenService, ICacheStore snapshots, IEncryptionProvider enc)
     {
       _tokenService = tokenService;
       _eventStore = eventStore;

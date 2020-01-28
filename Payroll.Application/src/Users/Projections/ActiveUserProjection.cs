@@ -14,7 +14,7 @@ namespace Payroll.Application.Users.Projections
       public int Version { get; internal set; } = 0;
     }
     
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       ActiveUserRecord doc;
       switch(e)
       {

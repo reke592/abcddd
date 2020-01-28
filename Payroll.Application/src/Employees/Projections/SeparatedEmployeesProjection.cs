@@ -15,7 +15,7 @@ namespace Payroll.Application.Employees.Projections
     }
 
     
-    public void Handle(object e, ISnapshotStore snapshots) {
+    public void Handle(object e, ICacheStore snapshots) {
       SeparatedEmployeeRecord doc;
       switch(e)
       {
