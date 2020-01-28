@@ -2,16 +2,12 @@ using System;
 
 namespace Payroll.Domain.Users
 {
-  public class UserId
+  public class UserId : DomainAggregateGuid
   {
-    private Guid _value;
-
-    public UserId(Guid value)
-    {
-      _value = value;
-    }
+    public UserId() {}
+    public UserId(Guid value) : base(value) { }
 
     public static implicit operator UserId(Guid value) => new UserId(value);
-    public static implicit operator Guid(UserId self) => self._value;
+    public static implicit operator UserId(string value) => new UserId(Guid.Parse(value));
   }
 }
