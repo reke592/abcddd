@@ -6,7 +6,7 @@ using Payroll.EventSourcing;
 
 namespace Payroll.Infrastructure
 {
-  public class MemorySnapshotStore : ISnapshotStore
+  public class MemoryCacheStore : ICacheStore
   {
     private IDictionary<Type, IDictionary<Guid, object>> _store 
       = new Dictionary<Type, IDictionary<Guid, object>>();
@@ -77,12 +77,12 @@ namespace Payroll.Infrastructure
       return default(ReadOnlyCollection<T>);
     }
 
-    public void NukeUpdate<T>(Action<T> update) {
-      if(_store.TryGetValue(typeof(T), out var documents))
-      {
-        foreach(var document in documents.Values)
-          update((T) document);
-      }
-    }
+    // public void NukeUpdate<T>(Action<T> update) {
+    //   if(_store.TryGetValue(typeof(T), out var documents))
+    //   {
+    //     foreach(var document in documents.Values)
+    //       update((T) document);
+    //   }
+    // }
   }
 }

@@ -6,10 +6,10 @@ namespace Payroll.Infrastructure
 {
     public class ProjectionManager : IProjectionManager
     {
-        private ISnapshotStore _snapshots;
+        private ICacheStore _snapshots;
         private ISet<IProjection> _projections;
         
-        public ProjectionManager(ISnapshotStore store)
+        public ProjectionManager(ICacheStore store)
         {
             _snapshots = store;
              _projections = new HashSet<IProjection>();

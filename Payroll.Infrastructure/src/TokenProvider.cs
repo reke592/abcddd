@@ -12,9 +12,9 @@ namespace Payroll.Infrastructure
   public class TokenProvider : IAccessTokenProvider
   {
     private readonly char[] _secret;
-    private readonly ISnapshotStore _snapshots;
+    private readonly ICacheStore _snapshots;
     
-    public TokenProvider(string secret, ISnapshotStore snapshots)
+    public TokenProvider(string secret, ICacheStore snapshots)
     {
       _secret = secret.ToCharArray();
       _snapshots = snapshots;
