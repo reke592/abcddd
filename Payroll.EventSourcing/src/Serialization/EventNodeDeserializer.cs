@@ -2,14 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using YamlDotNet.Core;
-using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
 namespace Payroll.EventSourcing.Serialization
 {
     public class EventNodeDeserializer : INodeDeserializer
     {
-        ITypeMapper _mapper;
+        private readonly ITypeMapper _mapper;
         private readonly INodeDeserializer _nodeDeserializer;
 
         public EventNodeDeserializer(INodeDeserializer nodeDeserializer, ITypeMapper mapper)
@@ -42,7 +41,7 @@ namespace Payroll.EventSourcing.Serialization
                             prop.SetValue(meta, Extract(prop.PropertyType, raw_value));
                         }
                     }
-                    value = new Event(x.Name, meta);
+                    value = Event.Create(x.StartLocation, x.Index, x.Name, meta);
                 }
                 return true;
             }
@@ -52,35 +51,51 @@ namespace Payroll.EventSourcing.Serialization
         object Extract(Type value_type, object raw_value)
         {
             if(value_type == typeof(Guid))
-            {
-                return Guid.Parse(raw_value.ToString());
-            }
+            return Guid.Parse(raw_value.ToString());
+            
             else if(value_type == typeof(DateTimeOffset))
-            {
-                return DateTimeOffset.Parse(raw_value.ToString());
-            }
+            return DateTimeOffset.Parse(raw_value.ToString());
+            
+            else if(value_type == typeof(Int16))
+            return Int16.Parse(raw_value.ToString());
+            
+            else if(value_type == typeof(Int32))
+            return Int32.Parse(raw_value.ToString());
+            
+            else if(value_type == typeof(Int64))
+            return Int64.Parse(raw_value.ToString());
+
+            else if(value_type == typeof(Decimal))
+            return Decimal.Parse(raw_value.ToString());
+
+            else if(value_type == typeof(Double))
+            return Double.Parse(raw_value.ToString());
+
+            else if(value_type == typeof(Boolean))
+            return Boolean.Parse(raw_value.ToString());
+            
             else if(value_type.IsSubclassOf(typeof(Enum)))
-            {
-                return Enum.Parse(value_type, raw_value.ToString());
-            }
+            return Enum.Parse(value_type, raw_value.ToString());
+
             else if(raw_value.GetType() == typeof(Dictionary<object, object>))
             {
                 var meta = raw_value as Dictionary<object, object>;
-                // Console.WriteLine(type);
                 var instance = Activator.CreateInstance(value_type);
                 var binding_flags = BindingFlags.Instance 
-                                    // | BindingFlags.DeclaredOnly 
                                     | BindingFlags.Public 
                                     | BindingFlags.NonPublic;
-                // foreach(var key in meta.Keys)
                 foreach(var prop in value_type.GetFields(binding_flags))
                 {
-                    // var field = value_type.GetField(key.ToString(), binding_flags);
-                    // Console.WriteLine(inner_type);
                     if(meta.TryGetValue(prop.Name, out var value)){
                         prop.SetValue(instance, Extract(prop.FieldType, value));
                     }
-                    // field.SetValue(instance, Extract(field.FieldType, meta[key]));
+                }
+
+                foreach(var prop in value_type.GetProperties(binding_flags))
+                {
+                    if(meta.TryGetValue(prop.Name, out var value)){
+                        prop.SetValue(instance, Extract(prop.PropertyType, value));
+                    }
                 }
                 return instance;
             }

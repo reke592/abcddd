@@ -6,6 +6,6 @@ namespace Payroll.EventSourcing
         /// <summary>
         /// where e is a domain event
         /// </summary>
-        void Handle(object e, ISnapshotStore snapshots);
+        void Handle(object e, ICacheStore snapshots);
     }
 }

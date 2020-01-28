@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Payroll.EventSourcing
 {
-    public interface ISnapshotStore
+    public interface ICacheStore
     {
         // T is a document projection snapshot
         void UpdateIfFound<T>(Guid id, Action<T> apply);
@@ -21,6 +21,9 @@ namespace Payroll.EventSourcing
         IReadOnlyCollection<T> All<T>();
 
         // apply same updates to all record, DO NOT use in golded copies
-        void NukeUpdate<T>(Action<T> update);
+        // void NukeUpdate<T>(Action<T> update);
+
+        // check if snapshots contains any T record, used to verify single record
+        // bool ContainsAny<T>();
     }
 }

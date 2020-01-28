@@ -15,9 +15,11 @@ namespace Payroll.EventSourcing.Serialization {
             _mapper = mapper;
             _serializer = new SerializerBuilder()
                         .WithTypeConverter(new DateTimeOffsetConverter(true))
+                        // .WithTypeConverter(new DomainAggregateIdTypeConverter(true))
                         .Build();
             _deserializer = new DeserializerBuilder()
                         .WithTypeConverter(new DateTimeOffsetConverter(true))
+                        // .WithTypeConverter(new DomainAggregateIdTypeConverter(true))
                         .WithNodeDeserializer(inner => new EventNodeDeserializer(inner, _mapper),
                                             s => s.InsteadOf<ObjectNodeDeserializer>())
                         .Build();
