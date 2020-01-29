@@ -14,8 +14,15 @@ namespace Payroll.Infrastructure
     private readonly char[] _secret;
     private readonly ICacheStore _snapshots;
     
-    public TokenProvider(string secret, ICacheStore snapshots)
+    public TokenProvider(ICacheStore snapshots)
     {
+      var random_secret = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
+      random_secret = random_secret.Replace("=", "");
+      random_secret = random_secret.Replace("+", "");
+      
+      // using random_secret will make all access token invalid on reboot
+      var secret = Environment.GetEnvironmentVariable("TOKEN_SECRET") ?? random_secret;
+
       _secret = secret.ToCharArray();
       _snapshots = snapshots;
     }
