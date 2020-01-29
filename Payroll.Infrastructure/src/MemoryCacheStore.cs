@@ -83,5 +83,26 @@ namespace Payroll.Infrastructure
         documents.Clear();
       }
     }
+
+    public bool GetRecent<T>(out T record) {
+      if(_store.TryGetValue(typeof(T), out var documents))
+      {
+        record = (T) documents.Values.Last();
+        return true;
+      }
+      record = default(T);
+      return false;
+    }
+
+    public bool GetRecent<T>(int n, out IEnumerable<T> records) {
+      if(_store.TryGetValue(typeof(T), out var documents))
+      {
+        var skip = (n <= documents.Count) ? documents.Count - n : 0;
+        records = documents.Values.Skip(skip).Cast<T>().ToList();
+        return true;
+      }
+      records = null;
+      return false;
+    }
   }
 }

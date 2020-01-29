@@ -20,6 +20,12 @@ namespace Payroll.EventSourcing
         // returns projection document
         T Get<T>(Guid id);
 
+        // returns the last inserted record
+        bool GetRecent<T>(out T record);
+
+        // returns the last n reocords
+        bool GetRecent<T>(int n, out IEnumerable<T> records);
+
         // returns all projection document
         IReadOnlyCollection<T> All<T>();
     }
