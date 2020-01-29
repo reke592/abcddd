@@ -8,9 +8,9 @@ namespace Payroll.EventSourcing
 {
   public class EventStreamPlaceholder
   {
-    public Guid AggregateId { get; set; }
-    public long StartLocation { get; set; }
-    public IList<Event> Events { get; set;}
+    public Guid AggregateId { get; private set; }
+    public long StartLocation { get; private set; }
+    public IList<Event> Events { get; private set;}
   }
 
   public class EventStream
