@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.EventSourcing", "Pa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.Infrastructure", "Payroll.Infrastructure\Payroll.Infrastructure.csproj", "{671BE4FB-173F-443D-BF87-F1C5D6EB8F6F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payroll.API", "Payroll.API\Payroll.API.csproj", "{B18E6879-724F-4D0A-A18B-A49C291680A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,5 +74,17 @@ Global
 		{671BE4FB-173F-443D-BF87-F1C5D6EB8F6F}.Release|x64.Build.0 = Release|Any CPU
 		{671BE4FB-173F-443D-BF87-F1C5D6EB8F6F}.Release|x86.ActiveCfg = Release|Any CPU
 		{671BE4FB-173F-443D-BF87-F1C5D6EB8F6F}.Release|x86.Build.0 = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|x64.Build.0 = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{B18E6879-724F-4D0A-A18B-A49C291680A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
