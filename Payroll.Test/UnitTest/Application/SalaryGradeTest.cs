@@ -12,7 +12,7 @@ namespace Payroll.Test.UnitTest.Application
   {
     private BusinessYearHistoryRecord createBusinessYearStub(int year)
     {
-      _app.Handle(new BusinessYearCommands.CreateBusinessYear {
+      _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = year
       });
@@ -25,7 +25,7 @@ namespace Payroll.Test.UnitTest.Application
     public void CanCreateSalaryGrade()
     {
       var yearStub = createBusinessYearStub(2020);
-      _app.Handle(new SalaryGradeCommands.CreateSalaryGrade {
+      _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
         BusinessYearId = yearStub.Id,
         GrossValue = 10000
@@ -39,7 +39,7 @@ namespace Payroll.Test.UnitTest.Application
     public void CanUpdateSalaryGrade()
     {
       var yearStub = createBusinessYearStub(2020);
-      _app.Handle(new SalaryGradeCommands.CreateSalaryGrade {
+      _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
         BusinessYearId = yearStub.Id,
         GrossValue = 10000
@@ -47,7 +47,7 @@ namespace Payroll.Test.UnitTest.Application
 
       var record = _cache.All<SalaryGradeRecord>().Where(x => x.BusinessYear == yearStub.Year).SingleOrDefault();
       
-      _app.Handle(new SalaryGradeCommands.UpdateSalaryGrade {
+      _app.SalaryGrade.Handle(new SalaryGradeCommands.UpdateSalaryGrade {
         AccessToken = _accessTokenStub,
         SalaryGradeId = record.Id,
         NewGrossValue = 15000

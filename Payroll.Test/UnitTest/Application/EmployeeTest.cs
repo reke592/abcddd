@@ -21,7 +21,7 @@ namespace Payroll.Test.UnitTest.Application
 
     private EmployeeId createStub()
     {
-      _app.Handle(new EmployeeCommands.CreateEmployee {
+      _app.Employee.Handle(new EmployeeCommands.CreateEmployee {
         AccessToken = _accessTokenStub,
         Firstname = $"Employee-{_stubCount}",
         Middlename = "",
@@ -36,7 +36,7 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanCreateEmployee()
     {
-      _app.Handle(new EmployeeCommands.CreateEmployee {
+      _app.Employee.Handle(new EmployeeCommands.CreateEmployee {
         AccessToken = _accessTokenStub,
         Firstname = "Juan",
         Middlename = "",
@@ -53,7 +53,7 @@ namespace Payroll.Test.UnitTest.Application
     {
       var stub = createStub();
       
-      _app.Handle(new EmployeeCommands.EmployEmployee {
+      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
@@ -66,7 +66,7 @@ namespace Payroll.Test.UnitTest.Application
     public void CanSeparateEmployee()
     {
       var stub = createStub();
-      _app.Handle(new EmployeeCommands.EmployEmployee {
+      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
@@ -74,7 +74,7 @@ namespace Payroll.Test.UnitTest.Application
       var ee = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
       Assert.Equal(EmployeeStatus.EMPLOYED, ee.Status);
 
-      _app.Handle(new EmployeeCommands.SeparateEmployee {
+      _app.Employee.Handle(new EmployeeCommands.SeparateEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
@@ -90,12 +90,12 @@ namespace Payroll.Test.UnitTest.Application
     public void CanGrantEmployeeLeave()
     {
       var stub = createStub();
-      _app.Handle(new EmployeeCommands.EmployEmployee {
+      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
 
-      _app.Handle(new EmployeeCommands.GrantLeave {
+      _app.Employee.Handle(new EmployeeCommands.GrantLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
@@ -112,12 +112,12 @@ namespace Payroll.Test.UnitTest.Application
     public void CanRevokeEmployeeLeave()
     {
       var stub = createStub();
-      _app.Handle(new EmployeeCommands.EmployEmployee {
+      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
 
-      _app.Handle(new EmployeeCommands.GrantLeave {
+      _app.Employee.Handle(new EmployeeCommands.GrantLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
@@ -128,7 +128,7 @@ namespace Payroll.Test.UnitTest.Application
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, ee_on_leave.Status);
 
-      _app.Handle(new EmployeeCommands.RevokeLeave {
+      _app.Employee.Handle(new EmployeeCommands.RevokeLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
@@ -141,12 +141,12 @@ namespace Payroll.Test.UnitTest.Application
     public void CanEndEmployeeLeave()
     {
       var stub = createStub();
-      _app.Handle(new EmployeeCommands.EmployEmployee {
+      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
 
-      _app.Handle(new EmployeeCommands.GrantLeave {
+      _app.Employee.Handle(new EmployeeCommands.GrantLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
@@ -157,7 +157,7 @@ namespace Payroll.Test.UnitTest.Application
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, ee_on_leave.Status);
 
-      _app.Handle(new EmployeeCommands.EndLeave {
+      _app.Employee.Handle(new EmployeeCommands.EndLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub
       });
@@ -169,19 +169,19 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanUpdateSalaryGrade()
     {
-      _app.Handle(new BusinessYearCommands.CreateBusinessYear {
+      _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
       });
 
       var year = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
 
-      _app.Handle(new BusinessYearCommands.StartBusinessYear {
+      _app.BusinessYear.Handle(new BusinessYearCommands.StartBusinessYear {
         AccessToken = _accessTokenStub,
         BusinessYearId = year.Id
       });
 
-      _app.Handle(new SalaryGradeCommands.CreateSalaryGrade {
+      _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
         BusinessYearId = year.Id,
         GrossValue = 10000
@@ -191,7 +191,7 @@ namespace Payroll.Test.UnitTest.Application
 
       var stub = createStub();
 
-      _app.Handle(new EmployeeCommands.UpdateSalaryGrade {
+      _app.Employee.Handle(new EmployeeCommands.UpdateSalaryGrade {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         SalaryGradeId = sg.Id

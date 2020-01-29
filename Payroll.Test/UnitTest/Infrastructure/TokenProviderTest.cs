@@ -9,7 +9,7 @@ namespace Payroll.Test.UnitTest.Infrastructure
     [Fact]
     public void CanCreateToken()
     {
-      var _provider = new TokenProvider("some secret", _cache);
+      var _provider = new TokenProvider(_cache);
       var record = _cache.Get<ActiveUsersProjection.ActiveUserRecord>(_rootId);
       var actual = _provider.CreateToken(record);
       Assert.True(_provider.IsValidToken(actual));
