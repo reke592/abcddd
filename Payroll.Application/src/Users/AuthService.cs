@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Payroll.Application.Exceptions;
+using Payroll.Application.Users;
 using Payroll.Application.Users.Projections;
 using Payroll.Domain.Users;
 using Payroll.EventSourcing;
@@ -8,7 +9,7 @@ using UserCommands = Payroll.Application.Users.Contracts.V1;
 
 namespace Payroll.Application
 {
-  public class AuthService
+  public class AuthService : IUserAppService
   {
     private readonly IAccessTokenProvider _tokenService;
     private readonly IEventStore _eventStore;
