@@ -6,6 +6,13 @@ optimize aggregate loading:
 complete application layer projections
   active record setters MUST be internal
 
+make this services flow:
+  command -> app.Service -> actual record -> domain.Service -> domain aggregates
+                                  |                                    |
+                  .-- get cache --'                                    |
+                  v                                                    v
+  query   -> projections <------------------ update --------------- events
+  
 create test
   employees:
     + create
@@ -22,8 +29,8 @@ create test
     + create
     + createConsignee
     + updateConsignee
-    start
-    end
+    + start
+    / end
   deductions:
     create
     create payment
@@ -40,9 +47,9 @@ create test
 PS: all record with (history) means golden copies
 projections:
   employees:
-    active
-    on leave
-    separated
+    + active
+    + on leave
+    + separated
     registered employees (history) = a registry of all created employee stream
     granted leave requests (history) = request granted and consumed
     revoked leave requests (history) = request granted then revoked
@@ -55,8 +62,8 @@ projections:
     employee mandatory deductions (history)
     completed deductions (history)
   business year:
-    current businessYear  -- we store the latest created Id in memory
-    business year with consignee (history)
+    + current businessYear  -- we store the latest created Id in memory
+    + business year with consignee (history)
     annual payroll summary (history)
 
 
