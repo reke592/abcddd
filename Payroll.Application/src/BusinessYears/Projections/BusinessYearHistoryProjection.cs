@@ -16,7 +16,7 @@ namespace Payroll.Application.BusinessYears.Projections
       public bool Ended { get; internal set; } = false;
     }
 
-    public void Handle(object e, ICacheStore snapshots) {
+    public void Handle(object e, ICacheStore db) {
       BusinessYearHistoryRecord doc;
       switch(e)
       {
@@ -24,26 +24,26 @@ namespace Payroll.Application.BusinessYears.Projections
           doc = new BusinessYearHistoryRecord();
           doc.Id = x.Id;
           doc.Year = x.ApplicableYear;
-          snapshots.Store<BusinessYearHistoryRecord>(x.Id, doc);
+          db.Store<BusinessYearHistoryRecord>(x.Id, doc);
           break;
         
         case BusinessYearEvents.BusinessYearConsigneeCreated x:
-          snapshots.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => r.Consignees.Add(x.Consignee));
+          db.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => r.Consignees.Add(x.Consignee));
           break;
         
         case BusinessYearEvents.BusinessYearConsigneeUpdated x:
-          snapshots.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => {
+          db.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => {
             r.Consignees.Remove(x.OldValue);
             r.Consignees.Add(x.NewValue);
           });
           break;
         
         case BusinessYearEvents.BusinessYearStarted x:
-          doc = snapshots.Get<BusinessYearHistoryRecord>(x.Id);
+          doc = db.Get<BusinessYearHistoryRecord>(x.Id);
           break;
         
         case BusinessYearEvents.BusinessYearEnded x:
-          snapshots.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => r.Ended = true);
+          db.UpdateIfFound<BusinessYearHistoryRecord>(x.Id, r => r.Ended = true);
           break;
       }
     }
