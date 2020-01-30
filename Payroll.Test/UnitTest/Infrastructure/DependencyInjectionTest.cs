@@ -21,6 +21,7 @@ using Payroll.Application.PayrollPeriods;
 using Payroll.Application.SalaryGrades;
 using Payroll.Application.Users;
 using Payroll.EventSourcing.Serialization;
+using Payroll.Application.Deductions.Projections;
 
 namespace Payroll.Test.UnitTest.Infrastructure
 {
@@ -103,6 +104,8 @@ namespace Payroll.Test.UnitTest.Infrastructure
       projections.Register(new EmployeesOnLeaveProjection());
       projections.Register(new BusinessYearHistoryProjection());
       projections.Register(new SalaryGradeHistoryProjection());
+      projections.Register(new MandatoryDeductionProjection());
+      projections.Register(new NonMandatoryDeductionProjection());
       projections.Register(CurrentBusinessYearProjection.Instance);
 
       mapper
@@ -125,8 +128,9 @@ namespace Payroll.Test.UnitTest.Infrastructure
         .Map<Employees.EmployeeLeaveRevoked>("Employee Leave Revoked")
         .Map<Employees.EmployeeLeaveEnded>("Employee Leave Ended")
         .Map<Employees.EmployeeUpdateAttemptFailed>("Employee Update Attempt Failed")
-        .Map<Deductions.DeductionCreated>("Deduction Created")
-        .Map<Deductions.DeductionAmountSettled>("Deduction Amount Settled")
+        .Map<Deductions.MandatoryDeductionCreated>("Mandatory Deduction Created")
+        .Map<Deductions.NonMandatoryDeductionCreated>("NonMandatory Deduction Created")
+        // .Map<Deductions.DeductionAmountSettled>("Deduction Amount Settled")
         .Map<Deductions.DeductionScheduleSettled>("Deduction Schedule Settled")
         .Map<Deductions.DeductionPaymentCreated>("Deduction Payment Created")
         .Map<Deductions.DeductionPaymentCompleted>("Deduction Payment Completed")
