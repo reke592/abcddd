@@ -19,18 +19,19 @@ namespace Payroll.Domain.Deductions
         public DateTimeOffset CreatedAt { get; set; }
       }
 
-      public class DeductionAmountSettled
-      {
-        public DeductionId Id { get; set; }
-        public decimal NewAmount { get; set; }
-        public UserId SettledBy { get; set; }
-        public DateTimeOffset SettledAt { get; set; }
-      }
+      // public class DeductionAmountSettled
+      // {
+      //   public DeductionId Id { get; set; }
+      //   public decimal NewAmount { get; set; }
+      //   public UserId SettledBy { get; set; }
+      //   public DateTimeOffset SettledAt { get; set; }
+      // }
 
       public class DeductionScheduleSettled
       {
         public DeductionId Id { get; set; }
         public int NewAmortization { get; set; }
+        public decimal AmortizedAmount { get; set; }
         public DeductionSchedule NewSchedule { get; set; }
         public UserId SettledBy { get; set; }
         public DateTimeOffset SettledAt { get; set; }

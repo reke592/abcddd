@@ -27,13 +27,14 @@ namespace Payroll.Domain.Deductions
           Employee = x.Employee;
           break;
         
-        case Events.V1.DeductionAmountSettled x:
-          Balance = x.NewAmount;
-          break;
+        // case Events.V1.DeductionAmountSettled x:
+        //   Balance = x.NewAmount;
+        //   break;
 
         case Events.V1.DeductionScheduleSettled x:
-          Schedule = x.NewSchedule;
           Amortization = x.NewAmortization;
+          Balance = x.AmortizedAmount * x.NewAmortization;
+          Schedule = x.NewSchedule;
           break;
 
         case Events.V1.DeductionPaymentCreated x:
@@ -60,25 +61,24 @@ namespace Payroll.Domain.Deductions
       return record;
     }
 
-    public void setAmount(decimal newAmount, UserId settledBy, DateTimeOffset settledAt)
-    {
-      if(this.Owner != settledBy)
-        _updateFailed("can't update deduction amount. not the record owner", newAmount, settledBy, settledAt);
-      else
-        this.Apply(new Events.V1.DeductionAmountSettled {
-          Id = this.Id,
-          NewAmount = newAmount,
-          SettledBy = settledBy,
-          SettledAt = settledAt
-        });
-    }
+    // public void setAmount(decimal newAmount, UserId settledBy, DateTimeOffset settledAt)
+    // {
+    //   if(this.Owner != settledBy)
+    //     _updateFailed("can't update deduction amount. not the record owner", newAmount, settledBy, settledAt);
+    //   else
+    //     this.Apply(new Events.V1.DeductionAmountSettled {
+    //       Id = this.Id,
+    //       NewAmount = newAmount,
+    //       SettledBy = settledBy,
+    //       SettledAt = settledAt
+    //     });
+    // }
 
-    public void setSchedule(int amortization, DeductionSchedule schedule, UserId settledBy, DateTimeOffset settledAt)
+    public void setSchedule(int amortization, decimal amortizedAmount, DeductionSchedule schedule, UserId settledBy, DateTimeOffset settledAt)
     {
       if(this.Owner != settledBy)
       {
-        _updateFailed("can't set deduction amortization. not the record owner", amortization, settledBy, settledAt);
-        _updateFailed("can't set deduction schedule. not the record owner", schedule, settledBy, settledAt);
+        _updateFailed("can't set deduction schedule. not the record owner", new { amortization, amortizedAmount, schedule }, settledBy, settledAt);
       }
       else if(amortization < 0)
       {
@@ -89,6 +89,7 @@ namespace Payroll.Domain.Deductions
           Id = this.Id,
           NewSchedule = schedule,
           NewAmortization = amortization,
+          AmortizedAmount = amortizedAmount,
           SettledBy = settledBy,
           SettledAt = settledAt
         });

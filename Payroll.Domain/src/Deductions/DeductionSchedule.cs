@@ -2,7 +2,7 @@ namespace Payroll.Domain.Deductions
 {
   public enum DeductionSchedule
   {
-    TEMPORARY,
+    NON_MANDATORY,
     MANDATORY
   }
 }
