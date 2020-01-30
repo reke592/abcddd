@@ -32,8 +32,9 @@ create test
     + start
     / end
   deductions:
-    create
-    create payment
+    + create
+    + create payment
+    update schedule
     stop
   payroll:
     create
@@ -58,8 +59,8 @@ projections:
     employee salaries (history)
     previous payrolls (history)
   deductions:
-    employee non-mandatory deductions
-    employee mandatory deductions (history)
+    + employee non-mandatory deductions
+    + employee mandatory deductions
     completed deductions (history)
   business year:
     + current businessYear  -- we store the latest created Id in memory
