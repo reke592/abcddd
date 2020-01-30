@@ -18,9 +18,9 @@ namespace Payroll.Application.Deductions
     public void Handle(Contracts.V1.CreateDeduction cmd)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = Deduction.Create(Guid.NewGuid(), cmd.EmplyoeeId, cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
+        var record = Deduction.Create(Guid.NewGuid(), cmd.EmplyoeeId, cmd.Schedule, cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
         // record.setAmount(cmd.Amount, user.Id, DateTimeOffset.Now);
-        record.setSchedule(cmd.Amortization, cmd.Amount, cmd.Schedule, user.Id, DateTimeOffset.Now);
+        record.setSchedule(cmd.Amortization, cmd.Amount, user.Id, DateTimeOffset.Now);
         _eventStore.Save(record);
       });
     }

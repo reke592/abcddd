@@ -20,11 +20,20 @@ namespace Payroll.Domain.Deductions
     protected override void When(object e) {
       switch(e)
       {
-        case Events.V1.DeductionCreated x:
+        case Events.V1.MandatoryDeductionCreated x:
           Id = x.Id;
           BusinessYear = x.BusinessYear;
           Owner = x.CreatedBy;
           Employee = x.Employee;
+          Schedule = x.Schedule;
+          break;
+        
+        case Events.V1.NonMandatoryDeductionCreated x:
+          Id = x.Id;
+          BusinessYear = x.BusinessYear;
+          Owner = x.CreatedBy;
+          Employee = x.Employee;
+          Schedule = x.Schedule;
           break;
         
         // case Events.V1.DeductionAmountSettled x:
@@ -34,7 +43,6 @@ namespace Payroll.Domain.Deductions
         case Events.V1.DeductionScheduleSettled x:
           Amortization = x.NewAmortization;
           Balance = x.AmortizedAmount * x.NewAmortization;
-          Schedule = x.NewSchedule;
           break;
 
         case Events.V1.DeductionPaymentCreated x:
@@ -48,16 +56,33 @@ namespace Payroll.Domain.Deductions
       }
     }
 
-    public static Deduction Create(DeductionId id, EmployeeId employee, BusinessYearId businessYear, UserId createdBy, DateTimeOffset createdAt)
+    public static Deduction Create(DeductionId id, EmployeeId employee, DeductionSchedule schedule, BusinessYearId businessYear, UserId createdBy, DateTimeOffset createdAt)
     {
       var record = new Deduction();
-      record.Apply(new Events.V1.DeductionCreated {
-        Id = id,
-        Employee = employee,
-        BusinessYear = businessYear,
-        CreatedBy = createdBy,
-        CreatedAt = createdAt
-      });
+      switch(schedule)
+      {
+        case DeductionSchedule.MANDATORY:
+          record.Apply(new Events.V1.MandatoryDeductionCreated {
+            Id = id,
+            Employee = employee,
+            Schedule = schedule,
+            BusinessYear = businessYear,
+            CreatedBy = createdBy,
+            CreatedAt = createdAt
+          });
+          break;
+        
+        case DeductionSchedule.NON_MANDATORY:
+          record.Apply(new Events.V1.NonMandatoryDeductionCreated {
+            Id = id,
+            Employee = employee,
+            Schedule = schedule,
+            BusinessYear = businessYear,
+            CreatedBy = createdBy,
+            CreatedAt = createdAt
+          });
+          break;
+      }
       return record;
     }
 
@@ -74,11 +99,11 @@ namespace Payroll.Domain.Deductions
     //     });
     // }
 
-    public void setSchedule(int amortization, decimal amortizedAmount, DeductionSchedule schedule, UserId settledBy, DateTimeOffset settledAt)
+    public void setSchedule(int amortization, decimal amortizedAmount, UserId settledBy, DateTimeOffset settledAt)
     {
       if(this.Owner != settledBy)
       {
-        _updateFailed("can't set deduction schedule. not the record owner", new { amortization, amortizedAmount, schedule }, settledBy, settledAt);
+        _updateFailed("can't set deduction schedule. not the record owner", new { amortization, amortizedAmount }, settledBy, settledAt);
       }
       else if(amortization < 0)
       {
@@ -87,7 +112,6 @@ namespace Payroll.Domain.Deductions
       else
         this.Apply(new Events.V1.DeductionScheduleSettled {
           Id = this.Id,
-          NewSchedule = schedule,
           NewAmortization = amortization,
           AmortizedAmount = amortizedAmount,
           SettledBy = settledBy,
