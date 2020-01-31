@@ -20,7 +20,7 @@ using Payroll.Application.Employees;
 using Payroll.Application.PayrollPeriods;
 using Payroll.Application.SalaryGrades;
 using Payroll.Application.Users;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
 using Payroll.Application.Deductions.Projections;
 
 namespace Payroll.Test.UnitTest.Infrastructure

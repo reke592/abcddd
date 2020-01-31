@@ -14,7 +14,7 @@ using Payroll.Application.Users.Projections;
 using Payroll.Application.BusinessYears.Projections;
 using static Payroll.Application.Users.Contracts.V1;
 using Payroll.Application.SalaryGrades.Projections;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
 using Payroll.Application.BusinessYears;
 using Payroll.Application.Users;
 

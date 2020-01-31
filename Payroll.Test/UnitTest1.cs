@@ -9,7 +9,9 @@ namespace Payroll.Test
         [Fact]
         public void Test1()
         {
-            var x = new UserId(Guid.NewGuid()).ToString();
+            var x = Guid.NewGuid();
+            UserId y = x;
+            var r = y != x;
         }
     }
 }

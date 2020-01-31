@@ -10,7 +10,7 @@ using Payroll.Application.Employees;
 using Payroll.Application.PayrollPeriods;
 using Payroll.Application.SalaryGrades;
 using Payroll.Application.Users;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
 
 namespace Payroll.Test.UnitTest
 {
@@ -29,13 +29,20 @@ namespace Payroll.Test.UnitTest
       container.Register(Component.For<IYAMLSerializer>()
         .ImplementedBy<YAMLSerializer>()
         .LifestyleSingleton());
-
-      container.Register(Component.For<IEncryptionProvider>()
-        .ImplementedBy<BCryptEncryptionProvider>()
+      
+      container.Register(Component.For<ISerializer>()
+        .ImplementedBy<Payroll.Test.UnitTest.Impl.JSONSerializer>()
         .LifestyleSingleton());
 
       container.Register(Component.For<IEventStore>()
-        .ImplementedBy<MemoryEventStore>()
+        .ImplementedBy<Payroll.Test.UnitTest.Impl.UseEventStore>()
+        .LifestyleSingleton());
+      // container.Register(Component.For<IEventStore>()
+      //   .ImplementedBy<MemoryEventStore>()
+      //   .LifestyleSingleton());
+
+      container.Register(Component.For<IEncryptionProvider>()
+        .ImplementedBy<BCryptEncryptionProvider>()
         .LifestyleSingleton());
       
       container.Register(Component.For<ICacheStore>()

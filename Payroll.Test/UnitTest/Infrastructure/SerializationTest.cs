@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Payroll.Domain.Employees;
 using Payroll.EventSourcing;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
+using Payroll.Test.UnitTest.Impl;
 using Xunit;
 
 namespace Payroll.Test.UnitTest.Infrastructure

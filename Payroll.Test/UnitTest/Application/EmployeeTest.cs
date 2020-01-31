@@ -9,7 +9,7 @@ using Payroll.Domain.Shared;
 using static Payroll.Application.BusinessYears.Projections.BusinessYearHistoryProjection;
 using static Payroll.Application.SalaryGrades.Projections.SalaryGradeHistoryProjection;
 using System;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
 using Payroll.EventSourcing;
 using System.Collections.Generic;
 
