@@ -3,12 +3,15 @@ using Payroll.Domain.Shared;
 
 namespace Payroll.Domain.Employees
 {
-  public class BioData : ValueObject
+  public class BioData : ValueObject<BioData>
   {
     public string Firstname { get; private set; }
     public string Middlename { get; private set; }
     public string Surname { get; private set; }
     public string DateOfBirth { get; private set; }
+
+    // testing json
+    public int Age { get; private set; }
 
     public static BioData Create(string firstname, string middlename, string surname, Date dateOfBirth)
     {
@@ -16,7 +19,8 @@ namespace Payroll.Domain.Employees
         Firstname = firstname,
         Middlename = middlename,
         Surname = surname,
-        DateOfBirth = dateOfBirth.ToString()
+        DateOfBirth = dateOfBirth.ToString(),
+        Age = 1
       };
     }
 

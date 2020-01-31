@@ -2,7 +2,7 @@ using System;
 
 namespace Payroll.Domain
 {
-  public abstract class DomainAggregateGuid
+  public class DomainAggregateGuid
   {
     protected Guid _value;
 
@@ -18,7 +18,24 @@ namespace Payroll.Domain
     }
 
     public static implicit operator Guid(DomainAggregateGuid self) => self._value;
+    public static implicit operator DomainAggregateGuid(Guid id) => new DomainAggregateGuid(id);
 
-    public override string ToString() => _value.ToString();
+    public override bool Equals(object obj)
+    {
+      var other = obj as DomainAggregateGuid;
+      return this._value.ToString() == other._value.ToString();
+    }
+
+    public override int GetHashCode()
+      => (this.GetType() + this._value.ToString()).GetHashCode();
+    
+    public static bool operator ==(DomainAggregateGuid a, DomainAggregateGuid b)
+      => a.Equals(b);
+    
+    public static bool operator !=(DomainAggregateGuid a, DomainAggregateGuid b)
+      => !a.Equals(b);
+
+    public override string ToString()
+      => _value.ToString();
   }
 }

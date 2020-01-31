@@ -38,4 +38,8 @@ namespace Payroll.Domain {
                 .Aggregate((x, y) => x ^ y);
         }
     }
+
+    // added for deserialization purpose
+    public abstract class ValueObject<T> : ValueObject
+    { }
 }

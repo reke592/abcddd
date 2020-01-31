@@ -80,6 +80,9 @@ namespace Payroll.Domain.Employees
 
     public void markEmployed(UserId settledBy, DateTimeOffset settledAt)
     {
+      Console.WriteLine(this.Owner);
+      Console.WriteLine(settledBy);
+      Console.WriteLine(this.Owner != settledBy);
       if(this.Owner != settledBy)
         _updateFailed("can't mark employed. not the record owner", null, settledBy, settledAt);
       else
