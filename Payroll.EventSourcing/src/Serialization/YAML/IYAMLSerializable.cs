@@ -1,4 +1,4 @@
-namespace Payroll.EventSourcing.Serialization
+namespace Payroll.EventSourcing.Serialization.YAML
 {
     public interface IYAMLSerializable
     {

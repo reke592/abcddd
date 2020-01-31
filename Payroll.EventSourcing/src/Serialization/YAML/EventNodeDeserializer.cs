@@ -4,7 +4,7 @@ using System.Reflection;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 
-namespace Payroll.EventSourcing.Serialization
+namespace Payroll.EventSourcing.Serialization.YAML
 {
     public class EventNodeDeserializer : INodeDeserializer
     {

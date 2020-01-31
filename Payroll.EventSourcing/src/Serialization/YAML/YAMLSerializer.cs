@@ -3,10 +3,10 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 using YamlDotNet.Serialization.NodeDeserializers;
 
-namespace Payroll.EventSourcing.Serialization {
+namespace Payroll.EventSourcing.Serialization.YAML {
     public class YAMLSerializer : IYAMLSerializer
     {
-        private ISerializer _serializer;
+        private YamlDotNet.Serialization.ISerializer _serializer;
         private IDeserializer _deserializer;
         private ITypeMapper _mapper;
 

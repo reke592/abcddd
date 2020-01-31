@@ -3,7 +3,7 @@ using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
 
-namespace Payroll.EventSourcing.Serialization
+namespace Payroll.EventSourcing.Serialization.YAML
 {
     public class DateTimeOffsetConverter : IYamlTypeConverter
     {
