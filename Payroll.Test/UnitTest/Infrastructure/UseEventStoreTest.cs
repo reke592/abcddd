@@ -16,9 +16,7 @@ namespace Payroll.Test.UnitTest.Infrastructure
       var stubEmpId = Guid.NewGuid();
       var stubBioData = BioData.Create("Juan", "Santos", "Dela Cruz", Date.TryParse("1/1/2000"));
 
-      var employee = Employee.Create(stubEmpId, stubUserId, DateTimeOffset.Now);
-      employee.updateBioData(stubBioData, stubUserId, DateTimeOffset.Now);
-      employee.markEmployed(stubUserId, DateTimeOffset.Now);
+      var employee = Employee.Create(stubEmpId, stubBioData, stubUserId, DateTimeOffset.Now);
       store.Save<Employee>(employee);
     }
 
@@ -26,11 +24,11 @@ namespace Payroll.Test.UnitTest.Infrastructure
     public void CanLoadFromEventStore()
     {
       var store = _container.Resolve<IEventStore>();
-      store.TryGet<Employee>(Guid.Parse("558c30b0-85ac-458c-b5e6-a5cdeca32272"), out var events);
+      store.TryGet<Employee>(Guid.Parse("bb4710ca-a42e-4bba-80eb-2e615ffbbc77"), out var events);
       var employee = new Employee();
       employee.Load(events);
       var latest = store.LatestVersion<Employee>(employee);
-      Assert.Equal(2, latest);
+      Assert.Equal(1, latest);
     }
   }
 }

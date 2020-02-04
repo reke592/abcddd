@@ -1,3 +1,5 @@
+using System;
+
 namespace Payroll.Application
 {
   public interface IHandleCommand<T>
@@ -7,6 +9,6 @@ namespace Payroll.Application
 
   public interface IHandleCommand<T, R>
   {
-    R Handle(T cmd);
+    void Handle(T cmd, Action<R> cb);
   }
 }

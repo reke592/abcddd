@@ -9,7 +9,7 @@ namespace Payroll.Application.Employees.Projections
   {
     public class ActiveEmployeeRecord
     {
-      public EmployeeId Id { get; internal set; }
+      public EmployeeId EmployeeId { get; internal set; }
       public BioData BioData { get; internal set; }
       public int BusinessYear { get; internal set; }
       public decimal GrossPay { get; internal set; } = 0;
@@ -20,9 +20,9 @@ namespace Payroll.Application.Employees.Projections
       ActiveEmployeeRecord active_doc;
       switch(e)
       {
-        case Events.V1.EmployeeStatusEmployed x:
+        case Events.V1.EmployeeEmployed x:
           active_doc = new ActiveEmployeeRecord();
-          active_doc.Id = x.Id;
+          active_doc.EmployeeId = x.Id;
           active_doc.BioData = x.BioData;
           snapshots.Store<ActiveEmployeeRecord>(x.Id, active_doc);
           break;
@@ -31,7 +31,7 @@ namespace Payroll.Application.Employees.Projections
           snapshots.UpdateIfFound<ActiveEmployeeRecord>(x.Id, r => r.BioData = x.BioData);
           break;
 
-        case Events.V1.EmployeeStatusSeparated x:
+        case Events.V1.EmployeeSeparated x:
           snapshots.Delete<ActiveEmployeeRecord>(x.Id);
           break;
         

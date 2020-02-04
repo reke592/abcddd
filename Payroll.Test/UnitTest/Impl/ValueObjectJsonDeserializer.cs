@@ -8,12 +8,12 @@ using Payroll.EventSourcing;
 
 namespace Payroll.Test.UnitTest.Impl
 {
-  public class ValueObjectJsonDeserializer : JsonConverterFactory
+  /// <summary>
+  /// https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to
+  /// </summary>
+  public class ValueObjectJsonConverterFactory : JsonConverterFactory
   {
-    /// <summary>
-    /// https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to
-    /// </summary>
-    public ValueObjectJsonDeserializer () { }
+    public ValueObjectJsonConverterFactory () { }
 
     public override bool CanConvert(Type typeToConvert) {
       return typeToConvert.IsSubclassOf(typeof(ValueObject));

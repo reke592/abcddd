@@ -29,9 +29,7 @@ namespace Payroll.Test.UnitTest.Infrastructure
       var stubEmpId = Guid.NewGuid();
       var stubBioData = BioData.Create("Juan", "Santos", "Dela Cruz", Date.TryParse("1/1/2000"));
 
-      var employee = Employee.Create(stubEmpId, stubUserId, DateTimeOffset.Now);
-      employee.updateBioData(stubBioData, stubUserId, DateTimeOffset.Now);
-      employee.markEmployed(stubUserId, DateTimeOffset.Now);
+      var employee = Employee.Create(stubEmpId, stubBioData, stubUserId, DateTimeOffset.Now);
       
       var json = serializer.Serialize(employee.Events[2]);
       Console.WriteLine(ASCIIEncoding.UTF8.GetString(json));
@@ -45,9 +43,7 @@ namespace Payroll.Test.UnitTest.Infrastructure
       var stubEmpId = Guid.NewGuid();
       var stubBioData = BioData.Create("Juan", "Santos", "Dela Cruz", Date.TryParse("1/1/2000"));
 
-      var employee = Employee.Create(stubEmpId, stubUserId, DateTimeOffset.Now);
-      employee.updateBioData(stubBioData, stubUserId, DateTimeOffset.Now);
-      employee.markEmployed(stubUserId, DateTimeOffset.Now);
+      var employee = Employee.Create(stubEmpId, stubBioData, stubUserId, DateTimeOffset.Now);
       
       var json = serializer.Serialize(employee.Events[1]);
       Console.WriteLine(ASCIIEncoding.UTF8.GetString(json));

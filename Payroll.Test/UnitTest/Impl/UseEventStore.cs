@@ -19,7 +19,13 @@ namespace Payroll.Test.UnitTest.Impl
     {
       _typeMapper = typeMapper;
       _serializer = serializer;
-      _conn = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "PayrollAppUnitTest");
+      // _conn = EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "PayrollAppUnitTest");
+      // _conn.ConnectAsync().Wait();
+    }
+
+    public void Start(IEventStoreConnection conn)
+    {
+      _conn = conn;
       _conn.ConnectAsync().Wait();
     }
 
@@ -52,11 +58,6 @@ namespace Payroll.Test.UnitTest.Impl
         .ToArray();
     }
 
-    public object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1)
-    {
-      throw new NotImplementedException();
-    }
-
     public long LatestVersion<T>(T record) where T : Aggregate
     {
       var result = _conn.ReadStreamEventsBackwardAsync(_stream<T>(record.Id), StreamPosition.End, 1, false, null).Result;
@@ -65,7 +66,9 @@ namespace Payroll.Test.UnitTest.Impl
 
     public void Save<T>(T record) where T : Aggregate
     {
-      // throw new NotImplementedException();
+      if(record.Version != LatestVersion<T>(record))
+        throw new DataIntegrityException(record);
+      
       var events = record.Events.Select(e => new EventData(
         eventId: Guid.NewGuid(),
         type: _typeMapper.GetEventName(e),
@@ -75,6 +78,8 @@ namespace Payroll.Test.UnitTest.Impl
       ));
 
       _conn.AppendToStreamAsync($"{typeof(T).Name}@{record.Id.ToString()}", ExpectedVersion.Any, events).Wait();
+      
+      _afterSave(this , record.Events);
     }
 
     public bool TryGet<T>(Guid id, out object[] events)

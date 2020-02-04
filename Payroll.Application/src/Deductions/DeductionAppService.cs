@@ -18,9 +18,9 @@ namespace Payroll.Application.Deductions
     public void Handle(Contracts.V1.CreateDeduction cmd)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = Deduction.Create(Guid.NewGuid(), cmd.EmplyoeeId, cmd.Schedule, cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
+        var record = Deduction.Create(Guid.NewGuid(), cmd.EmplyoeeId, cmd.Schedule, cmd.BusinessYearId, user.UserId, DateTimeOffset.Now);
         // record.setAmount(cmd.Amount, user.Id, DateTimeOffset.Now);
-        record.setSchedule(cmd.Amortization, cmd.Amount, user.Id, DateTimeOffset.Now);
+        record.setSchedule(cmd.Amortization, cmd.Amount, user.UserId, DateTimeOffset.Now);
         _eventStore.Save(record);
       });
     }
@@ -32,7 +32,7 @@ namespace Payroll.Application.Deductions
         {
           var record = new Deduction();
           record.Load(events);
-          record.createPayment(cmd.Payment, cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
+          record.createPayment(cmd.Payment, cmd.BusinessYearId, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -45,7 +45,7 @@ namespace Payroll.Application.Deductions
         {
           var record = new Deduction();
           record.Load(events);
-          record.StopDeduction(cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
+          record.StopDeduction(cmd.BusinessYearId, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

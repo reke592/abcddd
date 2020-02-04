@@ -16,31 +16,32 @@ namespace Payroll.Test.UnitTest.Application
 
     public DeductionTestBase() : base()
     {
+      EmployeeId stubEmpId = null;
+      BusinessYearId stubBusinessYearId = null;
+
       _app.Employee.Handle(new EmployeeCommands.CreateEmployee {
         AccessToken = _accessTokenStub,
         DateOfBirth = "1/1/2000",
         Firstname = "Juan",
         Middlename = "Santos",
         Surname = "Dela Cruz"
-      });
+      }, id => stubEmpId = id);
 
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubBusinessYearId = id);
 
-      // by default, newly created employees are separated
-      _cache.GetRecent<SeparatedEmployeeRecord>(out var ee_created);
+      var ee_created = _cache.Get<ActiveEmployeeRecord>(stubEmpId);
 
       _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
         AccessToken = _accessTokenStub,
-        EmployeeId = ee_created.Id
+        EmployeeId = ee_created.EmployeeId
       });
 
-      _cache.GetRecent<ActiveEmployeeRecord>(out var ee);
-      _cache.GetRecent<CurrentBusinessYearRecord>(out var year);
-      _stubEmployee = ee.Id;
-      _stubBusinessYear = year.Id;
+      // assign value to protected fields
+      _stubEmployee = stubEmpId;
+      _stubBusinessYear = stubBusinessYearId;
     }
 
     public new void Dispose()

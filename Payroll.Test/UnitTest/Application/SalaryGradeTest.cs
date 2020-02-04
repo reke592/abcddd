@@ -5,6 +5,7 @@ using Xunit;
 using static Payroll.Application.BusinessYears.Projections.BusinessYearHistoryProjection;
 using System.Linq;
 using static Payroll.Application.SalaryGrades.Projections.SalaryGradeHistoryProjection;
+using Payroll.Domain.BusinessYears;
 
 namespace Payroll.Test.UnitTest.Application
 {
@@ -12,12 +13,13 @@ namespace Payroll.Test.UnitTest.Application
   {
     private BusinessYearHistoryRecord createBusinessYearStub(int year)
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = year
-      });
+      }, id => stubId = id);
 
-      var record = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var record = _cache.Get<BusinessYearHistoryRecord>(stubId);
       return record;
     }
 
@@ -27,7 +29,7 @@ namespace Payroll.Test.UnitTest.Application
       var yearStub = createBusinessYearStub(2020);
       _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
-        BusinessYearId = yearStub.Id,
+        BusinessYearId = yearStub.BusinessYearId,
         GrossValue = 10000
       });
 
@@ -41,7 +43,7 @@ namespace Payroll.Test.UnitTest.Application
       var yearStub = createBusinessYearStub(2020);
       _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
-        BusinessYearId = yearStub.Id,
+        BusinessYearId = yearStub.BusinessYearId,
         GrossValue = 10000
       });
 
@@ -49,7 +51,7 @@ namespace Payroll.Test.UnitTest.Application
       
       _app.SalaryGrade.Handle(new SalaryGradeCommands.UpdateSalaryGrade {
         AccessToken = _accessTokenStub,
-        SalaryGradeId = record.Id,
+        SalaryGradeId = record.SalaryGradeId,
         NewGrossValue = 15000
       });
 

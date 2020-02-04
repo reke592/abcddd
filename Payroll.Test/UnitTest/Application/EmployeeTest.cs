@@ -12,6 +12,10 @@ using System;
 using Payroll.EventSourcing.Serialization.YAML;
 using Payroll.EventSourcing;
 using System.Collections.Generic;
+using static Payroll.Application.Employees.Projections.ActiveEmployeesProjection;
+using static Payroll.Application.Employees.Projections.SeparatedEmployeesProjection;
+using static Payroll.Application.Employees.Projections.EmployeesOnLeaveProjection;
+using Payroll.Domain.BusinessYears;
 
 namespace Payroll.Test.UnitTest.Application
 {
@@ -21,31 +25,35 @@ namespace Payroll.Test.UnitTest.Application
 
     private EmployeeId createStub()
     {
+      EmployeeId stubId = null;
       _app.Employee.Handle(new EmployeeCommands.CreateEmployee {
         AccessToken = _accessTokenStub,
-        Firstname = $"Employee-{_stubCount}",
+        Firstname = $"Employee-{_stubCount++}",
         Middlename = "",
         Surname = "Stub",
         DateOfBirth = "1/1/2000"
-      });
+      }, id => stubId = id);
 
-      var record = _cache.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == $"Employee-{_stubCount++}").SingleOrDefault();
-      return record.Id;
+      // var record = _cache.All<ActiveEmployeesProjection.ActiveEmployeeRecord>().Where(x => x.BioData.Firstname == $"Employee-{_stubCount++}").SingleOrDefault();
+      // _cache.GetRecent<ActiveEmployeeRecord>(out var record);
+      return stubId;
     }
 
     [Fact]
     public void CanCreateEmployee()
     {
+      EmployeeId stubId;
       _app.Employee.Handle(new EmployeeCommands.CreateEmployee {
         AccessToken = _accessTokenStub,
         Firstname = "Juan",
         Middlename = "",
         Surname = "Dela Cruz",
         DateOfBirth = "1/1/2000"
-      });
+      }, id => stubId = id);
 
-      var record = _cache.All<SeparatedEmployeesProjection.SeparatedEmployeeRecord>().Where(x => x.BioData.Firstname == "Juan").SingleOrDefault();
+      var record = _cache.All<ActiveEmployeeRecord>().Where(x => x.BioData.Firstname == "Juan").SingleOrDefault();
       Assert.Equal("Juan", record.BioData.Firstname);
+      _cache.Delete<ActiveEmployeeRecord>(record.EmployeeId);
     }
 
     [Fact]
@@ -58,8 +66,9 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var actual = _cache.Get<ActiveEmployeeRecord>(stub);
       Assert.Equal(actual.Status, EmployeeStatus.EMPLOYED);
+      _cache.Delete<ActiveEmployeeRecord>(stub);
     }
 
     [Fact]
@@ -71,7 +80,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var ee = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var ee = _cache.Get<ActiveEmployeeRecord>(stub);
       Assert.Equal(EmployeeStatus.EMPLOYED, ee.Status);
 
       _app.Employee.Handle(new EmployeeCommands.SeparateEmployee {
@@ -79,10 +88,10 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var removed = _cache.Get<ActiveEmployeesProjection.ActiveEmployeeRecord>(stub);
+      var removed = _cache.Get<ActiveEmployeeRecord>(stub);
       Assert.Equal(null, removed);
 
-      var actual = _cache.Get<SeparatedEmployeesProjection.SeparatedEmployeeRecord>(stub);
+      var actual = _cache.Get<SeparatedEmployeeRecord>(stub);
       Assert.Equal(EmployeeStatus.SEPARATED, actual.Status);
     }
 
@@ -99,10 +108,10 @@ namespace Payroll.Test.UnitTest.Application
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
-        Return = Date.Create(2020, 2, 2)
+        Return = Date.Now.AddDays(2)
       });
 
-      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<OnLeaveEmployeeRecord>(stub);
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, actual.Status);
       Assert.Equal($"Employee-{_stubCount - 1}", actual.BioData.Firstname);
@@ -112,16 +121,12 @@ namespace Payroll.Test.UnitTest.Application
     public void CanRevokeEmployeeLeave()
     {
       var stub = createStub();
-      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
-        AccessToken = _accessTokenStub,
-        EmployeeId = stub
-      });
 
       _app.Employee.Handle(new EmployeeCommands.GrantLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
-        Return = Date.Create(2020, 2, 2)
+        Return = Date.Now.AddDays(2)
       });
 
       var ee_on_leave = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
@@ -133,7 +138,7 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<OnLeaveEmployeeRecord>(stub);
       Assert.Equal(null, actual);
     }
 
@@ -141,19 +146,15 @@ namespace Payroll.Test.UnitTest.Application
     public void CanEndEmployeeLeave()
     {
       var stub = createStub();
-      _app.Employee.Handle(new EmployeeCommands.EmployEmployee {
-        AccessToken = _accessTokenStub,
-        EmployeeId = stub
-      });
 
       _app.Employee.Handle(new EmployeeCommands.GrantLeave {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
         Start = Date.Now,
-        Return = Date.Create(2020, 2, 2)
+        Return = Date.Now.AddDays(2)
       });
 
-      var ee_on_leave = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var ee_on_leave = _cache.Get<OnLeaveEmployeeRecord>(stub);
 
       Assert.Equal(EmployeeStatus.ON_LEAVE, ee_on_leave.Status);
 
@@ -162,28 +163,30 @@ namespace Payroll.Test.UnitTest.Application
         EmployeeId = stub
       });
 
-      var actual = _cache.Get<EmployeesOnLeaveProjection.OnLeaveEmployeeRecord>(stub);
+      var actual = _cache.Get<OnLeaveEmployeeRecord>(stub);
       Assert.Equal(null, actual);
     }
 
     [Fact]
     public void CanUpdateSalaryGrade()
     {
+      BusinessYearId stubBusinessYearId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubBusinessYearId = id);
 
-      var year = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      // _cache.GetRecent<BusinessYearHistoryRecord>(out var year);
+      var year = _cache.Get<BusinessYearHistoryRecord>(stubBusinessYearId);
 
       _app.BusinessYear.Handle(new BusinessYearCommands.StartBusinessYear {
         AccessToken = _accessTokenStub,
-        BusinessYearId = year.Id
+        BusinessYearId = year.BusinessYearId
       });
 
       _app.SalaryGrade.Handle(new SalaryGradeCommands.CreateSalaryGrade {
         AccessToken = _accessTokenStub,
-        BusinessYearId = year.Id,
+        BusinessYearId = year.BusinessYearId,
         GrossValue = 10000
       });
 
@@ -194,14 +197,14 @@ namespace Payroll.Test.UnitTest.Application
       _app.Employee.Handle(new EmployeeCommands.UpdateSalaryGrade {
         AccessToken = _accessTokenStub,
         EmployeeId = stub,
-        SalaryGradeId = sg.Id
+        SalaryGradeId = sg.SalaryGradeId
       });
 
       var actual = new Employee();
       _eventStore.TryGet<Employee>(stub, out var events);
       actual.Load(events);
 
-      Assert.Equal<Guid>(sg.Id, actual.SalaryGrade);
+      Assert.Equal<Guid>(sg.SalaryGradeId, actual.SalaryGrade);
     }
   }
 }

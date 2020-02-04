@@ -1,6 +1,7 @@
 using Payroll.Domain.Employees;
 using Payroll.Domain.Shared;
 using Payroll.EventSourcing;
+using static Payroll.Application.Employees.Projections.ActiveEmployeesProjection;
 
 namespace Payroll.Application.Employees.Projections
 {
@@ -9,7 +10,7 @@ namespace Payroll.Application.Employees.Projections
     public class OnLeaveEmployeeRecord
     {
 
-      public EmployeeId Id { get; internal set; }
+      public EmployeeId EmployeeId { get; internal set; }
       public BioData BioData { get; internal set; }
       public EmployeeStatus Status { get; internal set; } = EmployeeStatus.ON_LEAVE;
       public string Start { get; internal set; }
@@ -22,8 +23,8 @@ namespace Payroll.Application.Employees.Projections
       {
         case Events.V1.EmployeeLeaveGranted x:
           doc = new OnLeaveEmployeeRecord();
-          doc.Id = x.Id;
-          doc.BioData = x.BioData;
+          doc.EmployeeId = x.Id;
+          doc.BioData = snapshots.Get<ActiveEmployeeRecord>(x.Id).BioData;
           doc.Start = x.LeaveRequest.Start;
           doc.Return = x.LeaveRequest.Return;
           snapshots.Store<OnLeaveEmployeeRecord>(x.Id, doc);

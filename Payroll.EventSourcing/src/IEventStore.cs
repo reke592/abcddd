@@ -14,7 +14,8 @@ namespace Payroll.EventSourcing
         bool TryGet<T>(Guid id, out object[] events);
 
         // return all events in stream to project the previous version of an aggregate
-        object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1);
+        // object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1);
+        // ... instead, we use event store projections
 
         // returns the current most current version of the aggregate
         long LatestVersion<T>(T record) where T : Aggregate;

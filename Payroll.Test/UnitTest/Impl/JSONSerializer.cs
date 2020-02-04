@@ -5,6 +5,8 @@ using System.Text.Json.Serialization;
 using Payroll.Domain.BusinessYears;
 using Payroll.Domain.Deductions;
 using Payroll.Domain.Employees;
+using Payroll.Domain.SalaryGrades;
+using Payroll.Domain.Shared;
 using Payroll.Domain.Users;
 using Payroll.EventSourcing;
 
@@ -22,7 +24,10 @@ namespace Payroll.Test.UnitTest.Impl
       _options.Converters.Add(new AggregateIdJsonConverter<EmployeeId>());
       _options.Converters.Add(new AggregateIdJsonConverter<BusinessYearId>());
       _options.Converters.Add(new AggregateIdJsonConverter<DeductionId>());
-      _options.Converters.Add(new ValueObjectJsonDeserializer());
+      _options.Converters.Add(new AggregateIdJsonConverter<SalaryGradeId>());
+
+      // object deserializer
+      _options.Converters.Add(new ValueObjectJsonConverterFactory());
     }
 
     public object Deserialize(byte[] data, Type type) {

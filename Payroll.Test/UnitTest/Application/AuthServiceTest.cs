@@ -10,10 +10,10 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanLogin()
     {
-      var actual = _auth.Handle(new PasswordLogin {
+      _auth.Handle(new PasswordLogin {
         Username = "test",
         Password = "p4ssw0d"
-      });
+      }, result => Assert.NotNull(result));
     }
 
     [Fact]
@@ -22,12 +22,12 @@ namespace Payroll.Test.UnitTest.Application
       Action invalid_password = () => _auth.Handle(new PasswordLogin {
         Username = "test",
         Password = "1234"
-      });
+      }, result => Assert.Null(result));
 
       Action non_existing_user = () => _auth.Handle(new PasswordLogin {
         Username = "nobadi",
         Password = "1234"
-      });
+      }, result => Assert.Null(result));
 
       Assert.Throws<UserLoginException>(invalid_password);
       Assert.Throws<UserLoginException>(non_existing_user);

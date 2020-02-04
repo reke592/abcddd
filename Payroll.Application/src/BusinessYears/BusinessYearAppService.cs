@@ -15,11 +15,12 @@ namespace Payroll.Application.BusinessYears
       _eventStore = eventStore;
     }
 
-    public void Handle(Contracts.V1.CreateBusinessYear cmd)
+    public void Handle(Contracts.V1.CreateBusinessYear cmd, Action<BusinessYearId> cb)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = BusinessYear.Create(Guid.NewGuid(), cmd.ApplicableYear, user.Id, DateTimeOffset.Now);
+        var record = BusinessYear.Create(Guid.NewGuid(), cmd.ApplicableYear, user.UserId, DateTimeOffset.Now);
         _eventStore.Save(record);
+        cb(record.Id);
       });
     }
 
@@ -30,7 +31,7 @@ namespace Payroll.Application.BusinessYears
         {
           var record = new BusinessYear();
           record.Load(events);
-          record.Start(user.Id, DateTimeOffset.Now);
+          record.Start(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -43,7 +44,7 @@ namespace Payroll.Application.BusinessYears
         {
           var record = new BusinessYear();
           record.Load(events);
-          record.End(user.Id, DateTimeOffset.Now);
+          record.End(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -56,7 +57,7 @@ namespace Payroll.Application.BusinessYears
         {
           var record = new BusinessYear();
           record.Load(events);
-          record.addConsignee(ConsigneePerson.Create(cmd.Name, cmd.Position), user.Id, DateTimeOffset.Now);
+          record.addConsignee(ConsigneePerson.Create(cmd.Name, cmd.Position), user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -71,7 +72,7 @@ namespace Payroll.Application.BusinessYears
           var old = ConsigneePerson.Create(cmd.OldName, cmd.OldPosition);
           var new_ = ConsigneePerson.Create(cmd.NewName, cmd.NewPosition);
           record.Load(events);
-          record.updateConsignee(old, new_, user.Id, DateTimeOffset.Now);
+          record.updateConsignee(old, new_, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

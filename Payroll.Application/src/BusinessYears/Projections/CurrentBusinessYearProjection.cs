@@ -10,7 +10,7 @@ namespace Payroll.Application.BusinessYears.Projections
   {
     public class CurrentBusinessYearRecord
     {
-      public BusinessYearId Id { get; internal set; }
+      public BusinessYearId BusinessYearId { get; internal set; }
       public int Year { get; internal set; }
       public ISet<ConsigneePerson> Consignees { get; internal set; } = new HashSet<ConsigneePerson>();
       public bool Started { get; internal set; } = false;
@@ -32,9 +32,9 @@ namespace Payroll.Application.BusinessYears.Projections
       switch(e)
       {
         case BusinessYearCreated x:
-          db.DeleteAll<CurrentBusinessYearRecord>();
+          db.Delete<CurrentBusinessYearRecord>(projectionId);
           doc = new CurrentBusinessYearRecord();
-          doc.Id = x.Id;
+          doc.BusinessYearId = x.Id.ToString();
           doc.Year = x.ApplicableYear;
           db.Store<CurrentBusinessYearRecord>(projectionId, doc);
           break;

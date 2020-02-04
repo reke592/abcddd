@@ -4,6 +4,11 @@
     <ProjectReference Include="..\Payroll.Application\Payroll.Application.csproj" />
     <ProjectReference Include="..\Payroll.Infrastructure\Payroll.Infrastructure.csproj" />
     <ProjectReference Include="..\Payroll.EventSourcing\Payroll.EventSourcing.csproj" />
+    <ProjectReference Include="..\Payroll.Test\Payroll.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Windsor.MsDependencyInjection" Version="3.3.1" />
   </ItemGroup>
 
   <PropertyGroup>

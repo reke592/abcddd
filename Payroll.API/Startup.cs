@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Castle.Windsor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Payroll.Application;
+using Payroll.EventSourcing;
 
 namespace Payroll.API
 {
@@ -27,7 +30,10 @@ namespace Payroll.API
         {
             services.AddControllers();
             // register constructor injections
-            
+            var container = new Test.UnitTest.TestContainer().GetContainer;
+            services.AddSingleton<IPayrollApplicationServices>(container.Resolve<IPayrollApplicationServices>());
+            services.AddSingleton<ICacheStore>(container.Resolve<ICacheStore>());
+            services.AddSingleton<IEventStore>(container.Resolve<IEventStore>());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

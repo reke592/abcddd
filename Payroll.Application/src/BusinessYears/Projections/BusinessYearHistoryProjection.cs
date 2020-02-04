@@ -10,7 +10,7 @@ namespace Payroll.Application.BusinessYears.Projections
 
     public class BusinessYearHistoryRecord
     {
-      public BusinessYearId Id { get; internal set; }
+      public BusinessYearId BusinessYearId { get; internal set; }
       public ISet<ConsigneePerson> Consignees { get; internal set; } = new HashSet<ConsigneePerson>();
       public int Year { get; internal set; }
       public bool Ended { get; internal set; } = false;
@@ -22,7 +22,7 @@ namespace Payroll.Application.BusinessYears.Projections
       {
         case BusinessYearEvents.BusinessYearCreated x:
           doc = new BusinessYearHistoryRecord();
-          doc.Id = x.Id;
+          doc.BusinessYearId = x.Id.ToString();
           doc.Year = x.ApplicableYear;
           db.Store<BusinessYearHistoryRecord>(x.Id, doc);
           break;

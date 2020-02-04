@@ -9,7 +9,7 @@ namespace Payroll.Application.SalaryGrades.Projections
   {
     public class SalaryGradeRecord
     {
-      public SalaryGradeId Id { get; internal set; }
+      public SalaryGradeId SalaryGradeId { get; internal set; }
       public int BusinessYear { get; internal set; }
       public decimal Gross { get; internal set; }
     }
@@ -20,7 +20,7 @@ namespace Payroll.Application.SalaryGrades.Projections
       {
         case SalaryGradeEvents.SalaryGradeCreated x:
           doc = new SalaryGradeRecord();
-          doc.Id = x.Id;
+          doc.SalaryGradeId = x.Id.ToString();
           doc.BusinessYear = snapshots.Get<BusinessYearHistoryRecord>(x.BusinessYear).Year;
           doc.Gross = x.GrossValue;
           snapshots.Store<SalaryGradeRecord>(x.Id, doc);

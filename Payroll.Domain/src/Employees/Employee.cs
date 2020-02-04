@@ -18,6 +18,7 @@ namespace Payroll.Domain.Employees
       {
         case Events.V1.EmployeeCreated x:
           Id = x.Id;
+          BioData = x.BioData;
           Owner = x.CreatedBy;
           break;
 
@@ -25,12 +26,12 @@ namespace Payroll.Domain.Employees
           BioData = x.BioData;
           break;
         
-        case Events.V1.EmployeeStatusSeparated x:
-          Status = EmployeeStatus.SEPARATED;
+        case Events.V1.EmployeeEmployed x:
+          Status = x.NewStatus;
           break;
 
-        case Events.V1.EmployeeStatusEmployed x:
-          Status = EmployeeStatus.EMPLOYED;
+        case Events.V1.EmployeeSeparated x:
+          Status = x.NewStatus;
           break;
 
         case Events.V1.EmployeeLeaveGranted x:
@@ -54,43 +55,29 @@ namespace Payroll.Domain.Employees
       }
     }
 
-    public static Employee Create(EmployeeId id, UserId owner, DateTimeOffset createdAt)
+    public static Employee Create(EmployeeId id, BioData bioData, UserId owner, DateTimeOffset employedAt)
     {
       var record = new Employee();
       record.Apply(new Events.V1.EmployeeCreated {
         Id = id,
+        BioData = bioData,
         CreatedBy = owner,
-        CreatedAt = createdAt
+        CreatedAt = employedAt
       });
       return record;
     }
 
-    // public void changeStatus(EmployeeStatus newStatus, UserId changedBy, DateTimeOffset changedAt)
-    // {
-    //   if(this.Owner != changedBy)
-    //     _updateFailed("can't change status. not the record owner", newStatus, changedBy, changedAt);
-    //   else
-    //     this.Apply(new Events.V1.EmployeeStatusChanged {
-    //       Id = this.Id,
-    //       NewStatus = newStatus,
-    //       ChangedBy = changedBy,
-    //       ChangedAt = changedAt
-    //     });
-    // }
-
     public void markEmployed(UserId settledBy, DateTimeOffset settledAt)
     {
-      Console.WriteLine(this.Owner);
-      Console.WriteLine(settledBy);
-      Console.WriteLine(this.Owner != settledBy);
       if(this.Owner != settledBy)
         _updateFailed("can't mark employed. not the record owner", null, settledBy, settledAt);
       else
-        this.Apply(new Events.V1.EmployeeStatusEmployed {
+        this.Apply(new Events.V1.EmployeeEmployed {
           Id = this.Id,
           BioData = this.BioData,
-          SettledBy = settledBy,
-          SettledAt = settledAt
+          NewStatus = EmployeeStatus.EMPLOYED,
+          EmployedBy = settledBy,
+          EmployedAt = settledAt
         });
     }
 
@@ -99,11 +86,12 @@ namespace Payroll.Domain.Employees
       if(this.Owner != settledBy)
         _updateFailed("can't mark separated. not the record owner", null, settledBy, settledAt);
       else
-        this.Apply(new Events.V1.EmployeeStatusSeparated {
+        this.Apply(new Events.V1.EmployeeSeparated {
           Id = this.Id,
           BioData = this.BioData,
-          SettledBy = settledBy,
-          SettledAt = settledAt
+          NewStatus = EmployeeStatus.SEPARATED,
+          SeparatedBy = settledBy,
+          SeparatedAt = settledAt
         });
     }
 
@@ -121,7 +109,6 @@ namespace Payroll.Domain.Employees
       else
         this.Apply(new Events.V1.EmployeeLeaveGranted {
           Id = this.Id,
-          BioData = this.BioData,
           LeaveRequest = request,
           GrantedBy = grantedBy,
           GrantedAt = grantedAt

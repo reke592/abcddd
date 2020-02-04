@@ -18,7 +18,7 @@ namespace Payroll.Application.SalaryGrades
     public void Handle(Contracts.V1.CreateSalaryGrade cmd)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = SalaryGrade.Create(Guid.NewGuid(), cmd.BusinessYearId, cmd.GrossValue, user.Id, DateTimeOffset.Now);
+        var record = SalaryGrade.Create(Guid.NewGuid(), cmd.BusinessYearId, cmd.GrossValue, user.UserId, DateTimeOffset.Now);
         // record.updateGross(cmd.GrossValue, user.Id, DateTimeOffset.Now);
         _eventStore.Save(record);
       });
@@ -31,7 +31,7 @@ namespace Payroll.Application.SalaryGrades
         {
           var record = new SalaryGrade();
           record.Load(events);
-          record.updateGross(cmd.NewGrossValue, user.Id, DateTimeOffset.Now);
+          record.updateGross(cmd.NewGrossValue, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

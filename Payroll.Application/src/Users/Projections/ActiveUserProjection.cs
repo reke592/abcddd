@@ -8,7 +8,7 @@ namespace Payroll.Application.Users.Projections
   {
     public class ActiveUserRecord
     {
-      public UserId Id { get; internal set; }
+      public UserId UserId { get; internal set; }
       public string Username { get; internal set; }
       public ISet<string> Claims { get; internal set; } = new HashSet<string>();
       public int Version { get; internal set; } = 0;
@@ -20,7 +20,7 @@ namespace Payroll.Application.Users.Projections
       {
         case Events.V1.UserCreated x:
           doc = new ActiveUserRecord();
-          doc.Id = x.Id;
+          doc.UserId = x.Id.ToString();
           doc.Username = x.Username;
           snapshots.Store(x.Id, doc);
           break;

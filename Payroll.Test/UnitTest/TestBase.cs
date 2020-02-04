@@ -59,10 +59,10 @@ namespace Payroll.Test.UnitTest
       stubRoot.Apply(root_event);
       _eventStore.Save(stubRoot);
 
-      _accessTokenStub = _auth.Handle(new PasswordLogin {
+      _auth.Handle(new PasswordLogin {
         Username = "test",
         Password = "p4ssw0d"
-      });
+      }, result => _accessTokenStub = result);
     }
 
     public new void Dispose() {

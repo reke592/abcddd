@@ -16,12 +16,13 @@ namespace Payroll.Application.PayrollPeriods
       _tokenProvider = tokenProvider;
     }
 
-    public void Handle(Contracts.V1.CreatePayrollPeriod cmd)
+    public void Handle(Contracts.V1.CreatePayrollPeriod cmd, Action<PayrollPeriodId> cb)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = PayrollPeriod.Create(Guid.NewGuid(), cmd.BusinessYearId, user.Id, DateTimeOffset.Now);
-        record.setApplicableMonth(cmd.ApplicableMonth, user.Id, DateTimeOffset.Now);
+        var record = PayrollPeriod.Create(Guid.NewGuid(), cmd.BusinessYearId, user.UserId, DateTimeOffset.Now);
+        record.setApplicableMonth(cmd.ApplicableMonth, user.UserId, DateTimeOffset.Now);
         _eventStore.Save(record);
+        cb(record.Id);
       });
     }
 
@@ -33,7 +34,7 @@ namespace Payroll.Application.PayrollPeriods
           var record = new PayrollPeriod();
           var consignee = ConsigneePerson.Create(cmd.Name, cmd.Position);
           record.Load(events);
-          record.addConsignee(consignee, cmd.ConsigneeAction, user.Id, DateTimeOffset.Now);
+          record.addConsignee(consignee, cmd.ConsigneeAction, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -47,7 +48,7 @@ namespace Payroll.Application.PayrollPeriods
           var record = new PayrollPeriod();
           var consignee = PayrollConsignee.Create(cmd.Name, cmd.Position, cmd.ConsigneeAction);
           record.Load(events);
-          record.removeConsignee(consignee, user.Id, DateTimeOffset.Now);
+          record.removeConsignee(consignee, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -62,7 +63,7 @@ namespace Payroll.Application.PayrollPeriods
           record.Load(events);
           foreach(var employee in cmd.EmployeeIds)
           {
-            record.includeEmployee(employee, user.Id, DateTimeOffset.Now);
+            record.includeEmployee(employee, user.UserId, DateTimeOffset.Now);
           }
           _eventStore.Save(record);
         }
@@ -78,7 +79,7 @@ namespace Payroll.Application.PayrollPeriods
           record.Load(events);
           foreach(var employee in cmd.EmployeeIds)
           {
-            record.excludeEmployee(employee, user.Id, DateTimeOffset.Now);
+            record.excludeEmployee(employee, user.UserId, DateTimeOffset.Now);
           }
           _eventStore.Save(record);
         }
@@ -94,7 +95,7 @@ namespace Payroll.Application.PayrollPeriods
           var record = new PayrollPeriod();
           var adjustment = AdjustedDeductionPayment.Create(cmd.EmployeeId, cmd.DeductionId, cmd.AdjustedAmount);
           record.Load(events);
-          record.adjustDeductionPayment(cmd.EmployeeId, adjustment, user.Id, DateTimeOffset.Now);
+          record.adjustDeductionPayment(cmd.EmployeeId, adjustment, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -107,7 +108,7 @@ namespace Payroll.Application.PayrollPeriods
         {
           var record = new PayrollPeriod();
           record.Load(events);
-          record.giveOutSalary(cmd.EmployeeId, user.Id, DateTimeOffset.Now);
+          record.giveOutSalary(cmd.EmployeeId, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

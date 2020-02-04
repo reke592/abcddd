@@ -6,7 +6,7 @@ namespace Payroll.Application.Users.Projections
 {
   public class UserPassHashRecord
   {
-    public UserId Id { get; internal set; }
+    public UserId UserId { get; internal set; }
     public string Username { get; internal set; }
     public string PassHash { get; internal set; }
     public int Version { get; internal set; } = 0;
@@ -20,7 +20,7 @@ namespace Payroll.Application.Users.Projections
       {
         case Events.V1.UserCreated x:
           doc = new UserPassHashRecord();
-          doc.Id = x.Id;
+          doc.UserId = x.Id.ToString();
           doc.Username = x.Username;
           doc.PassHash = x.PassHash;
           snapshots.Store(x.Id, doc);

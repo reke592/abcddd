@@ -10,6 +10,10 @@ using Payroll.Application.BusinessYears.Projections;
 using Payroll.Application.SalaryGrades.Projections;
 using Payroll.EventSourcing;
 using Payroll.Application.Deductions.Projections;
+using Payroll.Test.UnitTest.Impl;
+using EventStore.ClientAPI;
+using System;
+using Castle.MicroKernel.Registration;
 
 namespace Payroll.Test.UnitTest
 {
@@ -17,10 +21,13 @@ namespace Payroll.Test.UnitTest
   {
     public BootstrapInjectTestBase()
     {
-      var eventStore = _container.Resolve<IEventStore>();
-      var projections = _container.Resolve<IProjectionManager>();
+      var eventStore = _container.Resolve<IEventStore>() as UseEventStore;      
+      var ravenDb = _container.Resolve<ICacheStore>() as UseRavenDb;
       var mapper = _container.Resolve<ITypeMapper>();
-      
+      var projections = _container.Resolve<IProjectionManager>();
+
+      ravenDb.Start(new string[] { "http://localhost:8080 "}, "payroll");
+      eventStore.Start(EventStoreConnection.Create(new Uri("tcp://admin:changeit@localhost:1113"), "PayrollAppUnitTest"));
       eventStore.AfterSave(projections.UpdateProjections);
       eventStore.AfterDBReload(projections.UpdateProjections);
 
@@ -46,11 +53,12 @@ namespace Payroll.Test.UnitTest
         .Map<BusinessYear.BusinessYearConsigneeUpdated>("BusinessYear Consignee Updated")
         .Map<BusinessYear.BusinessYearUpdateAttemptFailed>("BusinessYear Update Attempt Failed")
         .Map<Employees.EmployeeCreated>("Employee Created")
+        .Map<Employees.EmployeeEmployed>("Employee Employed")
+        .Map<Employees.EmployeeSeparated>("Employee Separated")
         .Map<Employees.EmployeeBioDataUpdated>("Employee BioData Updated")
         .Map<Employees.EmployeeSalaryGradeUpdated>("Employee SalaryGrade Updated")
         // .Map<Employees.EmployeeStatusChanged>("Employee Status Changed")
-        .Map<Employees.EmployeeStatusEmployed>("Employee Employed")
-        .Map<Employees.EmployeeStatusSeparated>("Employee Separated")
+        // .Map<Employees.EmployeeStatusEmployed>("Employee Employed")
         .Map<Employees.EmployeeLeaveGranted>("Employee Leave Granted")
         .Map<Employees.EmployeeLeaveRevoked>("Employee Leave Revoked")
         .Map<Employees.EmployeeLeaveEnded>("Employee Leave Ended")

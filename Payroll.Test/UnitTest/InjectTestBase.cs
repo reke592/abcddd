@@ -34,20 +34,27 @@ namespace Payroll.Test.UnitTest
         .ImplementedBy<Payroll.Test.UnitTest.Impl.JSONSerializer>()
         .LifestyleSingleton());
 
+      // provice method for application layer so we can adjust the connections settings
       container.Register(Component.For<IEventStore>()
         .ImplementedBy<Payroll.Test.UnitTest.Impl.UseEventStore>()
         .LifestyleSingleton());
+
+      container.Register(Component.For<ICacheStore>()
+        .ImplementedBy<Payroll.Test.UnitTest.Impl.UseRavenDb>()
+        .LifestyleSingleton());
+
       // container.Register(Component.For<IEventStore>()
       //   .ImplementedBy<MemoryEventStore>()
+      //   .LifestyleSingleton());
+
+      // container.Register(Component.For<ICacheStore>()
+      //   .ImplementedBy<MemoryCacheStore>()
       //   .LifestyleSingleton());
 
       container.Register(Component.For<IEncryptionProvider>()
         .ImplementedBy<BCryptEncryptionProvider>()
         .LifestyleSingleton());
-      
-      container.Register(Component.For<ICacheStore>()
-        .ImplementedBy<MemoryCacheStore>()
-        .LifestyleSingleton());
+    
 
       container.Register(Component.For<IAccessTokenProvider>()
         .ImplementedBy<TokenProvider>()

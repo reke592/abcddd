@@ -31,7 +31,7 @@ namespace Payroll.Infrastructure
       var token = new JwtBuilder()
         .WithAlgorithm(new HMACSHA256Algorithm())
         .WithSecret(_secret.ToString());
-      token.Id(user.Id);
+      token.Id(user.UserId);
       token.Subject("access token");
       token.AddClaim("version", user.Version);
       token.AddClaim("exp", DateTimeOffset.UtcNow.AddHours(1).ToUnixTimeSeconds());

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Payroll.Domain;
 using Payroll.EventSourcing;
-using Payroll.EventSourcing.Serialization;
+using Payroll.EventSourcing.Serialization.YAML;
 
 namespace Payroll.Infrastructure
 {
@@ -86,15 +86,15 @@ namespace Payroll.Infrastructure
       return -1;
     }
 
-    public object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1)
-    {
-      if(_store.TryGetValue(id, out var record)) {
-        var eventCount = record.EventCount;
-        versionOffset = (versionOffset >= eventCount) ? eventCount - 1 : versionOffset;
-        return record.Events.SkipLast(versionOffset).ToArray();
-      }
-      return Empty;
-    }
+    // public object[] GetPreviousVersion<T>(Guid id, int versionOffset = 1)
+    // {
+    //   if(_store.TryGetValue(id, out var record)) {
+    //     var eventCount = record.EventCount;
+    //     versionOffset = (versionOffset >= eventCount) ? eventCount - 1 : versionOffset;
+    //     return record.Events.SkipLast(versionOffset).ToArray();
+    //   }
+    //   return Empty;
+    // }
 
     public void AfterSave(EventHandler<object[]> handler)
     {

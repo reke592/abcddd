@@ -11,8 +11,28 @@ namespace Payroll.Domain.Employees
       public class EmployeeCreated
       {
         public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public UserId CreatedBy { get; set; }
+      }
+
+
+      public class EmployeeEmployed
+      {
+        public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
+        public EmployeeStatus NewStatus { get; set; }
+        public DateTimeOffset EmployedAt { get; set; }
+        public UserId EmployedBy { get; set; }
+      }
+
+      public class EmployeeSeparated
+      {
+        public EmployeeId Id { get; set; }
+        public BioData BioData { get; set; }
+        public EmployeeStatus NewStatus { get; set; }
+        public UserId SeparatedBy { get; set; }
+        public DateTimeOffset SeparatedAt { get; set; }
       }
 
       public class EmployeeBioDataUpdated
@@ -23,34 +43,18 @@ namespace Payroll.Domain.Employees
         public UserId UpdatedBy { get; set; }
       }
 
-      // public class EmployeeStatusChanged
+      // public class EmployeeStatusEmployed
       // {
       //   public EmployeeId Id { get; set; }
-      //   public EmployeeStatus NewStatus { get; set; }
-      //   public UserId ChangedBy { get; set; }
-      //   public DateTimeOffset ChangedAt { get; set; }
+      //   public BioData BioData { get; set; }
+      //   public UserId SettledBy { get; set; }
+      //   public DateTimeOffset SettledAt { get; set; }
       // }
-
-      public class EmployeeStatusEmployed
-      {
-        public EmployeeId Id { get; set; }
-        public BioData BioData { get; set; }
-        public UserId SettledBy { get; set; }
-        public DateTimeOffset SettledAt { get; set; }
-      }
-
-      public class EmployeeStatusSeparated
-      {
-        public EmployeeId Id { get; set; }
-        public BioData BioData { get; set; }
-        public UserId SettledBy { get; set; }
-        public DateTimeOffset SettledAt { get; set; }
-      }
 
       public class EmployeeLeaveGranted
       {
         public EmployeeId Id { get; set; }
-        public BioData BioData { get; set; }
+        // public BioData BioData { get; set; }
         public EmployeeLeaveRequest LeaveRequest { get; set; }
         public UserId GrantedBy { get; set; }
         public DateTimeOffset GrantedAt { get; set; }
@@ -59,7 +63,7 @@ namespace Payroll.Domain.Employees
       public class EmployeeLeaveEnded
       {
         public EmployeeId Id { get; set; }
-        public BioData BioData { get; set; }
+        // public BioData BioData { get; set; }
         public EmployeeLeaveRequest EndedLeaveRequest { get; set; }
         public UserId EndedBy { get; set; }
         public DateTimeOffset EndedAt { get; set; }

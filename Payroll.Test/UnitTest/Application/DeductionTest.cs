@@ -36,7 +36,7 @@ namespace Payroll.Test.UnitTest.Application
       _app.Deduction.Handle(new DeductionCommands.CreateDeductionPayment {
         AccessToken = _accessTokenStub,
         BusinessYearId = _stubBusinessYear,
-        DeductionId = doc.Id,
+        DeductionId = doc.DeductionId,
         Payment = 50
       });
 

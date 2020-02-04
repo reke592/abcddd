@@ -10,6 +10,26 @@ namespace Payroll.Domain.Shared {
         public virtual string ShortMonth => Enum.GetName(typeof(ShortMonth), this.Month);
         public virtual string LongMonth => Enum.GetName(typeof(LongMonth), this.Month);
 
+        public Date AddDays(int days)
+        {
+            var adjusted = DateTime.Parse(this.ToString());
+            adjusted = adjusted.AddDays(days);
+            this.Year = adjusted.Year;
+            this.Day = adjusted.Day;
+            this.Month = adjusted.Month;
+            return this;
+        }
+
+        public Date AddMonth(int months)
+        {
+            var adjusted = DateTime.Parse(this.ToString());
+            adjusted = adjusted.AddMonths(months);
+            this.Year = adjusted.Year;
+            this.Day = adjusted.Day;
+            this.Month = adjusted.Month;
+            return this;
+        }
+
         public static Date Create(int year, int month, int day) {
             return TryParse(string.Join("/", year, month, day));
         }

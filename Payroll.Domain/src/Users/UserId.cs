@@ -11,6 +11,6 @@ namespace Payroll.Domain.Users
     }
 
     public static implicit operator UserId(Guid value) => new UserId(value);
-    public static implicit operator Guid(UserId self) => self.Value;
+    public static implicit operator UserId(string value) => new UserId(Guid.Parse(value));
   }
 }

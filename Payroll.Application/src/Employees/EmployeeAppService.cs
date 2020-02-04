@@ -16,28 +16,16 @@ namespace Payroll.Application.Employees
       _eventStore = eventStore;
     }
 
-    public void Handle(Contracts.V1.CreateEmployee cmd)
+    public void Handle(Contracts.V1.CreateEmployee cmd, Action<EmployeeId> cb)
     {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
-        var record = Employee.Create(Guid.NewGuid(), user.Id, DateTimeOffset.Now);
         var bioData = BioData.Create(cmd.Firstname, cmd.Middlename, cmd.Surname, Date.TryParse(cmd.DateOfBirth));
-        record.updateBioData(bioData, user.Id, DateTimeOffset.Now);
+        var record = Employee.Create(Guid.NewGuid(), bioData, user.UserId, DateTimeOffset.Now);
+        record.markEmployed(user.UserId, DateTimeOffset.Now);
         _eventStore.Save(record);
+        cb(record.Id);
       });
     }
-
-    // public void Handle(Contracts.V1.ChangeStatus cmd)
-    // {
-    //   _tokenService.ReadToken(cmd.AccessToken, user => {
-    //     if(_eventStore.TryGet<Employee>(cmd.EmplyoeeId, out var events))
-    //     {
-    //       var record = new Employee();
-    //       record.Load(events);
-    //       record.changeStatus(cmd.NewStatus, user.Id, DateTimeOffset.Now);
-    //       _eventStore.Save(record);
-    //     }
-    //   });
-    // }
 
     public void Handle(Contracts.V1.UpdateBioData cmd) {
       _tokenProvider.ReadToken(cmd.AccessToken, user => {
@@ -46,7 +34,7 @@ namespace Payroll.Application.Employees
           var record = new Employee();
           var newBioData = BioData.Create(cmd.Firstname, cmd.Middlename, cmd.Surname, Date.TryParse(cmd.DateOfBirth));
           record.Load(events);
-          record.updateBioData(newBioData, user.Id, DateTimeOffset.Now);
+          record.updateBioData(newBioData, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -59,7 +47,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.markEmployed(user.Id, DateTimeOffset.Now);
+          record.markEmployed(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -72,7 +60,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.markSeparated(user.Id, DateTimeOffset.Now);
+          record.markSeparated(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -85,7 +73,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.grantLeave(cmd.Start, cmd.Return, user.Id, DateTimeOffset.Now);
+          record.grantLeave(cmd.Start, cmd.Return, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -98,7 +86,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.revokeLeave(user.Id, DateTimeOffset.Now);
+          record.revokeLeave(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -111,7 +99,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.endLeave(user.Id, DateTimeOffset.Now);
+          record.endLeave(user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });
@@ -124,7 +112,7 @@ namespace Payroll.Application.Employees
         {
           var record = new Employee();
           record.Load(events);
-          record.updateSalaryGrade(cmd.SalaryGradeId, user.Id, DateTimeOffset.Now);
+          record.updateSalaryGrade(cmd.SalaryGradeId, user.UserId, DateTimeOffset.Now);
           _eventStore.Save(record);
         }
       });

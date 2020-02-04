@@ -7,7 +7,7 @@ namespace Payroll.EventSourcing
     {
         public object[] FailedUpdates { get; }
         public DataIntegrityException(Aggregate record) 
-            : base($"Can't apply updates to {record.GetType()}. Record version did not match.")
+            : base($"Can't apply updates to {record.GetType()}/{record.Id}. Record version did not match.")
         {
             FailedUpdates = record.Events;
         }

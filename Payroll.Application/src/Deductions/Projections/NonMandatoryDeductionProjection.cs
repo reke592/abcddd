@@ -10,7 +10,7 @@ namespace Payroll.Application.Deductions.Projections
   {
     public class NonMandatoryDeductionRecord
     {
-      public DeductionId Id { get; internal set; }
+      public DeductionId DeductionId { get; internal set; }
       public BusinessYearId BusinessYear { get; internal set; }
       public DeductionSchedule Schedule { get; internal set; }
       public decimal AmortizedAmount { get; internal set; } = 0;
@@ -27,7 +27,7 @@ namespace Payroll.Application.Deductions.Projections
       {
         case DeductionEvents.NonMandatoryDeductionCreated x:
           doc = new NonMandatoryDeductionRecord();
-          doc.Id = x.Id;
+          doc.DeductionId = x.Id;
           doc.BusinessYear = x.BusinessYear;
           doc.Schedule = x.Schedule;
           doc.CreatedAt = x.CreatedAt;

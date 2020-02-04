@@ -8,10 +8,10 @@ namespace Payroll.Application.Employees.Projections
   {
     public class SeparatedEmployeeRecord
     {
-      public EmployeeId Id { get; internal set; }
+      public EmployeeId EmployeeId { get; internal set; }
       public BioData BioData { get; internal set; }
       public EmployeeStatus Status { get; internal set; } = EmployeeStatus.SEPARATED;
-      public Date DateSeparated { get; internal set; }
+      public string DateSeparated { get; internal set; }
     }
 
     
@@ -19,10 +19,11 @@ namespace Payroll.Application.Employees.Projections
       SeparatedEmployeeRecord doc;
       switch(e)
       {
-        case Events.V1.EmployeeCreated x:
+        case Events.V1.EmployeeSeparated x:
           doc = new SeparatedEmployeeRecord();
-          doc.Id = x.Id;
-          doc.DateSeparated = Date.TryParse(x.CreatedAt.ToString());
+          doc.EmployeeId = x.Id;
+          doc.BioData = x.BioData;
+          doc.DateSeparated = x.SeparatedAt.ToString("MM/dd/yyyy");
           snapshots.Store<SeparatedEmployeeRecord>(x.Id, doc);
           break;
 
@@ -30,15 +31,7 @@ namespace Payroll.Application.Employees.Projections
           snapshots.UpdateIfFound<SeparatedEmployeeRecord>(x.Id, r => r.BioData = x.BioData);
           break;
 
-        case Events.V1.EmployeeStatusSeparated x:
-          doc = new SeparatedEmployeeRecord();
-          doc.Id = x.Id;
-          doc.BioData = x.BioData;
-          doc.DateSeparated = Date.TryParse(x.SettledAt.ToString());
-          snapshots.Store<SeparatedEmployeeRecord>(x.Id, doc);
-          break;
-
-        case Events.V1.EmployeeStatusEmployed x:
+        case Events.V1.EmployeeEmployed x:
           snapshots.Delete<SeparatedEmployeeRecord>(x.Id);
           break;
       }

@@ -4,6 +4,7 @@ using System.Linq;
 using Xunit;
 using Payroll.Domain.BusinessYears;
 using static Payroll.Application.BusinessYears.Projections.CurrentBusinessYearProjection;
+using System;
 
 namespace Payroll.Test.UnitTest.Application
 {
@@ -12,10 +13,11 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanCreateBusinessYear()
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubId = id);
 
       var actual = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
 
@@ -25,21 +27,22 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanAddConsignee()
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubId = id);
 
-      var yearStub = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var yearStub = _cache.Get<BusinessYearHistoryRecord>(stubId);
       var consignee = ConsigneePerson.Create("camilla dela torre", "finance officer");
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateConsignee {
         AccessToken = _accessTokenStub,
         Name = consignee.Name,
         Position = consignee.Position,
-        BusinessYearId = yearStub.Id
+        BusinessYearId = yearStub.BusinessYearId
       });
 
-      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.BusinessYearId);
 
       Assert.True(actual.Consignees.Contains(consignee));
     }
@@ -47,12 +50,13 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanUpdateConsignee()
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubId = id);
 
-      var yearStub = _cache.All<BusinessYearHistoryRecord>().Where(x => !x.Ended).SingleOrDefault();
+      var yearStub = _cache.Get<BusinessYearHistoryRecord>(stubId);
       var old = ConsigneePerson.Create("camilla dela torre", "finance officer");
       var new_ = ConsigneePerson.Create("juan felipe", "finance officer");
 
@@ -60,23 +64,23 @@ namespace Payroll.Test.UnitTest.Application
         AccessToken = _accessTokenStub,
         Name = old.Name,
         Position = old.Position,
-        BusinessYearId = yearStub.Id
+        BusinessYearId = yearStub.BusinessYearId
       });
 
-      var year = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var year = _cache.Get<BusinessYearHistoryRecord>(yearStub.BusinessYearId);
 
       Assert.Contains<ConsigneePerson>(old, year.Consignees);
 
       _app.BusinessYear.Handle(new BusinessYearCommands.UpdateConsignee {
         AccessToken = _accessTokenStub,
-        BusinessYearId = year.Id,
+        BusinessYearId = year.BusinessYearId,
         OldName = old.Name,
         OldPosition = old.Position,
         NewName = new_.Name,
         NewPosition = new_.Position
       });
 
-      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.Id);
+      var actual = _cache.Get<BusinessYearHistoryRecord>(yearStub.BusinessYearId);
 
       Assert.False(actual.Consignees.Contains(old));
       Assert.True(actual.Consignees.Contains(new_));
@@ -86,10 +90,11 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanStartBusinessYear()
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
-      });
+      }, id => stubId = id);
 
       // GetRecent returns the last inserted in dictionary
       // we only have 1 record, since CurrentBusinessYearProjection is using a static Id
@@ -101,7 +106,7 @@ namespace Payroll.Test.UnitTest.Application
       {
         _app.BusinessYear.Handle(new BusinessYearCommands.StartBusinessYear {
           AccessToken = _accessTokenStub,
-          BusinessYearId = doc.Id
+          BusinessYearId = doc.BusinessYearId
         });
       }
 
@@ -114,30 +119,28 @@ namespace Payroll.Test.UnitTest.Application
     [Fact]
     public void CanEndCurrentBusinessYear()
     {
+      BusinessYearId stubId = null;
       _app.BusinessYear.Handle(new BusinessYearCommands.CreateBusinessYear {
         AccessToken = _accessTokenStub,
         ApplicableYear = 2020
+      }, id => stubId = id);
+
+      
+      _app.BusinessYear.Handle(new BusinessYearCommands.StartBusinessYear {
+        AccessToken = _accessTokenStub,
+        BusinessYearId = stubId
+      });
+      
+      var stubYear = _cache.Get<CurrentBusinessYearRecord>(stubId);
+      
+      Assert.True(stubYear.Started);
+      _app.BusinessYear.Handle(new BusinessYearCommands.EndBusinessYear {
+        AccessToken = _accessTokenStub,
+        BusinessYearId = stubId
       });
 
-      if(_cache.GetRecent<CurrentBusinessYearRecord>(out var doc)) {
-        _app.BusinessYear.Handle(new BusinessYearCommands.StartBusinessYear {
-          AccessToken = _accessTokenStub,
-          BusinessYearId = doc.Id
-        });
-      }
-
-      if(_cache.GetRecent<CurrentBusinessYearRecord>(out var stub)) {
-        Assert.True(stub.Started);
-
-        _app.BusinessYear.Handle(new BusinessYearCommands.EndBusinessYear {
-          AccessToken = _accessTokenStub,
-          BusinessYearId = stub.Id
-        });
-      }
-
-      if(_cache.GetRecent<CurrentBusinessYearRecord>(out var actual)) {
-        Assert.True(actual.Ended);
-      }  
+      var actual = _cache.Get<CurrentBusinessYearRecord>(stubId);
+      Assert.True(actual.Ended);
     }
   }
 }
