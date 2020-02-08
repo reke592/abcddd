@@ -1,8 +1,10 @@
+make it asynchronous
+
 create marker interface for errored events for realtime projections
 
 event sourcing:
   + use EventStore for event storage
-  use RaveDB for projections
+  + use RaveDB for projections
 
 optimize JSON serialization:
   cache json converters
